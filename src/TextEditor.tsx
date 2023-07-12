@@ -634,12 +634,12 @@ function TextEditor({
  */}
       <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
         {open && (
-          <div className="flex">
-            {/*   <div
-              className={`hidden md:inline-block md:flex-none text-sm mr-xs w-4 md:w-16 ${textColor}`}
+          <div className="flex relative">
+            <div
+              className={`hidden md:inline-block absolute -left-10 top-10 text-sm mr-xs w-4 md:w-16 ${textColor}`}
             >
               {currentText.caption}
-            </div> */}
+            </div>
 
             <div className="hidden md:inline-block md:flex-grow">
               <div
@@ -695,15 +695,15 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex  
+            className={`flex relative 
               
             `}
           >
-            {/* <div
-              className={` text-sm mr-xs flex-none w-4 md:w-16 ${textColor} hidden md:inline-block`}
+            <div
+              className={`hidden md:inline-block absolute -left-20 top-0 text-sm mr-xs w-4 md:w-16 ${textColor}`}
             >
               {currentText.caption}
-            </div> */}
+            </div>
             <div className="md:grid grid-cols-1 hidden">
               <div
                 className="flex-none cursor-pointer mr-xs"

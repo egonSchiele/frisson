@@ -18,7 +18,7 @@ export default function ProgressBar({}) {
   }
 
   const progress = Math.round(
-    (activeTextIndex + 1 / currentChapterLength) * 100
+    ((activeTextIndex + 1) / currentChapterLength) * 100
   );
   console.log("progress", progress, activeTextIndex, currentChapterLength);
   return (
