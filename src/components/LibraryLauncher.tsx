@@ -1,46 +1,38 @@
-import * as t from "../Types";
-import React, { useContext } from "react";
 import {
-  getSelectedBook,
-  getSelectedChapter,
-  librarySlice,
-} from "../reducers/librarySlice";
-import * as fd from "../lib/fetchData";
-import {
-  DocumentArrowDownIcon,
-  PlusIcon,
-  ViewColumnsIcon,
-  ClockIcon,
-  InformationCircleIcon,
-  ClipboardIcon,
-  Cog6ToothIcon,
-  Bars3BottomLeftIcon,
-  BookOpenIcon,
-  SparklesIcon,
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  Bars3Icon,
-  BarsArrowUpIcon,
-  BarsArrowDownIcon,
-  EyeIcon,
-  DocumentDuplicateIcon,
-  PencilIcon,
-  WrenchIcon,
-  XMarkIcon,
-  ArrowTopRightOnSquareIcon,
-  ArrowsUpDownIcon,
   ArrowSmallLeftIcon,
   ArrowSmallRightIcon,
+  ArrowTopRightOnSquareIcon,
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  ArrowsUpDownIcon,
+  Bars3BottomLeftIcon,
+  Bars3Icon,
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
+  BookOpenIcon,
   ChatBubbleLeftIcon,
-  QuestionMarkCircleIcon,
+  ClipboardIcon,
+  ClockIcon,
+  Cog6ToothIcon,
+  DocumentDuplicateIcon,
+  EyeIcon,
+  InformationCircleIcon,
   LockClosedIcon,
-  MicrophoneIcon,
+  PencilIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon,
+  SparklesIcon,
+  ViewColumnsIcon,
+  WrenchIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store";
-import { fetchSuggestionsWrapper } from "../utils";
 import sortBy from "lodash/sortBy";
+import React, { useContext } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Launcher from "../Launcher";
+import LibraryContext from "../LibraryContext";
+import * as t from "../Types";
 import {
   LibraryContextType,
   MenuItem,
@@ -48,22 +40,28 @@ import {
   blockTypes,
   chapterStatuses,
 } from "../Types";
-import { useNavigate } from "react-router-dom";
-import { languages } from "../lib/languages";
-import LibraryContext from "../LibraryContext";
+import * as fd from "../lib/fetchData";
 import { useRecording } from "../lib/hooks";
+import { languages } from "../lib/languages";
+import {
+  getSelectedBook,
+  getSelectedChapter,
+  librarySlice,
+} from "../reducers/librarySlice";
+import { AppDispatch, RootState } from "../store";
+import { fetchSuggestionsWrapper } from "../utils";
 
 export default function LibraryLauncher({ onLauncherClose }) {
   const state: State = useSelector((state: RootState) => state.library);
   const currentBook = useSelector(getSelectedBook);
 
   const currentChapter = getSelectedChapter({ library: state });
-  const currentText = useSelector((state: RootState) => {
+  const currentText: t.TextBlock[] = useSelector((state: RootState) => {
     const chapter = getSelectedChapter(state);
     return chapter ? chapter.text : [];
   });
 
-  let currentTextBlock = null;
+  let currentTextBlock: t.TextBlock | null = null;
   if (state.editor.activeTextIndex !== null) {
     currentTextBlock = currentText[state.editor.activeTextIndex];
   }
@@ -691,6 +689,26 @@ export default function LibraryLauncher({ onLauncherClose }) {
       }
     });
 
+    const textishBlocks: t.BlockType[] = ["plain", "markdown", "code"];
+
+    textishBlocks.forEach((blockType) => {
+      if (currentTextBlock.type !== blockType) {
+        launchItems.push({
+          label: `Convert all blocks to ${blockType}`,
+          onClick: () => {
+            currentText.forEach((textBlock, index) => {
+              dispatch(
+                librarySlice.actions.setBlockType({
+                  index,
+                  type: blockType,
+                })
+              );
+            });
+          },
+          icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        });
+      }
+    });
     languages.forEach((language) => {
       launchItems.push({
         label: `Set language to ${language}`,

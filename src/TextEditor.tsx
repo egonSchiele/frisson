@@ -256,6 +256,14 @@ function TextEditor({
     const text = quill.getText();
     quill.removeFormat(0, text.length - 1);
 
+    /*   function formatFor(line:string, index:number, prefix: string, format: string) {
+      if (!line.startsWith(prefix)) return;
+      quill.formatText(index, prefix.length, { class: "grayedout" });
+      quill.formatText(index + prefix.length, line.length - prefix.length, {
+        class: format,
+      });
+    } */
+
     const lines = text.split("\n");
     let index = 0;
     lines.forEach((line, i) => {
@@ -273,6 +281,8 @@ function TextEditor({
       } else if (line.startsWith("#### ")) {
         quill.formatText(index, 4, { class: "grayedout" });
         quill.formatText(index + 5, lineLength - 5, { class: "h4" });
+      } else if (line.startsWith("http")) {
+        quill.formatText(index, lineLength, { class: "link" });
       }
       index += lineLength + 1;
     });
@@ -624,15 +634,15 @@ function TextEditor({
       <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
         {open && (
           <div className="flex">
-            <div
+            {/*   <div
               className={`hidden md:inline-block md:flex-none text-sm mr-xs w-4 md:w-16 ${textColor}`}
             >
               {currentText.caption}
-            </div>
+            </div> */}
 
             <div className="hidden md:inline-block md:flex-grow">
               <div
-                className="h-5 cursor-pointer mr-xs"
+                className="h-5 cursor-pointer mr-sm mt-1"
                 onClick={() => {
                   setOpen(false);
                 }}
@@ -640,7 +650,7 @@ function TextEditor({
               >
                 <ChevronDownIcon
                   className={`w-5 h-5 ${
-                    isActive ? "text-gray-400" : "text-gray-500"
+                    isActive ? "text-gray-500" : "text-gray-700"
                   }`}
                 />
               </div>
@@ -688,11 +698,11 @@ function TextEditor({
               
             `}
           >
-            <div
+            {/* <div
               className={` text-sm mr-xs flex-none w-4 md:w-16 ${textColor} hidden md:inline-block`}
             >
               {currentText.caption}
-            </div>
+            </div> */}
             <div className="md:grid grid-cols-1 hidden">
               <div
                 className="flex-none cursor-pointer mr-xs"

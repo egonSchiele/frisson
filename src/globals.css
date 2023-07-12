@@ -112,6 +112,10 @@
     @apply text-gray-500;
   }
 
+  .link {
+    @apply text-gray-500;
+  }
+
   .red {
     @apply border;
     @apply border-red-500;

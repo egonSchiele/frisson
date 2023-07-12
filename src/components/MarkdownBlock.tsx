@@ -14,6 +14,7 @@ const renderer = {
     return htmlString;
   },
 };
+marked.setOptions({ smartypants: true });
 marked.use({ renderer });
 
 export default function MarkdownBlock({

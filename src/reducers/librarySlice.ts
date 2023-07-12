@@ -1480,6 +1480,15 @@ export const getSelectedChapterTextLength = (
   return chapter.text.length;
 };
 
+export const getSelectedChapterVisibleTextLength = (
+  state: RootState
+): number | null => {
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
+
+  return chapter.text.filter((b) => !b.hideInExport).length;
+};
+
 export const getCompostBookId = (state: RootState): string | null => {
   const compostBook = state.library.books.find(
     (b: t.Book) => b.tag === "compost"

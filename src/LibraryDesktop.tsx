@@ -54,6 +54,7 @@ import Help from "./Help";
 import SearchSidebar from "./SearchSidebar";
 import SpeechSidebar from "./SpeechSidebar";
 import EncryptionSidebar from "./EncryptionSidebar";
+import ProgressBar from "./ProgressBar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -199,6 +200,7 @@ export default function LibraryDesktop() {
         {/*  nav */}
         <LibErrorBoundary component="nav">
           <Nav mobile={mobile} bookid={bookid} chapterid={chapterid} />
+          <ProgressBar />
         </LibErrorBoundary>
         {/* <LibErrorBoundary component="tabs">
             <Tabs />

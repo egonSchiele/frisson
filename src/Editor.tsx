@@ -112,13 +112,13 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
         className="flex h-screen overflow-auto dark:[color-scheme:dark] w-full mx-auto"
         id="readonly"
       >
-        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm mb-sm h-full">
+        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-md mb-sm h-full">
           <h1
             className={`${fontClass} ${titleFontSize} mb-md mt-lg mx-auto text-center tracking-wide font-normal xl:font-semibold text-darkest dark:text-lightest`}
           >
             {currentChapterTitle}
           </h1>
-          <div className="w-full px-0 mx-0 lg:px-xl lg:ml-sm">
+          <div className="w-full pl-sm pr-0 mx-0 lg:px-xl lg:ml-sm">
             <ReadOnlyView
               textBlocks={currentText.filter((t) => !t.hideInExport)}
               fontClass={fontClass}
