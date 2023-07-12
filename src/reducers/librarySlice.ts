@@ -551,7 +551,7 @@ export const librarySlice = createSlice({
       const { activeTextIndex } = state.editor;
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
-      const cur = chapter.text[activeTextIndex];
+      const currentBlock = chapter.text[activeTextIndex];
       let { index, length, contents } = state.editor.selectedText;
       if (index === 0 && state.editor._cachedSelectedText) {
         index = state.editor._cachedSelectedText.index;
@@ -560,11 +560,14 @@ export const librarySlice = createSlice({
       }
       let newText = "";
       if (index) {
-        newText = strSplice(cur.text, index, length, toAdd);
+        newText = strSplice(currentBlock.text, index, length, toAdd);
+      } else if (currentBlock.type === "todoList") {
+        newText = `${currentBlock.text}\n${toAdd}`;
       } else {
-        newText = `${cur.text} ${toAdd}`;
+        newText = `${currentBlock.text} ${toAdd}`;
       }
-      cur.text = newText;
+
+      currentBlock.text = newText;
       state.editor._pushTextToEditor = newText;
       state.saved = false;
     },

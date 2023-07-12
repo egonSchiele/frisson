@@ -459,7 +459,8 @@ function TextEditor({
       event.preventDefault();
       addQuotes("(", ")");
     } else if (
-      ((event.shiftKey && event.code === "Comma") || event.code === "Period") &&
+      ((event.shiftKey && event.code === "Comma") ||
+        (event.shiftKey && event.code === "Period")) &&
       textIsSelected()
     ) {
       event.preventDefault();
