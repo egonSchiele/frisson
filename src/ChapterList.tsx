@@ -24,6 +24,7 @@ import {
   encryptMessage,
   getChapterText,
   getCsrfToken,
+  prettyDate,
   useLocalStorage,
 } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
@@ -37,7 +38,12 @@ import Select from "./components/Select";
 
 // import Draggable from "react-draggable";
 
-type SortType = "alphabetical" | "manual";
+type SortType =
+  | "alphabetical"
+  | "manual"
+  | "recentlyModified"
+  | "leastRecentlyModified"
+  | "length";
 
 export default function ChapterList({
   selectedChapterId,
@@ -82,6 +88,10 @@ export default function ChapterList({
   let sortedChapters = chapters;
   if (sortType === "alphabetical") {
     sortedChapters = sortBy(chapters, ["title"]);
+  } else if (sortType === "recentlyModified") {
+    sortedChapters = sortBy(chapters, ["created_at"]);
+  } else if (sortType === "leastRecentlyModified") {
+    sortedChapters = sortBy(chapters, ["created_at"]).reverse();
   }
 
   if (!loaded) {
@@ -198,9 +208,9 @@ export default function ChapterList({
         return (
           <li
             key={text.id || chapter.chapterid}
-            className={
+            className={`grid grid-cols-1 ${
               !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-            }
+            }`}
           >
             <ListItem
               link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}/${textindex}`}
@@ -265,9 +275,9 @@ export default function ChapterList({
       return (
         <li
           key={chapter.chapterid}
-          className={
+          className={`grid grid-cols-1 ${
             !chapter.title ? "italic dark:text-gray-400 text-gray-600" : ""
-          }
+          }`}
         >
           <ListItem
             link={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}
@@ -277,6 +287,14 @@ export default function ChapterList({
             selector="chapterlist"
             menuItems={menuItems}
           />
+          {(sortType === "recentlyModified" ||
+            sortType === "leastRecentlyModified") && (
+            <div
+              className={`text-xs ${colors.secondaryTextColor} w-full px-2 py-1 ${colors.navBackgroundColor}`}
+            >
+              {prettyDate(chapter.created_at)}
+            </div>
+          )}
         </li>
       );
     });
@@ -470,6 +488,8 @@ export default function ChapterList({
     >
       <option value="manual">Manual</option>
       <option value="alphabetical">Alphabetical</option>
+      <option value="recentlyModified">Recently Modified</option>
+      <option value="leastRecentlyModified">Least Recently Modified</option>
     </Select>
   );
 
