@@ -9,7 +9,7 @@ export default function ProgressBar({}) {
     (state: RootState) => state.library.editor.activeTextIndex
   );
 
-  if (!currentChapterLength) {
+  if (!currentChapterLength || currentChapterLength < 2) {
     return null;
   }
 
@@ -23,17 +23,24 @@ export default function ProgressBar({}) {
   console.log("progress", progress, activeTextIndex, currentChapterLength);
   return (
     <div
-      className={`h-2 w-screen absolute left-0 bottom-0 z-50 flex-grow text-gray-700 `}
+      className={`h-1 w-screen absolute left-0 top-9 z-50 text-gray-600 flex-grow `}
       id="progress-bar"
     >
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <line
-          x1="0"
-          y1="0"
-          x2={`${progress}%`}
-          y2="0"
-          stroke="rgb(55, 65, 81)"
-          strokeWidth={1}
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-1 w-full">
+        <defs>
+          <linearGradient id="myGradient" gradientTransform="rotate(0)">
+            <stop offset="5%" stopColor="black" />
+            <stop offset="95%" stopColor="rgb(75 85 99)" />
+          </linearGradient>
+        </defs>
+
+        <rect
+          x="0"
+          y="0"
+          width={`${progress}%`}
+          height="100%"
+          fill="url('#myGradient')"
+          strokeWidth="0"
         />
       </svg>
     </div>
