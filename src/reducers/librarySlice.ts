@@ -1509,6 +1509,20 @@ export const getSelectedChapterVisibleTextLength = (
   return chapter.text.filter((b) => !b.hideInExport).length;
 };
 
+export const getProgress = (state: RootState): number | null => {
+  const activeTextIndex = state.library.editor.activeTextIndex;
+  if (!activeTextIndex) return null;
+
+  const chapter = getSelectedChapter(state);
+  if (!chapter) return null;
+  const currentText = chapter.text[activeTextIndex];
+
+  const visibleBlocks = chapter.text.filter((b) => !b.hideInExport);
+  const currentTextIndex = visibleBlocks.findIndex((b) => b === currentText);
+
+  return Math.round(((currentTextIndex + 1) / visibleBlocks.length) * 100);
+};
+
 export const getCompostBookId = (state: RootState): string | null => {
   const compostBook = state.library.books.find(
     (b: t.Book) => b.tag === "compost"

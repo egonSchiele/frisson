@@ -73,7 +73,6 @@ export function useFonts() {
   let fontSize = settings.design?.fontSize || 18;
   const fontSizeClass = getFontSizeClass(fontSize);
   const titleFontSize = fontClass === "serif" ? "text-4xl" : "text-4xl";
-  console.log(fontClass, fontSizeClass, titleFontSize, "<<", settings.design);
   return { fontClass, fontSizeClass, titleFontSize };
 }
 

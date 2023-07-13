@@ -1,26 +1,15 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { getSelectedChapterVisibleTextLength } from "./reducers/librarySlice";
+import {
+  getProgress,
+  getSelectedChapterVisibleTextLength,
+} from "./reducers/librarySlice";
 import { RootState } from "./store";
 
 export default function ProgressBar({}) {
-  let currentChapterLength = useSelector(getSelectedChapterVisibleTextLength);
-  let activeTextIndex = useSelector(
-    (state: RootState) => state.library.editor.activeTextIndex
-  );
-
-  if (!currentChapterLength || currentChapterLength < 2) {
-    return null;
-  }
-
-  if (activeTextIndex === undefined) {
-    activeTextIndex = 0;
-  }
-
-  const progress = Math.round(
-    ((activeTextIndex + 1) / currentChapterLength) * 100
-  );
-  console.log("progress", progress, activeTextIndex, currentChapterLength);
+  const progress = useSelector(getProgress);
+  /* console.log("progress", progress); */
+  if (progress === null) return null;
   return (
     <div
       className={`h-1 w-screen absolute left-0 top-9 z-50 text-gray-600 flex-grow `}
