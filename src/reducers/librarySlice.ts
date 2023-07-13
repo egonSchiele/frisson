@@ -206,11 +206,11 @@ export const librarySlice = createSlice({
       state.booksLoaded = action.payload;
     },
     newBook(state: t.State, action: PayloadAction<t.Book>) {
-      let books = action.payload;
-      if (state.encryptionPassword !== null) {
+      let book = action.payload;
+      /* if (state.encryptionPassword !== null) {
         books = encryptObject(books, state.encryptionPassword);
-      }
-      state.books.push(books);
+      } */
+      state.books.push(book);
     },
     setBook(state: t.State, action: PayloadAction<string | null>) {
       state.selectedBookId = action.payload;
