@@ -63,6 +63,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   const readonlyDiv = useRef(null);
   const editDiv = useRef(null);
+  const scrollKey = `scrollTop-${currentChapterId}`;
   function scrollCallback(scrollTop) {
     //console.log("scrollCallback", scrollTop);
     dispatch(librarySlice.actions.setScrollTo(scrollTop));
@@ -75,6 +76,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       // console.log("scrollTop", editDiv.current.scrollTop);
       // console.log("offsetHeight", editDiv.current.offsetHeight);
       // console.log(editDiv.current);
+      console.log("scrollTo was set! scrolling to", scrollTo);
 
       editDiv.current.scroll({ top: scrollTo });
 
@@ -83,10 +85,27 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     }
   }, [scrollTo, editDiv.current]);
 
+  useEffect(() => {
+    if (!editDiv.current) return;
+    editDiv.current.addEventListener("scroll", (e) => {
+      /* 
+      console.log("scrolling", editDiv.current.scrollTop); */
+      localStorage.setItem(scrollKey, `${editDiv.current.scrollTop}`);
+    });
+  }, [editDiv.current]);
+
+  useEffect(() => {
+    if (!editDiv.current) return;
+    const savedScrollTop = localStorage.getItem(scrollKey);
+    console.log("savedScrollTop was:", savedScrollTop, " scrolling to it.");
+    editDiv.current.scroll({ top: savedScrollTop });
+  }, [scrollKey]);
+
   useKeyDown((event) => {
     if (event.ctrlKey && event.code === "KeyF") {
       if (editDiv.current) {
         event.preventDefault();
+
         editDiv.current.scroll({
           top: editDiv.current.scrollTop + 400,
           behavior: "smooth",

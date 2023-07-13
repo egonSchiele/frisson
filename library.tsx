@@ -57,3 +57,7 @@ window.addEventListener("scroll", (e) => {
 });
 
 //window.addEventListener("focus", (e) => window.location.reload());
+
+// https://stackoverflow.com/a/46722645
+// because we scroll #editDiv instead of the window, we want to control and restore the scroll ourselves.
+history.scrollRestoration = "manual";
