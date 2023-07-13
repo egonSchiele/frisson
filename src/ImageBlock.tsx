@@ -49,7 +49,7 @@ export default function ImageBlock({
   } else {
     return (
       <div
-        className="my-sm grid grid-cols-3 gap-2"
+        className="my-sm grid grid-cols-1 md:grid-cols-3 gap-2"
         onClick={setActiveTextIndex}
       >
         {images.map((url) => (
