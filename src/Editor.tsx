@@ -31,6 +31,7 @@ import {
   ArrowSmallRightIcon,
 } from "@heroicons/react/24/outline";
 import TodoListBlock from "./TodoListBlock";
+import ImageBlock from "./ImageBlock";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -114,13 +115,13 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
         className="flex h-screen overflow-auto dark:[color-scheme:dark] w-full mx-auto"
         id="readonly"
       >
-        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-md mb-sm h-full">
+        <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] mb-sm h-full">
           <h1
             className={`${fontClass} ${titleFontSize} mb-md mt-lg mx-auto text-center tracking-wide font-normal xl:font-semibold text-darkest dark:text-lightest`}
           >
             {currentChapterTitle}
           </h1>
-          <div className="w-full pl-sm pr-0 mx-0 lg:px-xl lg:ml-sm">
+          <div className="w-full pl-sm pr-0 mx-0">
             <ReadOnlyView
               textBlocks={currentText.filter((t) => !t.hideInExport)}
               fontClass={fontClass}
@@ -187,6 +188,9 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
           key={key}
         />
       );
+      return;
+    } else if (text.type === "image") {
+      renderedBlocks.push(<ImageBlock text={text} key={key} />);
       return;
     }
     /*   let diffWithText = "";

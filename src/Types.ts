@@ -176,6 +176,13 @@ export type TodoListBlock = BaseBlock & {
   type: "todoList";
 };
 
+export type ImageDisplay = "linear" | "grid";
+
+export type ImageBlock = BaseBlock & {
+  type: "image";
+  display: ImageDisplay;
+};
+
 export type CodeBlock = BaseBlock & {
   type: "code";
   language?: string;
@@ -200,13 +207,15 @@ export const blockTypes = [
   "code",
   "embeddedText",
   "todoList",
+  "image",
 ];
 export type BlockType =
   | "plain"
   | "markdown"
   | "code"
   | "embeddedText"
-  | "todoList";
+  | "todoList"
+  | "image";
 
 export function plainTextBlock(text: string): PlainTextBlock {
   return { type: "plain", open: true, id: nanoid(), text, reference: false };
@@ -229,6 +238,18 @@ export function todoListBlock(text: string): TodoListBlock {
     text,
     reference: false,
     versions: [],
+  };
+}
+
+export function imageBlock(text: string): ImageBlock {
+  return {
+    type: "image",
+    open: true,
+    id: nanoid(),
+    text,
+    reference: false,
+    versions: [],
+    display: "linear",
   };
 }
 
@@ -303,6 +324,28 @@ export function todoListBlockFromData(
   };
 }
 
+export function imageBlockFromData(
+  text: string,
+  open: boolean,
+  reference: boolean,
+  caption?: string,
+  versions?: Version[],
+  diffWith?: string | null,
+  display: ImageDisplay = "linear"
+): ImageBlock {
+  return {
+    type: "image",
+    open,
+    id: nanoid(),
+    text,
+    reference,
+    caption,
+    versions,
+    diffWith,
+    display,
+  };
+}
+
 export function codeBlockFromData(
   text: string,
   open: boolean,
@@ -351,7 +394,8 @@ export type TextBlock =
   | MarkdownBlock
   | TodoListBlock
   | CodeBlock
-  | EmbeddedTextBlock;
+  | EmbeddedTextBlock
+  | ImageBlock;
 
 export type NewTextForBlock = { index: number; text: string };
 

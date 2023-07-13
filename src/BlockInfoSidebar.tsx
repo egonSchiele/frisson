@@ -130,11 +130,34 @@ function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
     { type: "code", label: "Code" },
     { type: "embeddedText", label: "Embedded Text" },
     { type: "todoList", label: "Todo List" },
+    { type: "image", label: "Image" },
   ];
   return (
     <RadioGroup
       value={type}
       onChange={setType}
+      className={"grid grid-cols-1"}
+      label="Type"
+      options={options}
+    />
+  );
+}
+
+function BlockImageDisplay({
+  display,
+  setDisplay,
+}: {
+  display: t.ImageDisplay;
+  setDisplay: any;
+}) {
+  const options = [
+    { type: "linear", label: "Linear" },
+    { type: "grid", label: "Grid" },
+  ];
+  return (
+    <RadioGroup
+      value={display}
+      onChange={setDisplay}
       className={"grid grid-cols-1"}
       label="Type"
       options={options}
@@ -251,6 +274,25 @@ export default function BlockInfoSidebar({}: {}) {
               librarySlice.actions.setLanguage({
                 index: state.activeTextIndex,
                 language: newLanguage,
+              })
+            );
+          }}
+        />
+      </li>
+    );
+  }
+
+  if (currentText.type === "image") {
+    listItems.push(
+      <li key="imagedisplay">
+        <BlockImageDisplay
+          display={currentText.display}
+          setDisplay={(newDisplay) => {
+            console.log({ newDisplay });
+            dispatch(
+              librarySlice.actions.setDisplay({
+                index: state.activeTextIndex,
+                display: newDisplay,
               })
             );
           }}

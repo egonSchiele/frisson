@@ -257,6 +257,19 @@ export function saveTextToHistory(chapter: t.Chapter): string {
         caption,
       });
       return `${jsonFrontMatter}\n\n${text.text}`;
+    } else if (text.type === "image") {
+      const { type, open, reference, versions, diffWith, caption, display } =
+        text;
+      const jsonFrontMatter = JSON.stringify({
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+        display,
+      });
+      return `${jsonFrontMatter}\n\n${text.text}`;
     } else if (text.type === "code") {
       const { type, open, reference, versions, diffWith, caption, language } =
         text;
@@ -328,6 +341,16 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.caption,
         frontMatter.versions,
         frontMatter.diffWith
+      );
+    } else if (frontMatter.type === "image") {
+      return t.imageBlockFromData(
+        blockText,
+        frontMatter.open,
+        frontMatter.reference,
+        frontMatter.caption,
+        frontMatter.versions,
+        frontMatter.diffWith,
+        frontMatter.display
       );
     } else {
       return t.markdownBlockFromData(

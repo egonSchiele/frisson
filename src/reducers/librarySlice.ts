@@ -877,6 +877,20 @@ export const librarySlice = createSlice({
       block.language = language;
       state.saved = false;
     },
+    setDisplay(
+      state: t.State,
+      action: PayloadAction<{ index: number; display: t.ImageDisplay }>
+    ) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const { index, display } = action.payload;
+
+      const block = chapter.text[index] as t.ImageBlock;
+
+      block.type = "image";
+      block.display = display;
+      state.saved = false;
+    },
     toggleReference(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;

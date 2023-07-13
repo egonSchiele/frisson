@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import LibraryContext from "./LibraryContext";
 import { getFontSizeClass } from "./utils";
+import ImageBlock from "./ImageBlock";
 export default function ReadOnlyView({ textBlocks, fontClass }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const { settings } = useContext(LibraryContext) as t.LibraryContextType;
@@ -22,6 +23,8 @@ export default function ReadOnlyView({ textBlocks, fontClass }) {
       return (
         <MarkdownBlock text={text.text} key={index} className={fontClass} />
       );
+    } else if (text.type === "image") {
+      return <ImageBlock text={text} key={index} />;
     } else if (text.type === "embeddedText") {
       let chapter = null;
       let book = null;

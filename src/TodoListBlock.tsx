@@ -48,12 +48,10 @@ export default function TodoListBlock({
   text: t.TodoListBlock;
   index: number;
 }) {
-  console.log("rendering TodoListBlock", text);
   const dispatch = useDispatch();
   const [newTodoText, setNewTodoText] = React.useState("");
 
   function updateLine(lineIndex, updatedLine) {
-    console.log("updateLine", lineIndex, updatedLine);
     const lines = text.text.split("\n");
     lines[lineIndex] = updatedLine;
     const newText = lines.join("\n");
