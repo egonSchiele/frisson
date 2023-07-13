@@ -18,62 +18,73 @@
   }
 
   .fontsize-16.font-mono * {
-    font-size: 16px !important;
-    line-height: 24px !important;
+    font-size: 16px;
+    line-height: 24px;
   }
 
   .fontsize-18.font-mono * {
-    font-size: 18px !important;
-    line-height: 26px !important;
+    font-size: 18px;
+    line-height: 26px;
   }
 
   .fontsize-20.font-mono * {
-    font-size: 20px !important;
-    line-height: 28px !important;
+    font-size: 20px;
+    line-height: 28px;
   }
 
   .fontsize-22.font-mono * {
-    font-size: 22px !important;
-    line-height: 30px !important;
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .fontsize-16.markdown pre, .fontsize-18.markdown pre, .fontsize-20.markdown pre, .fontsize-22.markdown pre  {
+    line-height: 22px;
+  }
+  .fontsize-16.markdown code, .fontsize-18.markdown code, .fontsize-20.markdown code, .fontsize-22.markdown code  {
+    line-height: 0px;
+  }
+  .fontsize-16.markdown code span, .fontsize-18.markdown code span, .fontsize-20.markdown code span, .fontsize-22.markdown code span  {
+    font-size: 16px;
+    line-height: 0px;
   }
 
   .fontsize-16.serif * {
-    font-size: 22px !important;
-    line-height: 32px !important;
+    font-size: 22px;
+    line-height: 32px;
   }
 
   .fontsize-18.serif * {
-    font-size: 24px !important;
-    line-height: 36px !important;
+    font-size: 24px;
+    line-height: 36px;
   }
 
   .fontsize-20.serif * {
-    font-size: 26px !important;
-    line-height: 36px !important;
+    font-size: 26px;
+    line-height: 36px;
   }
 
   .fontsize-22.serif * {
-    font-size: 28px !important;
-    line-height: 38px !important;
+    font-size: 28px;
+    line-height: 38px;
   }
   .fontsize-16 * {
-    font-size: 16px !important;
-    line-height: 32px !important;
+    font-size: 16px;
+    line-height: 32px;
   }
 
   .fontsize-18 * {
-    font-size: 18px !important;
-    line-height: 36px !important;
+    font-size: 18px;
+    line-height: 36px;
   }
 
   .fontsize-20 * {
-    font-size: 20px !important;
-    line-height: 36px !important;
+    font-size: 20px;
+    line-height: 36px;
   }
 
   .fontsize-22 * {
-    font-size: 22px !important;
-    line-height: 38px !important;
+    font-size: 22px;
+    line-height: 38px;
   }
 
  

@@ -9,7 +9,12 @@ import Button from "./components/Button";
 import ContentEditable from "./components/ContentEditable";
 import Select from "./components/Select";
 import "./globals.css";
-import { useColors, useKeyDown, useKeyboardScroll } from "./lib/hooks";
+import {
+  useColors,
+  useFonts,
+  useKeyDown,
+  useKeyboardScroll,
+} from "./lib/hooks";
 import {
   getNextChapter,
   getPreviousChapter,
@@ -53,6 +58,8 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     (state: RootState) => state.library.viewMode
   );
 
+  const { fontClass, fontSizeClass, titleFontSize } = useFonts();
+
   const readonlyDiv = useRef(null);
   const editDiv = useRef(null);
   function scrollCallback(scrollTop) {
@@ -95,11 +102,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       }
     }
   });
-
-  let font = settings.design ? settings.design.font : "serif";
-  font = font || "serif";
-  const fontClass = font === "serif" ? "serif" : "sansSerif";
-  const titleFontSize = fontClass === "serif" ? "text-4xl" : "text-2xl";
 
   if (!currentChapterTitle) {
     return <div className="flex w-full h-full"></div>;

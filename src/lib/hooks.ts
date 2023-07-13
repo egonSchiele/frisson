@@ -6,7 +6,7 @@ import { librarySlice } from "../reducers/librarySlice";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { useParams } from "react-router-dom";
-import { getCookie, setCookie } from "../utils";
+import { getCookie, getFontSizeClass, setCookie } from "../utils";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 export const useKeyboardScroll = (htmlRef, speed = 400, callback = null) => {
@@ -60,6 +60,21 @@ export function useKeyDown(callback) {
       document.removeEventListener("keydown", callback);
     };
   }, [callback]);
+}
+
+export function useFonts() {
+  const { settings } = useContext(LibraryContext) as t.LibraryContextType;
+  //const currentText: t.CodeBlock = useSelector(getText(index)) as t.CodeBlock;
+  let font = settings.design ? settings.design.font : "sans-serif";
+  font = font || "sans-serif";
+  let fontClass = font === "serif" ? "serif" : "sansSerif";
+  //if (currentText.type === "code") fontClass = "font-mono";
+
+  let fontSize = settings.design?.fontSize || 18;
+  const fontSizeClass = getFontSizeClass(fontSize);
+  const titleFontSize = fontClass === "serif" ? "text-4xl" : "text-4xl";
+  console.log(fontClass, fontSizeClass, titleFontSize, "<<", settings.design);
+  return { fontClass, fontSizeClass, titleFontSize };
 }
 
 export function useColors() {

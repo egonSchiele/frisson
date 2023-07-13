@@ -36,7 +36,7 @@ import Tag from "./components/Tag";
 import VersionsMenu from "./components/VersionsMenu";
 import { languages } from "./lib/languages";
 import { hasVersions } from "./utils";
-import { useColors } from "./lib/hooks";
+import { useColors, useFonts } from "./lib/hooks";
 
 let Inline = Quill.import("blots/inline");
 
@@ -149,6 +149,7 @@ function TextEditor({
 
   const dispatch = useDispatch();
   const colors = useColors();
+  const { fontClass, fontSizeClass } = useFonts();
 
   const quillRef = useRef();
   const inputDiv = useRef<HTMLDivElement>();
@@ -608,14 +609,6 @@ function TextEditor({
   let textColor = "text-gray-300 dark:text-gray-500";
   if (isActive) textColor = "text-gray-500 dark:text-gray-400";
 
-  let font = settings.design ? settings.design.font : "sans-serif";
-  font = font || "sans-serif";
-  let fontClass = font === "serif" ? "serif" : "sansSerif";
-  if (currentText.type === "code") fontClass = "font-mono";
-
-  let fontSize = settings.design?.fontSize || 18;
-  const fontSizeClass = getFontSizeClass(fontSize);
-
   /*  if (viewMode === "readonly") {
     return (
       <div className={`typography ${fontClass} ${fontSizeClass} mx-xl px-md`}>
@@ -671,7 +664,9 @@ function TextEditor({
               <ReactQuill
                 ref={quillRef}
                 placeholder=""
-                className={`${fontClass} ${fontSizeClass}`}
+                className={`${
+                  currentText.type === "code" ? "font-mono" : fontClass
+                } ${fontSizeClass}`}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
                 onChangeSelection={setSelection}
