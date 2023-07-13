@@ -674,7 +674,8 @@ export default function BookEditor({ className = "" }) {
         />
 
         <CoverImage book={book} className="mt-lg" />
-        <BookInfo book={book} />
+        {/* this was causing a lot of re-renderings when editing a tag or character */}
+        {/* <BookInfo book={book} /> */}
         <div className={`grid gap-md grid-cols-1 mt-lg`}>
           <div className="grid gap-sm grid-cols-1 ">
             <Heading

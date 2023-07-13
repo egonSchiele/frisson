@@ -389,7 +389,7 @@ export default function LibraryDesktop() {
           >
             <SlideTransition show={rightSidebarOpen} direction="right">
               <div
-                className={`absolute top-0 right-0 h-screen w-48 2xl:w-72 mt-9 z-10`}
+                className={`absolute top-0 right-0 h-screen w-48 md:w-72 lg:w-96 mt-9 z-10`}
               >
                 <Sidebar
                   onSuggestionClick={addToContents}
