@@ -190,7 +190,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       );
       return;
     } else if (text.type === "image") {
-      renderedBlocks.push(<ImageBlock text={text} key={key} />);
+      renderedBlocks.push(<ImageBlock text={text} index={index} key={key} />);
       return;
     }
     /*   let diffWithText = "";

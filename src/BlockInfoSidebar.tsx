@@ -1,3 +1,4 @@
+import * as fd from "./lib/fetchData";
 import InfoSection from "./components/InfoSection";
 import RadioGroup from "./components/RadioGroup";
 
@@ -155,13 +156,50 @@ function BlockImageDisplay({
     { type: "grid", label: "Grid" },
   ];
   return (
-    <RadioGroup
-      value={display}
-      onChange={setDisplay}
-      className={"grid grid-cols-1"}
-      label="Type"
-      options={options}
-    />
+    <div className=" my-sm">
+      <RadioGroup
+        value={display}
+        onChange={setDisplay}
+        className={"grid grid-cols-1"}
+        label="Type"
+        options={options}
+      />
+    </div>
+  );
+}
+
+function BlockImageUpload({ addImageUrl }: { addImageUrl: any }) {
+  const { setLoading } = useContext(LibraryContext) as t.LibraryContextType;
+  async function handleUpload(x) {
+    const files = x.target.files;
+    // @ts-ignore
+    window.plausible("block-info-image-upload");
+    setLoading(true);
+    const promises = [...files].map(async (file, i) => {
+      const res = await fd.upload(file);
+      if (res.tag === "success") {
+        const { s3key } = res.payload;
+        const imageUrl = "/image/" + s3key;
+
+        addImageUrl(imageUrl);
+      }
+    });
+    await Promise.all(promises);
+    setLoading(false);
+  }
+
+  return (
+    <div className=" my-sm">
+      <label className="settings_label my-xs">Upload Images</label>
+      <input
+        type="file"
+        id="imgupload"
+        key="upload"
+        accept="image/*"
+        multiple={true}
+        onChange={handleUpload}
+      />
+    </div>
   );
 }
 
@@ -295,6 +333,13 @@ export default function BlockInfoSidebar({}: {}) {
                 display: newDisplay,
               })
             );
+          }}
+        />
+      </li>,
+      <li key="imageupload">
+        <BlockImageUpload
+          addImageUrl={(newUrl) => {
+            dispatch(librarySlice.actions.addToContents(newUrl));
           }}
         />
       </li>

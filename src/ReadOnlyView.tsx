@@ -24,7 +24,7 @@ export default function ReadOnlyView({ textBlocks, fontClass }) {
         <MarkdownBlock text={text.text} key={index} className={fontClass} />
       );
     } else if (text.type === "image") {
-      return <ImageBlock text={text} key={index} />;
+      return <ImageBlock text={text} index={index} key={index} />;
     } else if (text.type === "embeddedText") {
       let chapter = null;
       let book = null;

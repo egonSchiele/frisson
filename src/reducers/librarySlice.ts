@@ -561,7 +561,10 @@ export const librarySlice = createSlice({
       let newText = "";
       if (index) {
         newText = strSplice(currentBlock.text, index, length, toAdd);
-      } else if (currentBlock.type === "todoList") {
+      } else if (
+        currentBlock.type === "todoList" ||
+        currentBlock.type === "image"
+      ) {
         newText = `${currentBlock.text}\n${toAdd}`;
       } else {
         newText = `${currentBlock.text} ${toAdd}`;
