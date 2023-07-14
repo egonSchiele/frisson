@@ -1,6 +1,21 @@
 # Chisel
 
-An open source writing app.
+Chisel is an open source writing app. I write a lot, and it is customized for me. Read on to see if it's for you!
+
+## Chisel may be for you if...
+- You're writing a book and want a free alternative to Scrivener.
+- You want better speech-to-text results than what Apple has built in. 
+- You like keyboard shortcuts, or want a writing app with a quick launch feature.
+- You have wanted to organize your chapters into blocks.
+- You want a writing app with end-to-end encryption.
+- You'd like to try using AI to help edit your work.
+- You want your writing to sync across all your devices.
+- You want a writing app that is a web app.
+
+### Chisel is not right for you if...
+- You want to visualize connections between all your notes.
+- You are looking for a desktop app.
+- You want collaborative editing.
 
 ### Installation
 
