@@ -1400,6 +1400,22 @@ export const librarySlice = createSlice({
       chapter.pinToHome = !chapter.pinToHome;
       state.saved = false;
     },
+    togglePublished(state: t.State) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      chapter.published = !chapter.published;
+      state.saved = false;
+    },
+    stripNonAsciiCharacters(state: t.State) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      chapter.text = chapter.text.map((block) => {
+        block.text = block.text.replace(/[^\x00-\x7F]/g, "");
+        return block;
+      });
+      state.editor._pushTextToEditor = nanoid();
+      state.saved = false;
+    },
     restoreFromEditHistory(state: t.State, action: PayloadAction<number>) {
       const historyId = action.payload;
       const prevState = state.editHistory[historyId];

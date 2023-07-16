@@ -420,6 +420,7 @@ export type Chapter = {
   embeddingsLastCalculatedAt?: number;
   writingStreak?: Date[];
   pinToHome?: boolean;
+  published?: boolean;
 };
 
 export type ChapterStatus = "not-started" | "in-progress" | "paused" | "done";

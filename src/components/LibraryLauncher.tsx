@@ -819,6 +819,16 @@ export default function LibraryLauncher({ onLauncherClose }) {
     plausibleEventName: "clear-cache",
   });
 
+  if (currentChapter) {
+    launchItems.push({
+      label: "Strip non-ASCII characters",
+      onClick: async () => {
+        dispatch(librarySlice.actions.stripNonAsciiCharacters());
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   /* if (settings.admin) {
     launchItems.push({
       label: state.recording ? "Stop Recording" : "Start Recording",
