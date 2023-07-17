@@ -11,7 +11,7 @@ export default function Panel({
   selector = "",
 }) {
   return (
-    <div className="mb-md">
+    <div className="mb-sm">
       <div className="p-xs relative settings_label">
         <p>{title}</p>
         {onDelete && (

@@ -21,26 +21,52 @@ import {
   getSelectedChapter,
   librarySlice,
 } from "./reducers/librarySlice";
-import { getChapterText } from "./utils";
+import { getChapterText, useLocalStorage } from "./utils";
 import LibraryContext from "./LibraryContext";
-import { LibraryContextType } from "./Types";
+import { LibraryContextType, Suggestion } from "./Types";
 import { useColors } from "./lib/hooks";
+import Switch from "./components/Switch";
 
 function Suggestions({ suggestions, onDelete }) {
   const maximize = useSelector(
     (state: RootState) => state.library.viewMode === "fullscreen"
   );
+  const [showSavedForLater, setShowSavedForLater] = useLocalStorage(
+    "showSavedForLater",
+    false
+  );
   const gridCols = maximize ? "grid-cols-3" : "grid-cols-1";
+  const countSavedForLater = suggestions.filter((s) => s.savedForLater).length;
+  const items = [];
+
+  suggestions.forEach((suggestion, index) => {
+    if (!showSavedForLater && suggestion.savedForLater) {
+      return;
+    }
+    items.push(
+      <SuggestionPanel
+        key={index}
+        title={suggestion.type}
+        contents={suggestion.contents}
+        onDelete={() => onDelete(index)}
+        index={index}
+        savedForLater={suggestion.savedForLater || false}
+      />
+    );
+  });
+  let label = showSavedForLater
+    ? "Hide Saved For Later"
+    : "Show Saved For Later";
+  label += ` (${countSavedForLater})`;
   return (
-    <div className={`grid ${gridCols}`}>
-      {suggestions.map((suggestion, index) => (
-        <SuggestionPanel
-          key={index}
-          title={suggestion.type}
-          contents={suggestion.contents}
-          onDelete={() => onDelete(index)}
-        />
-      ))}
+    <div>
+      <Switch
+        label={label}
+        enabled={showSavedForLater}
+        setEnabled={() => setShowSavedForLater(!showSavedForLater)}
+        className="mb-sm"
+      />
+      <div className={`grid gap-sm ${gridCols}`}>{items}</div>
     </div>
   );
 }
@@ -180,7 +206,7 @@ export default function Sidebar({ onHistoryClick, triggerHistoryRerender }) {
         )}
         {activePanel === "suggestions" && (
           <List
-            title="Suggestions"
+            title={`Suggestions (${state.suggestions.length})`}
             className=""
             items={[
               <Suggestions

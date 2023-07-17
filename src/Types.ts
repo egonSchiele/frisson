@@ -141,6 +141,7 @@ export type ButtonSize = "small" | "medium" | "large";
 export type Suggestion = {
   type: string;
   contents: string;
+  savedForLater?: boolean;
 };
 
 export type Pos = {

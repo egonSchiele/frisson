@@ -622,6 +622,19 @@ export const librarySlice = createSlice({
       state.suggestions.splice(action.payload, 1);
       state.saved = false;
     },
+    markSuggestionSavedForLater(state: t.State, action: PayloadAction<number>) {
+      const index = action.payload;
+      state.suggestions[index].savedForLater = true;
+      state.saved = false;
+    },
+    unmarkSuggestionSavedForLater(
+      state: t.State,
+      action: PayloadAction<number>
+    ) {
+      const index = action.payload;
+      state.suggestions[index].savedForLater = false;
+      state.saved = false;
+    },
     setChapterOrder(state: t.State, action: PayloadAction<t.ChapterId[]>) {
       saveToEditHistory(state, "chapter order");
       const ids = action.payload;
