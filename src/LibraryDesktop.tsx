@@ -392,7 +392,6 @@ export default function LibraryDesktop() {
                 className={`absolute top-0 right-0 h-screen w-48 md:w-72 lg:w-96 mt-9 z-10`}
               >
                 <Sidebar
-                  onSuggestionClick={addToContents}
                   onHistoryClick={async (e, newText) => {
                     await onTextEditorSave(state);
                     dispatch(
@@ -402,9 +401,6 @@ export default function LibraryDesktop() {
                       })
                     );
                     dispatch(librarySlice.actions.setViewMode("default"));
-                  }}
-                  addToHistory={async () => {
-                    await onTextEditorSave(state, true);
                   }}
                   /* TODO */
                   triggerHistoryRerender={0}

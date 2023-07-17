@@ -1,6 +1,6 @@
 import * as Diff from "diff";
 import range from "lodash/range";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import Select from "./components/Select";
@@ -9,6 +9,7 @@ import Panel from "./components/Panel";
 import { getHtmlDiff } from "./lib/diff";
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
+import LibraryContext from "./LibraryContext";
 
 const WINDOW = 5;
 
@@ -61,13 +62,7 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
   );
 }
 
-function History({
-  bookid,
-  chapterid,
-  triggerHistoryRerender,
-  onClick,
-  addToHistory,
-}) {
+function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
   const [history, setHistory] = useState<t.History>([]);
   const [page, setPage] = useState(0);
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
@@ -89,6 +84,10 @@ function History({
     func();
   }, [chapterid, triggerHistoryRerender]);
 
+  const { onTextEditorSave } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
+
   const applyPatch = (index) => {
     if (index < 0) return "";
     if (!history || !history[index]) return "";
@@ -101,6 +100,10 @@ function History({
     });
     return old;
   };
+
+  function addToHistory() {
+    onTextEditorSave(null, true);
+  }
 
   if (!history || history.length === 0)
     return (

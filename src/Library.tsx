@@ -298,8 +298,6 @@ export default function Library({ mobile = false }) {
     }
   });
 
-  const onEditorSave = useCallback(() => onTextEditorSave(state), [state]);
-
   const fetchBooks = async () => {
     // @ts-ignore
     dispatch(fetchBooksThunk());
@@ -389,14 +387,18 @@ export default function Library({ mobile = false }) {
     dispatch(librarySlice.actions.toggleLauncher());
   };
 
-  async function onTextEditorSave(state: t.State, shouldSaveToHistory = false) {
-    const chapter = getSelectedChapter({ library: state });
+  async function onTextEditorSave(
+    someState: t.State | null = null,
+    shouldSaveToHistory = false
+  ) {
+    const _state = someState || state;
+    const chapter = getSelectedChapter({ library: _state });
     if (!chapter) {
       console.log("No chapter to save");
     } else {
-      await saveChapter(chapter, state.suggestions);
+      await saveChapter(chapter, _state.suggestions);
     }
-    const book = getSelectedBook({ library: state });
+    const book = getSelectedBook({ library: _state });
     if (!book) {
       console.log("No book to save");
     } else {
@@ -409,11 +411,11 @@ export default function Library({ mobile = false }) {
     }
 
     if (chapter && shouldSaveToHistory) {
-      await saveToHistory(state);
+      await saveToHistory(_state);
       setTriggerHistoryRerender((t) => t + 1);
     }
 
-    if (!state.settingsSaved) await saveSettings();
+    if (!_state.settingsSaved) await saveSettings();
   }
 
   async function saveToHistory(state: t.State) {
@@ -725,7 +727,6 @@ export default function Library({ mobile = false }) {
           )}
 
           <Sidebar
-            onSuggestionClick={addToContents}
             onHistoryClick={async (e, newText) => {
               await onTextEditorSave(state);
               dispatch(
@@ -735,9 +736,6 @@ export default function Library({ mobile = false }) {
                 })
               );
               dispatch(librarySlice.actions.setViewMode("default"));
-            }}
-            addToHistory={async () => {
-              await onTextEditorSave(state, true);
             }}
             triggerHistoryRerender={triggerHistoryRerender}
           />

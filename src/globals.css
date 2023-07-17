@@ -67,22 +67,23 @@
     font-size: 28px;
     line-height: 38px;
   }
-  .fontsize-16 * {
+
+  .fontsize-16, .fontsize-16 * {
     font-size: 16px;
     line-height: 32px;
   }
 
-  .fontsize-18 * {
+  .fontsize-18, .fontsize-18 * {
     font-size: 18px;
     line-height: 36px;
   }
 
-  .fontsize-20 * {
+  .fontsize-20, .fontsize-20 * {
     font-size: 20px;
     line-height: 36px;
   }
 
-  .fontsize-22 * {
+  .fontsize-22, .fontsize-22 * {
     font-size: 22px;
     line-height: 38px;
   }

@@ -26,15 +26,18 @@ import LibraryContext from "./LibraryContext";
 import { LibraryContextType } from "./Types";
 import { useColors } from "./lib/hooks";
 
-function Suggestions({ suggestions, onClick, onDelete }) {
+function Suggestions({ suggestions, onDelete }) {
+  const maximize = useSelector(
+    (state: RootState) => state.library.viewMode === "fullscreen"
+  );
+  const gridCols = maximize ? "grid-cols-3" : "grid-cols-1";
   return (
-    <div>
+    <div className={`grid ${gridCols}`}>
       {suggestions.map((suggestion, index) => (
         <SuggestionPanel
           key={index}
           title={suggestion.type}
           contents={suggestion.contents}
-          onClick={onClick}
           onDelete={() => onDelete(index)}
         />
       ))}
@@ -125,12 +128,7 @@ function Navigation({
   );
 }
 
-export default function Sidebar({
-  onSuggestionClick,
-  onHistoryClick,
-  triggerHistoryRerender,
-  addToHistory,
-}) {
+export default function Sidebar({ onHistoryClick, triggerHistoryRerender }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
@@ -188,7 +186,6 @@ export default function Sidebar({
               <Suggestions
                 key="suggestions"
                 suggestions={state.suggestions}
-                onClick={onSuggestionClick}
                 onDelete={onSuggestionDelete}
               />,
             ]}
@@ -205,7 +202,6 @@ export default function Sidebar({
                 bookid={currentChapter.bookid}
                 triggerHistoryRerender={triggerHistoryRerender}
                 onClick={(e, newText) => onHistoryClick(e, newText)}
-                addToHistory={addToHistory}
               />,
             ]}
           />

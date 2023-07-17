@@ -1,5 +1,6 @@
 import React from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useColors } from "../lib/hooks";
 
 export default function Panel({
   title,
@@ -11,7 +12,7 @@ export default function Panel({
 }) {
   return (
     <div className="mb-md">
-      <div className="p-xs relative text-xs xl:text-sm text-slate-600 dark:text-white font-light uppercase">
+      <div className="p-xs relative settings_label">
         <p>{title}</p>
         {onDelete && (
           <XMarkIcon
