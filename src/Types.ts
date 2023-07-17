@@ -157,7 +157,10 @@ export type BaseBlock = {
   versions?: Version[];
   diffWith?: string | null;
   caption?: string;
+  blockColor?: BlockColor;
 };
+
+export type BlockColor = "red" | "blue" | "green" | "yellow" | "none";
 
 export type Version = {
   id: string;

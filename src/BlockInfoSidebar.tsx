@@ -144,6 +144,31 @@ function BlockType({ type, setType }: { type: t.BlockType; setType: any }) {
   );
 }
 
+function BlockColor({
+  color,
+  setColor,
+}: {
+  color: t.BlockColor;
+  setColor: any;
+}) {
+  const options = [
+    { type: "red", label: "red" },
+    { type: "blue", label: "blue" },
+    { type: "green", label: "green" },
+    { type: "yellow", label: "yellow" },
+    { type: "none", label: "none" },
+  ];
+  return (
+    <RadioGroup
+      value={color}
+      onChange={setColor}
+      className={"grid grid-cols-1"}
+      label="Color"
+      options={options}
+    />
+  );
+}
+
 function BlockImageDisplay({
   display,
   setDisplay,
@@ -300,6 +325,24 @@ export default function BlockInfoSidebar({}: {}) {
       />
     </li>
   );
+
+  if (currentText.type !== "embeddedText") {
+    listItems.push(
+      <li key="color">
+        <BlockColor
+          color={currentText.blockColor || "none"}
+          setColor={(newColor) =>
+            dispatch(
+              librarySlice.actions.setBlockColor({
+                index: state.activeTextIndex,
+                blockColor: newColor,
+              })
+            )
+          }
+        />
+      </li>
+    );
+  }
 
   if (currentText.type === "code") {
     listItems.push(

@@ -619,6 +619,22 @@ function TextEditor({
     );
   } */
 
+  if (currentText.type === "embeddedText") return null;
+
+  const blockColorBorders = {
+    red: "border-red-400",
+    green: "border-green-400",
+    blue: "border-blue-400",
+    yellow: "border-yellow-400",
+    none: "",
+  };
+
+  let blockColorBorder = "";
+  if (currentText.blockColor && currentText.blockColor !== "none") {
+    blockColorBorder =
+      "border-l-2 " + blockColorBorders[currentText.blockColor];
+  }
+
   return (
     <div className="">
       {/* h-full"> */}
@@ -655,7 +671,7 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow w-full px-0 xl:pl-sm xl:pr-md `}
+              className={`flex-grow w-full px-0 xl:pl-sm xl:pr-md ${blockColorBorder} `}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}

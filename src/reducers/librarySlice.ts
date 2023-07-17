@@ -908,6 +908,18 @@ export const librarySlice = createSlice({
       text.hideInExport = !text.hideInExport;
       state.saved = false;
     },
+    setBlockColor(
+      state: t.State,
+      action: PayloadAction<{ index: number; blockColor: t.BlockColor }>
+    ) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const { index, blockColor } = action.payload;
+      const text = chapter.text[index];
+      if (text.type === "embeddedText") return;
+      text.blockColor = blockColor;
+      state.saved = false;
+    },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
