@@ -32,6 +32,7 @@ export type State = {
   fromCache: boolean;
   _triggerSaveAll: boolean;
   encryptionPassword: string | null;
+  showStructure?: boolean;
 };
 
 export type Notification = {

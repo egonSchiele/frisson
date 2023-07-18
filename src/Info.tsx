@@ -102,11 +102,11 @@ export default function Info() {
   return (
     <div className="text-sm xl:text-md">
       <InfoSection text={infoText} />
-      <Switch
+      {/*   <Switch
         label="Include blocks that are hidden in export to count?"
         enabled={showHidden}
         setEnabled={setShowHidden}
-      />
+      /> */}
       <Switch
         label="Pin to home"
         enabled={currentChapter.pinToHome || false}

@@ -32,26 +32,28 @@ export default function ShowAllVersions({ index }) {
   const items = [];
 
   if (currentText.type === "embeddedText") {
-    items.push(<p key="err">Embedded text blocks cannot have versions</p>);
-  } else {
-    const versions = [{ text: currentText.text, id: null }];
-    if (currentText.versions) {
-      versions.push(...currentText.versions);
-    }
+    return <p key="err">Embedded text blocks cannot have versions</p>;
+  }
+  const versions = []; // [{ text: currentText.text, id: null }];
+  if (currentText.versions) {
+    versions.push(...currentText.versions);
+  }
+  items.push(
+    <h1
+      key="title"
+      className={`${fontClass} typography ${
+        versions.length === 1 ? "col-span-1" : "col-span-2"
+      } !text-4xl`}
+    >
+      {versions.length} Other {versions.length === 1 ? "Version" : "Versions"}
+    </h1>
+  );
+  sortBy(versions, ["text"]).forEach((version, i) => {
     items.push(
-      <h1
-        key="title"
-        className={`${fontClass} typography col-span-2 !text-2xl`}
-      >
-        {versions.length} Versions
-      </h1>
-    );
-    sortBy(versions, ["text"]).forEach((version, i) => {
-      items.push(
-        <div
-          className={`${colors.borderColor} ${fontClass} ${fontSizeClass} border typography p-sm rounded-md cursor-pointer max-h-108 overflow-scroll`}
-          key={version.id}
-          onClick={() => {
+      <div
+        className={` ${fontClass} ${fontSizeClass} ${colors.secondaryTextColor} rounded-md max-h-108 overflow-scroll`}
+        key={version.id}
+        /*  onClick={() => {
             if (version.id !== null) {
               dispatch(
                 librarySlice.actions.switchVersion({
@@ -66,14 +68,24 @@ export default function ShowAllVersions({ index }) {
                 index,
               })
             );
-          }}
+          }} */
+      >
+        <pre
+          className={`${fontClass} ${fontSizeClass} ${colors.secondaryTextColor} typography`}
         >
-          <pre className={`${fontClass} ${fontSizeClass} typography`}>
-            {version.text}
-          </pre>
-        </div>
-      );
-    });
-  }
-  return <div className="grid grid-cols-2 gap-sm my-sm mx-lg">{items}</div>;
+          {version.text}
+        </pre>
+      </div>
+    );
+  });
+
+  return (
+    <div
+      className={`grid ${
+        versions.length === 1 ? "col-span-1" : "col-span-2"
+      } gap-sm my-sm mx-lg bg-gray-800 p-sm rounded-md`}
+    >
+      {items}
+    </div>
+  );
 }

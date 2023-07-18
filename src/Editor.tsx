@@ -33,6 +33,7 @@ import {
 import TodoListBlock from "./TodoListBlock";
 import ImageBlock from "./ImageBlock";
 import ShowAllVersions from "./ShowAllVersions";
+import Structure from "./Structure";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -49,6 +50,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   const currentChapterId = useSelector(
     (state: RootState) => state.library.selectedChapterId
+  );
+
+  const showStructure = useSelector(
+    (state: RootState) => state.library.showStructure
   );
 
   const scrollTo = useSelector((state: RootState) => state.library.scrollTo);
@@ -180,6 +185,11 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
   }
 
   const renderedBlocks = [];
+
+  if (showStructure) {
+    renderedBlocks.push(<Structure key="structure" />);
+  }
+
   currentText.forEach((text, index) => {
     const key = text.id || index;
 
@@ -213,8 +223,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       renderedBlocks.push(<ImageBlock text={text} index={index} key={key} />);
       return;
     } else if (text.showAllVersions) {
-      renderedBlocks.push(<ShowAllVersions key={key} index={index} />);
-      return;
+      renderedBlocks.push(
+        <ShowAllVersions key={`${key}-allVersions`} index={index} />
+      );
+      // return;
     }
     /*   let diffWithText = "";
     if (text.diffWith) {

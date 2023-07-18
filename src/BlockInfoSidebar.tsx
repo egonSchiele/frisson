@@ -328,7 +328,7 @@ export default function BlockInfoSidebar({}: {}) {
 
   if (currentText.type !== "embeddedText") {
     listItems.push(
-      <li key="color">
+      <li key="color" className="mt-sm">
         <BlockColor
           color={currentText.blockColor || "none"}
           setColor={(newColor) =>

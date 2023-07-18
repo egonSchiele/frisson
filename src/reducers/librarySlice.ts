@@ -92,6 +92,7 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     fromCache: false,
     _triggerSaveAll: false,
     encryptionPassword: null,
+    showStructure: localStorageOrDefault("showStructure", false),
   };
 };
 
@@ -195,6 +196,10 @@ export const librarySlice = createSlice({
       action: PayloadAction<string | null>
     ) {
       state.encryptionPassword = action.payload;
+    },
+    setShowStructure(state: t.State, action: PayloadAction<boolean>) {
+      state.showStructure = action.payload;
+      localStorage.setItem("showStructure", JSON.stringify(action.payload));
     },
     startRecording(state: t.State) {
       state.recording = true;
@@ -937,6 +942,42 @@ export const librarySlice = createSlice({
       const text = chapter.text[index];
       if (text.type === "embeddedText") return;
       text.blockColor = blockColor;
+      state.saved = false;
+    },
+    cycleBlockColor(state: t.State, action: PayloadAction<{ index: number }>) {
+      const chapter = getSelectedChapter({ library: state });
+      console.log("cycleBlockColor", chapter);
+      if (!chapter) return;
+      const { index } = action.payload;
+      const text = chapter.text[index];
+      console.log(">>>", index);
+      if (text.type === "embeddedText") return;
+      const currentColor = current(text).blockColor;
+
+      const nexts: any = {
+        red: "blue",
+        blue: "green",
+        green: "yellow",
+        yellow: "none",
+        none: "red",
+      };
+
+      text.blockColor = nexts[currentColor];
+
+      if (text.blockColor === undefined) {
+        text.blockColor = "red";
+      }
+      console.log(text.blockColor, index, currentColor, nexts[currentColor]);
+      state.saved = false;
+    },
+    resetBlockColor(state: t.State, action: PayloadAction<{ index: number }>) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const { index } = action.payload;
+      const text = chapter.text[index];
+      if (text.type === "embeddedText") return;
+
+      text.blockColor = "none";
       state.saved = false;
     },
     markBlockAsReference(state: t.State, action: PayloadAction<number>) {

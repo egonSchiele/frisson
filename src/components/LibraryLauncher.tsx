@@ -829,6 +829,24 @@ export default function LibraryLauncher({ onLauncherClose }) {
     });
   }
 
+  if (state.showStructure) {
+    launchItems.push({
+      label: "Hide Structure",
+      onClick: async () => {
+        dispatch(librarySlice.actions.setShowStructure(false));
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  } else {
+    launchItems.push({
+      label: "Show Structure",
+      onClick: async () => {
+        dispatch(librarySlice.actions.setShowStructure(true));
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   /* if (settings.admin) {
     launchItems.push({
       label: state.recording ? "Stop Recording" : "Start Recording",

@@ -74,6 +74,7 @@ export default function ChapterList({
     "chapterListSort",
     "manual"
   );
+  const { setLoading } = useContext(LibraryContext) as t.LibraryContextType;
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const navigate = useNavigate();
@@ -124,6 +125,7 @@ export default function ChapterList({
     });
   }
   function handleAudioUpload(x) {
+    setLoading(true);
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
       const response = await fd.uploadAudio(file);
@@ -136,6 +138,7 @@ export default function ChapterList({
         dispatch(librarySlice.actions.setError(response.message));
       }
     });
+    setLoading(false);
   }
 
   const onDragEnd = (result) => {

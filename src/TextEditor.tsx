@@ -660,7 +660,7 @@ function TextEditor({
               >
                 <ChevronDownIcon
                   className={`w-5 h-5 ${
-                    isActive ? "text-gray-400" : "text-gray-700"
+                    isActive ? "text-gray-400" : "text-gray-500"
                   }`}
                 />
               </div>
