@@ -84,11 +84,45 @@ export default function VersionsSidebar() {
           )
         }
         style="secondary"
-        className="w-full my-sm"
+        className="w-full mt-sm"
       >
         Add New Version
       </Button>
     );
+
+    if (currentText.showAllVersions) {
+      items.push(
+        <Button
+          key="dontShowAllVersions"
+          onClick={() =>
+            dispatch(
+              librarySlice.actions.toggleShowAllVersions({
+                index,
+              })
+            )
+          }
+          className="w-full mt-sm"
+        >
+          Don't Show All Versions
+        </Button>
+      );
+    } else {
+      items.push(
+        <Button
+          key="showAllVersions"
+          onClick={() =>
+            dispatch(
+              librarySlice.actions.toggleShowAllVersions({
+                index,
+              })
+            )
+          }
+          className="w-full mt-sm"
+        >
+          Show All Versions
+        </Button>
+      );
+    }
   }
   return (
     <List

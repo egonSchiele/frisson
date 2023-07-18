@@ -159,6 +159,7 @@ export type BaseBlock = {
   diffWith?: string | null;
   caption?: string;
   blockColor?: BlockColor;
+  showAllVersions?: boolean;
 };
 
 export type BlockColor = "red" | "blue" | "green" | "yellow" | "none";

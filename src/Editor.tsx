@@ -32,6 +32,7 @@ import {
 } from "@heroicons/react/24/outline";
 import TodoListBlock from "./TodoListBlock";
 import ImageBlock from "./ImageBlock";
+import ShowAllVersions from "./ShowAllVersions";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -210,6 +211,9 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       return;
     } else if (text.type === "image") {
       renderedBlocks.push(<ImageBlock text={text} index={index} key={key} />);
+      return;
+    } else if (text.showAllVersions) {
+      renderedBlocks.push(<ShowAllVersions key={key} index={index} />);
       return;
     }
     /*   let diffWithText = "";

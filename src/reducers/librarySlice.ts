@@ -742,6 +742,12 @@ export const librarySlice = createSlice({
         state.panels.prompts.open ? "true" : "false"
       );
     }, */
+    showVersionsPanel(state: t.State) {
+      state.panels.leftSidebar.open = true;
+      state.panels.leftSidebar.activePanel = "versions";
+
+      localStorage.setItem("leftSidebarOpen", "true");
+    },
     closeAllPanels(state: t.State) {
       const panels = current(state.panels);
       state._cachedPanelState = { ...panels };
@@ -1088,6 +1094,19 @@ export const librarySlice = createSlice({
       if (block.type === "embeddedText") return;
       block.diffWith = diffWith;
       block.id = nanoid();
+
+      state.saved = false;
+    },
+    toggleShowAllVersions(
+      state: t.State,
+      action: PayloadAction<{ index: number }>
+    ) {
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const { index } = action.payload;
+      const block = chapter.text[index];
+      if (block.type === "embeddedText") return;
+      block.showAllVersions = !block.showAllVersions;
 
       state.saved = false;
     },

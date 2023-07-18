@@ -2,8 +2,8 @@ import React from "react";
 import Panel from "./components/Panel";
 import { useColors, useFonts } from "./lib/hooks";
 import { librarySlice } from "./reducers/librarySlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "./store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store";
 import Button from "./components/Button";
 export default function SuggestionPanel({
   title,
@@ -12,6 +12,9 @@ export default function SuggestionPanel({
   index,
   savedForLater,
 }) {
+  const activeTextIndex = useSelector(
+    (state: RootState) => state.library.editor.activeTextIndex
+  );
   const colors = useColors();
   const { fontSizeClass } = useFonts();
   const dispatch = useDispatch<AppDispatch>();
@@ -29,7 +32,7 @@ export default function SuggestionPanel({
       >
         <p className={``}>{contents}</p>
       </Panel>
-      <div className="w-full grid grid-cols-1 gap-xs h-sm">
+      <div className="w-full grid grid-cols-2 gap-xs h-sm">
         <Button
           onClick={() => {
             if (savedForLater) {
@@ -43,6 +46,20 @@ export default function SuggestionPanel({
         >
           {savedForLater && <span>Undo Save For Later</span>}
           {!savedForLater && <span>Save For Later</span>}
+        </Button>
+        <Button
+          onClick={() => {
+            dispatch(
+              librarySlice.actions.addVersion({
+                index: activeTextIndex,
+                text: contents,
+                setDiffWith: false,
+              })
+            );
+            dispatch(librarySlice.actions.showVersionsPanel());
+          }}
+        >
+          Add as Version
         </Button>
       </div>
     </div>
