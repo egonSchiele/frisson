@@ -417,7 +417,7 @@ export default function LibraryDesktop() {
             className="top-0 right-0"
           >
             <SlideTransition show={chatOpen} direction="right">
-              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
+              <div className={`absolute top-0 right-0 h-screen w-1/2 mt-9`}>
                 <ChatSidebar />
               </div>
             </SlideTransition>

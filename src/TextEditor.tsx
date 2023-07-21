@@ -710,11 +710,11 @@ function TextEditor({
               
             `}
           >
-            <div
+            {/* <div
               className={`hidden md:inline-block absolute -left-20 top-0 text-sm mr-xs w-4 md:w-16 ${textColor}`}
             >
               {currentText.caption}
-            </div>
+            </div> */}
             <div className="md:grid grid-cols-1 hidden">
               <div
                 className="flex-none cursor-pointer mr-xs"
@@ -735,11 +735,16 @@ function TextEditor({
               )} */}
             </div>
             <div
-              className={`flex-grow pl-sm`}
+              className={`flex-grow grid grid-cols-1 pl-sm`}
               onClick={() => {
                 dispatch(librarySlice.actions.setActiveTextIndex(index));
               }}
             >
+              <div
+                className={`text-sm mb-xs rounded-lg px-xs py-1 w-full ${colors.navBackgroundColor} ${colors.secondaryTextColor}`}
+              >
+                {currentText.caption}
+              </div>
               <p
                 className="text-gray-500"
                 data-selector={`text-preview-${index}`}

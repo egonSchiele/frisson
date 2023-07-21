@@ -27,13 +27,13 @@ import { useColors } from "./lib/hooks";
 
 function Chat({ role, content, className = null }) {
   return (
-    <div
-      className={`py-xs px-sm text-lg mb-sm rounded ${
+    <pre
+      className={`py-xs px-sm text-lg mb-sm rounded sansSerif ${
         role === "user" ? "bg-gray-800" : "bg-gray-600"
       } ${className}`}
     >
       {content}
-    </div>
+    </pre>
   );
 }
 
@@ -93,7 +93,9 @@ export default function ChatSidebar() {
 
     if (result.tag === "error") {
       dispatch(librarySlice.actions.setError(result.message));
-      newChatHistory.push({ role: "system", content: result.message });
+      // undo adding user's input, in case the error is the message was too long
+      newChatHistory.pop();
+      // newChatHistory.push({ role: "system", content: result.message });
     } else {
       result.payload.forEach((choice: { text: any }) => {
         const generatedText = choice.text;
@@ -152,7 +154,7 @@ export default function ChatSidebar() {
       items={items}
       leftMenuItem={loading ? spinner : null}
       rightMenuItem={clear}
-      className="border-l  w-48"
+      className="border-l w-full"
       selector="chatList"
     />
   );

@@ -30,9 +30,9 @@ export default function SuggestionPanel({
         onDelete={onDelete}
         selector="ai-suggestion-panel"
       >
-        <p className={``}>{contents}</p>
+        <pre className={`sansSerif`}>{contents}</pre>
       </Panel>
-      <div className="w-full grid grid-cols-2 gap-xs h-sm">
+      <div className="w-full grid grid-cols-2 gap-xs h-sm mb-md">
         <Button
           onClick={() => {
             if (savedForLater) {
