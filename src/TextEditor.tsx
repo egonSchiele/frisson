@@ -1,14 +1,6 @@
-import highlightErrors from "./focusModeChecks";
-import { hedges } from "hedges";
-import {
-  normalize,
-  findSubarray,
-  split,
-  getFontSizeClass,
-  isTextishBlock,
-} from "./utils";
-import { fillers } from "fillers";
 import PlainClipboard from "./components/PlainClipboard";
+import highlightErrors from "./focusModeChecks";
+import { isTextishBlock } from "./utils";
 
 import {
   ChevronDownIcon,
@@ -30,13 +22,9 @@ import {
 import { RootState } from "./store";
 
 import { useParams } from "react-router-dom";
-import CodeMenu from "./CodeMenu";
-import BlockMenu from "./components/BlockMenu";
-import Tag from "./components/Tag";
-import VersionsMenu from "./components/VersionsMenu";
+import { useColors, useFonts } from "./lib/hooks";
 import { languages } from "./lib/languages";
 import { hasVersions } from "./utils";
-import { useColors, useFonts } from "./lib/hooks";
 
 let Inline = Quill.import("blots/inline");
 
@@ -601,6 +589,8 @@ function TextEditor({
       textPreview = line;
     }
   }
+
+  textPreview = textPreview.substring(0, 200);
 
   let borderColor = colors.borderColor;
   if (isActive) borderColor = colors.selectedBorderColor;
