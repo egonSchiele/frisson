@@ -26,7 +26,7 @@ import {
   encryptMessage,
   encryptObject,
   getCsrfToken,
-  saveTextToHistory,
+  textToSaveToHistory,
   setCookie,
   today,
   useInterval,
@@ -420,10 +420,13 @@ export default function Library({ mobile = false }) {
 
   async function saveToHistory(state: t.State) {
     if (!currentChapter) return;
-    await makeApiCall(fd.saveToHistory, [
-      currentChapter.chapterid,
-      saveTextToHistory(currentChapter),
-    ]);
+    const data: t.Commit = {
+      id: nanoid(),
+      message: "",
+      timestamp: Date.now(),
+      patch: textToSaveToHistory(currentChapter),
+    };
+    await makeApiCall(fd.saveToHistory, [currentChapter.chapterid, data]);
   }
 
   async function makeApiCall(func, args) {
@@ -726,19 +729,7 @@ export default function Library({ mobile = false }) {
             <LibraryLauncher onLauncherClose={onLauncherClose} />
           )}
 
-          <Sidebar
-            onHistoryClick={async (e, newText) => {
-              await onTextEditorSave(state);
-              dispatch(
-                librarySlice.actions.restoreFromHistory({
-                  text: newText,
-                  metaKey: e.metaKey,
-                })
-              );
-              dispatch(librarySlice.actions.setViewMode("default"));
-            }}
-            triggerHistoryRerender={triggerHistoryRerender}
-          />
+          <Sidebar triggerHistoryRerender={triggerHistoryRerender} />
         </LibraryContext.Provider>
       </div>
     );

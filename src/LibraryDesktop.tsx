@@ -372,16 +372,6 @@ export default function LibraryDesktop() {
                 className={`absolute top-0 right-0 h-screen w-48 md:w-72 lg:w-96 mt-9 z-10`}
               >
                 <Sidebar
-                  onHistoryClick={async (e, newText) => {
-                    await onTextEditorSave(state);
-                    dispatch(
-                      librarySlice.actions.restoreFromHistory({
-                        text: newText,
-                        metaKey: e.metaKey,
-                      })
-                    );
-                    dispatch(librarySlice.actions.setViewMode("default"));
-                  }}
                   /* TODO */
                   triggerHistoryRerender={0}
                 />

@@ -346,12 +346,38 @@ export const getHistory = async (chapterid) => {
   return bookObj.data().history;
 };
 
-export const saveToHistory = async (chapterid, text) => {
+export const editCommitMessage = async (chapterid, message, index) => {
   let docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
 
   if (!bookObj.exists) {
-    const history = [text];
+    return failure(`no history to edit for chapter ${chapterid}`);
+  }
+  const { history } = bookObj.data();
+  console.log({ index, history }, history.length, history[index]);
+  if (typeof history[index] === "string") {
+    const patch = history[index];
+    history[index] = {
+      id: nanoid(),
+      message,
+      timestamp: Date.now(),
+      patch,
+    };
+  } else {
+    history[index].message = message;
+  }
+
+  docRef = db.collection("history").doc(chapterid);
+  await docRef.set({ history });
+  return success();
+};
+
+export const saveToHistory = async (chapterid, commitData) => {
+  let docRef = db.collection("history").doc(chapterid);
+  const bookObj = await docRef.get();
+
+  if (!bookObj.exists) {
+    const history = [commitData];
     const docRef = db.collection("history").doc(chapterid);
     await docRef.set({ history });
     return success();
@@ -367,23 +393,36 @@ export const saveToHistory = async (chapterid, text) => {
     );
   }
 
-  let old = history[0];
-  history.slice(1).forEach((patch) => {
-    old = Diff.applyPatch(old, patch);
-  });
-
-  // const old = history[history.length - 1];
-  console.log("old", old);
-  if (old.trim() === text.trim()) {
+  const { old, noChange } = checkForChangeInHistory(history, commitData.patch);
+  if (noChange) {
     console.log("no change");
     return success();
   }
-  const patch = Diff.createPatch(chapterid, old, text, "-", "-");
-  history.push(patch);
+
+  // we've sent some text, use that to generate a diff from what's in the history
+  const patch = Diff.createPatch(chapterid, old, commitData.patch, "-", "-");
+  history.push({ ...commitData, patch });
   docRef = db.collection("history").doc(chapterid);
   await docRef.set({ history });
   return success();
 };
+
+function getPatch(data) {
+  if (typeof data === "string") return data;
+  return data.patch;
+}
+
+function checkForChangeInHistory(history, newPatch) {
+  let old = getPatch(history[0]);
+  history.slice(1).forEach((patch) => {
+    old = Diff.applyPatch(old, getPatch(patch));
+  });
+
+  // const old = history[history.length - 1];
+  console.log("old", old);
+  const noChange = old.trim() === newPatch.trim();
+  return { old, noChange };
+}
 
 export function makeNewBook(data = {}) {
   const bookid = nanoid();

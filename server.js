@@ -43,6 +43,7 @@ import {
   saveChapter,
   deleteChapter,
   getChapter,
+  editCommitMessage,
   saveToHistory,
   getHistory,
   makeNewBook,
@@ -518,10 +519,31 @@ app.post("/api/newChapter", requireLogin, checkBookAccess, async (req, res) => {
 });
 
 app.post("/api/saveToHistory", requireLogin, async (req, res) => {
-  const { chapterid, text } = req.body;
-  console.log("saveToHistory", chapterid, text);
+  const { chapterid, id, message, timestamp, patch } = req.body;
+  const commitData = {
+    id,
+    message,
+    timestamp,
+    patch,
+  };
+  console.log("saveToHistory", chapterid, commitData);
 
-  const result = await saveToHistory(chapterid, text);
+  const result = await saveToHistory(chapterid, commitData);
+  res.status(200).end();
+
+  if (result.success) {
+    res.status(200).end();
+  } else {
+    res.status(400).send(result.message).end();
+  }
+});
+
+app.post("/api/history/editCommitMessage", requireLogin, async (req, res) => {
+  const { chapterid, message, index } = req.body;
+
+  console.log("editCommitMessage", chapterid, message, index);
+
+  const result = await editCommitMessage(chapterid, message, parseInt(index));
   res.status(200).end();
 
   if (result.success) {
@@ -1294,7 +1316,7 @@ async function getSuggestions(
   const max_tokens = Math.min(_max_tokens, settings.maxTokens);
   const num_suggestions = Math.min(_num_suggestions, settings.maxSuggestions);
 
-  const openAiModels = ["gpt-3.5-turbo", "curie"];
+  const openAiModels = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k", "curie"];
 
   const replicateModels = [
     "vicuna-13b",
@@ -1570,7 +1592,7 @@ async function usingOpenAi(
   _messages = [],
   customKey
 ) {
-  const chatModels = ["gpt-3.5-turbo"];
+  const chatModels = ["gpt-3.5-turbo", "gpt-3.5-turbo-16k"];
   let endpoint = "https://api.openai.com/v1/completions";
 
   const prompt = sanitize(_prompt);

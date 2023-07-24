@@ -154,7 +154,7 @@ function Navigation({
   );
 }
 
-export default function Sidebar({ onHistoryClick, triggerHistoryRerender }) {
+export default function Sidebar({ triggerHistoryRerender }) {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
@@ -227,7 +227,6 @@ export default function Sidebar({ onHistoryClick, triggerHistoryRerender }) {
                 chapterid={currentChapter.chapterid}
                 bookid={currentChapter.bookid}
                 triggerHistoryRerender={triggerHistoryRerender}
-                onClick={(e, newText) => onHistoryClick(e, newText)}
               />,
             ]}
           />

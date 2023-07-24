@@ -1,3 +1,4 @@
+import * as fd from "./lib/fetchData";
 import * as Diff from "diff";
 import range from "lodash/range";
 import React, { useState, useEffect, useContext } from "react";
@@ -7,30 +8,106 @@ import Select from "./components/Select";
 import * as t from "./Types";
 import Panel from "./components/Panel";
 import { getHtmlDiff } from "./lib/diff";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import LibraryContext from "./LibraryContext";
+import { librarySlice } from "./reducers/librarySlice";
+import { nanoid } from "nanoid";
+import { prettyDate } from "./utils";
+import { useColors } from "./lib/hooks";
 
 const WINDOW = 5;
+const MAX_LINES = 10;
 
-function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
+function HistoryPanel({
+  index,
+  patch,
+  nextPatch,
+  commit,
+  onClick,
+  editCommitMessage,
+}: {
+  index: number;
+  patch: string;
+  nextPatch: string;
+  commit: t.Commit;
+  onClick: (e: React.MouseEvent, patch: string) => void;
+  editCommitMessage: (message: string) => void;
+}) {
+  console.log({ commit, index });
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState(commit.message);
+  const colors = useColors();
   const fullscreen = viewMode === "fullscreen";
-
+  const title = prettyDate(commit.timestamp) + " --  " + index;
+  const lines = commit.patch.split("\n");
+  const patchPreview = lines.slice(0, MAX_LINES).join("\n");
   if (!fullscreen) {
     return (
-      <Panel
-        title="History"
-        // @ts-ignore
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(e, patch);
-        }}
-        className="cursor-pointer"
-        selector="history-panel"
-      >
-        <pre className="text-xs xl:text-sm">{rawPatch}</pre>
-      </Panel>
+      <div className="grid grid-cols-1">
+        <Panel
+          title={title}
+          // @ts-ignore
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(e, patch);
+          }}
+          className="cursor-pointer"
+          selector="history-panel"
+        >
+          {commit.message && (
+            <h2
+              className={`text-base xl:text-lg mb-sm font-semibold pb-xs border-b-2 border-black`}
+            >
+              {commit.message}
+            </h2>
+          )}
+          <pre className="text-xs xl:text-sm">{patchPreview}</pre>
+          {lines.length > MAX_LINES && (
+            <pre className="text-xs xl:text-sm text-gray-400 mt-xs">
+              ...{lines.length - MAX_LINES} more lines
+            </pre>
+          )}
+        </Panel>
+        {showMessage && (
+          <Input
+            name="commit-message"
+            title="Commit Message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full mt-xs"
+            onKeyDown={async (e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                editCommitMessage(message);
+                setShowMessage(!showMessage);
+              }
+            }}
+          />
+        )}
+        {showMessage && (
+          <Button
+            onClick={() => {
+              editCommitMessage(message);
+              setShowMessage(!showMessage);
+            }}
+            className="w-full my-xs"
+          >
+            Done
+          </Button>
+        )}
+        {!showMessage && (
+          <Button
+            onClick={() => {
+              setShowMessage(true);
+            }}
+            className="w-full my-xs"
+          >
+            {message ? "Edit Message" : "Add Message"}
+          </Button>
+        )}
+      </div>
     );
   }
   const changesOnly = patch.length > 10000 || nextPatch.length > 10000;
@@ -67,12 +144,24 @@ function getPatch(data: string | t.Commit): string {
   return data.patch;
 }
 
-function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
+function getCommit(data: string | t.Commit): t.Commit {
+  if (typeof data === "string") {
+    return {
+      id: nanoid(),
+      patch: data,
+      message: "",
+      timestamp: Date.now(),
+    };
+  }
+  return data;
+}
+
+function History({ bookid, chapterid, triggerHistoryRerender }) {
   const [history, setHistory] = useState<t.History>([]);
   const [page, setPage] = useState(0);
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
   const fullscreen = viewMode === "fullscreen";
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const func = async () => {
       const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
@@ -107,6 +196,26 @@ function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
     return old;
   };
 
+  async function onClick(e, newText) {
+    //await onTextEditorSave(state);
+    dispatch(
+      librarySlice.actions.restoreFromHistory({
+        text: newText,
+        metaKey: e.metaKey,
+      })
+    );
+    dispatch(librarySlice.actions.setViewMode("default"));
+  }
+
+  async function editCommitMessage(message: string, index: number) {
+    //await onTextEditorSave(state);
+    const result = await fd.editCommitMessage(chapterid, message, index);
+
+    if (result.tag === "error") {
+      dispatch(librarySlice.actions.setError(result.message));
+    }
+  }
+
   function addToHistory() {
     onTextEditorSave(null, true);
   }
@@ -131,7 +240,10 @@ function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
             onClick={(e) => onClick(e, applyPatch(history.length - 1 - i))}
             patch={""}
             nextPatch={""}
-            rawPatch={patch}
+            commit={getCommit(patch)}
+            editCommitMessage={(message) =>
+              editCommitMessage(message, history.length - 1 - i)
+            }
           />
         ))}
       </div>
@@ -183,7 +295,8 @@ function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
           onClick={(e) => onClick(e, patches[i - 1])}
           patch={i === reverseHistory.length ? "" : patches[i]}
           nextPatch={i > 0 ? patches[i - 1] : ""}
-          rawPatch={reverseHistory[i - 1]}
+          commit={getCommit(reverseHistory[i - 1])}
+          editCommitMessage={(message) => editCommitMessage(message, i - 1)}
         />
       ))}
     </div>

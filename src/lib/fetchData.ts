@@ -297,11 +297,28 @@ export async function askQuestion(bookid, question) {
   return t.success(json);
 }
 
-export async function saveToHistory(chapterid: string, text: string) {
-  const res = await postWithCsrf(`/api/saveToHistory`, { chapterid, text });
+export async function saveToHistory(chapterid: string, data: t.Commit) {
+  const res = await postWithCsrf(`/api/saveToHistory`, { chapterid, ...data });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error saving to history: ${text}`);
+  }
+  return t.success();
+}
+
+export async function editCommitMessage(
+  chapterid: string,
+  message: string,
+  index: number
+) {
+  const res = await postWithCsrf(`/api/history/editCommitMessage`, {
+    chapterid,
+    message,
+    index,
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    return t.error(`Error editing commit message: ${text}`);
   }
   return t.success();
 }

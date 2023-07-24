@@ -240,7 +240,7 @@ export function getChapterText(
   }
 }
 
-export function saveTextToHistory(chapter: t.Chapter): string {
+export function textToSaveToHistory(chapter: t.Chapter): string {
   const texts = chapter.text.map((text: t.TextBlock) => {
     if (
       text.type === "plain" ||

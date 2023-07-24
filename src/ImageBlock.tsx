@@ -22,7 +22,7 @@ export default function ImageBlock({
     dispatch(librarySlice.actions.setActiveTextIndex(index));
   }
 
-  const images = text.text.split("\n");
+  const images = text.text.split("\n").filter((x) => x !== "");
 
   if (text.open === false) {
     return (
