@@ -1,60 +1,40 @@
-import Home from "./Home";
-import ChatSidebar from "./ChatSidebar";
 import { ArrowUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import BlocksSidebar from "./BlocksSidebar";
 import BookEditor from "./BookEditor";
 import BookList from "./BookList";
 import ChapterList from "./ChapterList";
-import DiffViewer from "./DiffViewer";
+import ChatSidebar from "./ChatSidebar";
+import DebugSidebar from "./DebugSidebar";
+import EditHistorySidebar from "./EditHistorySidebar";
 import Editor from "./Editor";
-import FocusMode from "./FocusMode";
+import EncryptionSidebar from "./EncryptionSidebar";
+import FocusSidebar from "./FocusSidebar";
+import Help from "./Help";
+import Home from "./Home";
 import LibErrorBoundary from "./LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
+import { EditorPlaceholder, PanelPlaceholder } from "./LoadingPlaceholder";
 import Nav from "./Nav";
+import OutlineSidebar from "./OutlineSidebar";
+import ProgressBar from "./ProgressBar";
 import PromptsSidebar from "./PromptsSidebar";
+import SearchSidebar from "./SearchSidebar";
 import Sidebar from "./Sidebar";
+import SpeechSidebar from "./SpeechSidebar";
 import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
 import Popup from "./components/Popup";
 import SlideTransition from "./components/SlideTransition";
 import "./globals.css";
-import * as fd from "./lib/fetchData";
-import { useColors, useKeyDown } from "./lib/hooks";
-import LoadingPlaceholder, {
-  EditorPlaceholder,
-  PanelPlaceholder,
-} from "./LoadingPlaceholder";
 import {
-  defaultSettings,
-  fetchBooksThunk,
-  getChapter,
   getCompostBookId,
-  getSelectedBook,
   getSelectedChapter,
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import {
-  getCsrfToken,
-  saveTextToHistory,
-  today,
-  uniq,
-  useInterval,
-  useLocalStorage,
-} from "./utils";
-import BlocksSidebar from "./BlocksSidebar";
-import OutlineSidebar from "./OutlineSidebar";
-import FocusSidebar from "./FocusSidebar";
-import Tabs from "./Tabs";
-import EditHistorySidebar from "./EditHistorySidebar";
-import DebugSidebar from "./DebugSidebar";
-import Help from "./Help";
-import SearchSidebar from "./SearchSidebar";
-import SpeechSidebar from "./SpeechSidebar";
-import EncryptionSidebar from "./EncryptionSidebar";
-import ProgressBar from "./ProgressBar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
