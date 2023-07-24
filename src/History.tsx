@@ -62,6 +62,11 @@ function HistoryPanel({ index, patch, nextPatch, rawPatch, onClick }) {
   );
 }
 
+function getPatch(data: string | t.Commit): string {
+  if (typeof data === "string") return data;
+  return data.patch;
+}
+
 function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
   const [history, setHistory] = useState<t.History>([]);
   const [page, setPage] = useState(0);
@@ -88,13 +93,14 @@ function History({ bookid, chapterid, triggerHistoryRerender, onClick }) {
     LibraryContext
   ) as t.LibraryContextType;
 
-  const applyPatch = (index) => {
+  const applyPatch = (index: number): string => {
     if (index < 0) return "";
     if (!history || !history[index]) return "";
-    let old = history[0];
+    let old: string = getPatch(history[0]);
     if (index === 0) return old;
 
-    history.slice(1, index + 1).forEach((patch) => {
+    history.slice(1, index + 1).forEach((_patch: string | t.Commit) => {
+      const patch = getPatch(_patch);
       const result = Diff.applyPatch(old, patch);
       if (result) old = result;
     });

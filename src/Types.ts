@@ -562,7 +562,13 @@ export type User = {
   created_at: string;
 };
 
-export type History = string[];
+export type History = (string | Commit)[];
+export type Commit = {
+  id: string;
+  message: string;
+  timestamp: number;
+  patch: string;
+};
 
 export type Error = {
   tag: "error";

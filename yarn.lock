@@ -3398,6 +3398,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/diff@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-5.0.3.tgz#1f89e49ff83b5d200d78964fb896c68498ce1828"
+  integrity sha512-amrLbRqTU9bXMCc6uX0sWpxsQzRIo9z6MJPkH1pkez/qOxuqSZVuryJAWoBRq94CeG8JxY+VK4Le9HtjQR5T9A==
+
 "@types/dompurify@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-3.0.2.tgz#c1cd33a475bc49c43c2a7900e41028e2136a4553"
