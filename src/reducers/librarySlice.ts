@@ -726,7 +726,12 @@ export const librarySlice = createSlice({
     toggleSearch(state: t.State) {
       toggleBase(state, "search");
     },
-
+    togglePublish(state: t.State) {
+      toggleBase(state, "publish");
+    },
+    toggleExport(state: t.State) {
+      toggleBase(state, "export");
+    },
     toggleRightSidebar(state: t.State) {
       state.viewMode = "default";
       if (state.panels.rightSidebar.activePanel !== "chat") {

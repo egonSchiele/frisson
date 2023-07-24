@@ -243,7 +243,40 @@ export default function LibraryLauncher({ onLauncherClose }) {
         dispatch(librarySlice.actions.toggleDebug());
       },
     },
-
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "search"
+          ? "Close Search"
+          : "Open Search",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleSearch());
+      },
+      tooltip: "Command+Shift+f",
+    },
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "publish"
+          ? "Close Publish"
+          : "Open Publish",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.togglePublish());
+      },
+    },
+    {
+      label:
+        state.panels.leftSidebar.open &&
+        state.panels.leftSidebar.activePanel === "export"
+          ? "Close Export"
+          : "Open Export",
+      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        dispatch(librarySlice.actions.toggleExport());
+      },
+    },
     {
       label:
         state.panels.rightSidebar.open &&

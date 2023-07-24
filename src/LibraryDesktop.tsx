@@ -35,6 +35,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
+import ExportSidebar from "./ExportSidebar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -119,6 +120,17 @@ export default function LibraryDesktop() {
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "speech" &&
     state.viewMode !== "focus" &&
+    currentChapter
+  );
+
+  const publishOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "publish" &&
+    currentChapter;
+
+  const exportOpen = !!(
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "export" &&
     currentChapter
   );
 
@@ -437,6 +449,14 @@ export default function LibraryDesktop() {
               </div>
             </SlideTransition>
           </PanelPlaceholder>
+        </LibErrorBoundary>
+
+        <LibErrorBoundary component="export">
+          <SlideTransition show={exportOpen} direction="left">
+            <div className={`absolute top-0 left-0 h-screen w-72 mt-9`}>
+              <ExportSidebar />
+            </div>
+          </SlideTransition>
         </LibErrorBoundary>
       </div>
     </>

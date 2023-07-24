@@ -78,7 +78,9 @@ export type LeftActivePanel =
   | "outline"
   | "editHistory"
   | "debug"
-  | "search";
+  | "search"
+  | "publish"
+  | "export";
 
 export type SelectedText = {
   index: number;
