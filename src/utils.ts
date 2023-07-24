@@ -247,7 +247,16 @@ export function saveTextToHistory(chapter: t.Chapter): string {
       text.type === "markdown" ||
       text.type === "todoList"
     ) {
-      const { type, open, reference, versions, diffWith, caption } = text;
+      const {
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+        hideInExport,
+        blockColor,
+      } = text;
       const jsonFrontMatter = JSON.stringify({
         type,
         open,
@@ -255,11 +264,22 @@ export function saveTextToHistory(chapter: t.Chapter): string {
         versions,
         diffWith,
         caption,
+        hideInExport,
+        blockColor,
       });
       return `${jsonFrontMatter}\n\n${text.text}`;
     } else if (text.type === "image") {
-      const { type, open, reference, versions, diffWith, caption, display } =
-        text;
+      const {
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+        hideInExport,
+        blockColor,
+        display,
+      } = text;
       const jsonFrontMatter = JSON.stringify({
         type,
         open,
@@ -267,12 +287,23 @@ export function saveTextToHistory(chapter: t.Chapter): string {
         versions,
         diffWith,
         caption,
+        hideInExport,
+        blockColor,
         display,
       });
       return `${jsonFrontMatter}\n\n${text.text}`;
     } else if (text.type === "code") {
-      const { type, open, reference, versions, diffWith, caption, language } =
-        text;
+      const {
+        type,
+        open,
+        reference,
+        versions,
+        diffWith,
+        caption,
+        hideInExport,
+        blockColor,
+        language,
+      } = text;
       const jsonFrontMatter = JSON.stringify({
         type,
         open,
@@ -280,6 +311,8 @@ export function saveTextToHistory(chapter: t.Chapter): string {
         versions,
         diffWith,
         caption,
+        hideInExport,
+        blockColor,
         language,
       });
       return `${jsonFrontMatter}\n\n${text.text}`;
@@ -312,7 +345,9 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.reference,
         frontMatter.caption,
         frontMatter.versions,
-        frontMatter.diffWith
+        frontMatter.diffWith,
+        frontMatter.hideInExport,
+        frontMatter.blockColor
       );
     } else if (frontMatter.type === "code") {
       return t.codeBlockFromData(
@@ -322,7 +357,9 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.language,
         frontMatter.caption,
         frontMatter.versions,
-        frontMatter.diffWith
+        frontMatter.diffWith,
+        frontMatter.hideInExport,
+        frontMatter.blockColor
       );
     } else if (frontMatter.type === "embeddedText") {
       return t.embeddedTextBlockFromData(
@@ -340,7 +377,9 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.reference,
         frontMatter.caption,
         frontMatter.versions,
-        frontMatter.diffWith
+        frontMatter.diffWith,
+        frontMatter.hideInExport,
+        frontMatter.blockColor
       );
     } else if (frontMatter.type === "image") {
       return t.imageBlockFromData(
@@ -350,6 +389,8 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.caption,
         frontMatter.versions,
         frontMatter.diffWith,
+        frontMatter.hideInExport,
+        frontMatter.blockColor,
         frontMatter.display
       );
     } else {
@@ -359,7 +400,9 @@ export function restoreBlockFromHistory(text: string): t.TextBlock {
         frontMatter.reference,
         frontMatter.caption,
         frontMatter.versions,
-        frontMatter.diffWith
+        frontMatter.diffWith,
+        frontMatter.hideInExport,
+        frontMatter.blockColor
       );
     }
   } catch (e) {
@@ -411,6 +454,7 @@ export function getFontSizeClass(size: number | null) {
 }
 
 export function isTextishBlock(block: t.TextBlock) {
+  // NOT code
   return block.type === "markdown" || block.type === "plain";
 }
 

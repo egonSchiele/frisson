@@ -276,7 +276,9 @@ export function plainTextBlockFromData(
   reference: boolean,
   caption?: string,
   versions?: Version[],
-  diffWith?: string | null
+  diffWith?: string | null,
+  hideInExport?: boolean,
+  blockColor?: BlockColor
 ): PlainTextBlock {
   return {
     type: "plain",
@@ -287,6 +289,8 @@ export function plainTextBlockFromData(
     caption,
     versions,
     diffWith,
+    hideInExport,
+    blockColor,
   };
 }
 
@@ -296,7 +300,9 @@ export function markdownBlockFromData(
   reference: boolean,
   caption?: string,
   versions?: Version[],
-  diffWith?: string | null
+  diffWith?: string | null,
+  hideInExport?: boolean,
+  blockColor?: BlockColor
 ): MarkdownBlock {
   return {
     type: "markdown",
@@ -307,6 +313,8 @@ export function markdownBlockFromData(
     caption,
     versions,
     diffWith,
+    hideInExport,
+    blockColor,
   };
 }
 
@@ -316,7 +324,9 @@ export function todoListBlockFromData(
   reference: boolean,
   caption?: string,
   versions?: Version[],
-  diffWith?: string | null
+  diffWith?: string | null,
+  hideInExport?: boolean,
+  blockColor?: BlockColor
 ): TodoListBlock {
   return {
     type: "todoList",
@@ -327,6 +337,8 @@ export function todoListBlockFromData(
     caption,
     versions,
     diffWith,
+    hideInExport,
+    blockColor,
   };
 }
 
@@ -337,6 +349,8 @@ export function imageBlockFromData(
   caption?: string,
   versions?: Version[],
   diffWith?: string | null,
+  hideInExport?: boolean,
+  blockColor?: BlockColor,
   display: ImageDisplay = "linear"
 ): ImageBlock {
   return {
@@ -348,6 +362,8 @@ export function imageBlockFromData(
     caption,
     versions,
     diffWith,
+    hideInExport,
+    blockColor,
     display,
   };
 }
@@ -359,7 +375,9 @@ export function codeBlockFromData(
   language: string,
   caption?: string,
   versions?: Version[],
-  diffWith?: string | null
+  diffWith?: string | null,
+  hideInExport?: boolean,
+  blockColor?: BlockColor
 ): CodeBlock {
   return {
     type: "code",
@@ -371,6 +389,8 @@ export function codeBlockFromData(
     caption,
     versions,
     diffWith,
+    hideInExport,
+    blockColor,
   };
 }
 
