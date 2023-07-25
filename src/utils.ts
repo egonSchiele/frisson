@@ -626,3 +626,15 @@ export function getTags(str: string | null): string[] {
   if (!str) return [];
   return str.split(/,\s?/g).filter((x) => x !== "");
 }
+
+export function toMarkdown(block: t.TextBlock) {
+  if (block.type === "markdown") {
+    return block.text;
+  } else if (block.type === "code") {
+    return "```" + block.language + "\n" + block.text + "\n```";
+  } else if (block.type === "plain") {
+    return block.text.replaceAll("\n", "\n\n");
+  } else {
+    return block.text;
+  }
+}

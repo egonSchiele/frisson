@@ -21,10 +21,86 @@ import {
 } from "@heroicons/react/24/outline";
 import * as fd from "./lib/fetchData";
 import Switch from "./components/Switch";
-import { isTextishBlock, prettySeconds, useInterval } from "./utils";
+import {
+  isTextishBlock,
+  prettySeconds,
+  toMarkdown,
+  useInterval,
+  useLocalStorage,
+} from "./utils";
 import InfoSection from "./components/InfoSection";
 import Spinner from "./components/Spinner";
 import { set } from "cypress/types/lodash";
+import RadioGroup from "./components/RadioGroup";
+
+function CopyAs({ setMessage, className = "" }) {
+  const suggestions = useSelector(
+    (state: RootState) => state.library.suggestions
+  );
+  const currentBook = useSelector(getSelectedBook);
+  const currentChapter = useSelector(getSelectedChapter);
+  const dispatch = useDispatch();
+  const [type, setType] = React.useState<string>("plain");
+  const [includeHidden, setIncludeHidden] = useLocalStorage(
+    "exportSidebar-includeHidden",
+    false
+  );
+  const options = [
+    { type: "plain", label: "Plain" },
+    { type: "markdown", label: "Markdown" },
+    { type: "JSON", label: "JSON" },
+  ];
+
+  function copy() {
+    if (!currentChapter) return;
+    const blocks = includeHidden
+      ? currentChapter.text
+      : currentChapter.text.filter((block) => !block.hideInExport);
+
+    if (type === "plain") {
+      const text = blocks.map((block) => block.text).join("\n");
+      navigator.clipboard.writeText(text);
+    } else if (type === "markdown") {
+      const text = blocks.map((block) => toMarkdown(block)).join("\n\n");
+      navigator.clipboard.writeText(text);
+    } else if (type === "JSON") {
+      const chapter = { ...currentChapter, suggestions };
+      navigator.clipboard.writeText(JSON.stringify(chapter, null, 2));
+    }
+  }
+
+  return (
+    <div className={`grid grid-cols-1 gap-xs ${className}`}>
+      <RadioGroup
+        value={type}
+        onChange={setType}
+        className={"grid grid-cols-1"}
+        label="Type"
+        options={options}
+      />
+      {(type === "markdown" || type === "plain") && (
+        <Switch
+          label="Include Hidden In Export?"
+          enabled={includeHidden}
+          setEnabled={(enabled) => {
+            setIncludeHidden(enabled);
+          }}
+          divClassName="mt-sm"
+        />
+      )}
+      <Button
+        key="copyChapter"
+        className="w-full"
+        onClick={() => {
+          copy();
+          setMessage("Copied chapter to clipboard");
+        }}
+      >
+        Copy As {type}
+      </Button>
+    </div>
+  );
+}
 
 export default function ExportSidebar() {
   const state = useSelector((state: RootState) => state.library.editor);
@@ -46,7 +122,7 @@ export default function ExportSidebar() {
 
   if (message) {
     items.push(
-      <div className="bg-green-700 p-2 text-white flex">
+      <div className="bg-green-700 p-2 text-white flex rounded-md mb-sm">
         <p className="flex-grow">{message}</p>
         <div
           className="cursor-pointer flex-none"
@@ -58,18 +134,7 @@ export default function ExportSidebar() {
     );
   }
 
-  items.push(
-    <Button
-      key="copyChapter"
-      className="w-full"
-      onClick={() => {
-        navigator.clipboard.writeText(JSON.stringify(currentChapter));
-        setMessage("Copied chapter to clipboard");
-      }}
-    >
-      Copy Chapter
-    </Button>
-  );
+  items.push(<CopyAs setMessage={setMessage} key="copyAs" className="mb-sm" />);
   const spinner = {
     label: "Loading",
     icon: <Spinner className="w-5 h-5" />,
