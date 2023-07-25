@@ -70,7 +70,7 @@ export default function Library({ mobile = false }) {
         })
       );
       dispatch(librarySlice.actions.setChapter(chapterid));
-      dispatch(librarySlice.actions.closeLeftSidebar());
+      // dispatch(librarySlice.actions.closeLeftSidebar());
       //dispatch(librarySlice.actions.toggleOutline());
       return;
     }

@@ -638,3 +638,13 @@ export function toMarkdown(block: t.TextBlock) {
     return block.text;
   }
 }
+
+export function wordCount(chapter: t.Chapter, showHidden = false): number {
+  const blocks = showHidden
+    ? chapter.text
+    : chapter.text.filter((b) => !b.hideInExport);
+  const count = blocks
+    .map((b) => split(b.text).length)
+    .reduce((a, b) => a + b, 0);
+  return count;
+}

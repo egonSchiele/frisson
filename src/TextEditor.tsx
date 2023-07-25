@@ -25,6 +25,7 @@ import { useParams } from "react-router-dom";
 import { useColors, useFonts } from "./lib/hooks";
 import { languages } from "./lib/languages";
 import { hasVersions } from "./utils";
+import Tag from "./components/Tag";
 
 let Inline = Quill.import("blots/inline");
 
@@ -658,6 +659,12 @@ function TextEditor({
               {currentText.hideInExport && (
                 <EyeSlashIcon className="w-5 h-5 text-gray-500" />
               )}
+              {/* {currentText.versions && currentText.versions.length > 0 && (
+                <Tag
+                  letter={currentText.versions.length + 1}
+                  className="mr-sm"
+                />
+              )} */}
             </div>
 
             <div

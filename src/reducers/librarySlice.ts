@@ -1242,6 +1242,20 @@ export const librarySlice = createSlice({
       chapter.text.splice(index, 1);
       state.saved = false;
     },
+    moveBlock(
+      state: t.State,
+      action: PayloadAction<{ sourceIndex: number; destinationIndex: number }>
+    ) {
+      saveToEditHistory(state, "move block");
+      const { sourceIndex, destinationIndex } = action.payload;
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      if (chapter.text.length === 1) return;
+
+      const [removed] = chapter.text.splice(sourceIndex, 1);
+      chapter.text.splice(destinationIndex, 0, removed);
+      state.saved = false;
+    },
     extractBlock(state: t.State) {
       saveToEditHistory(state, "extract block");
       let { index, length, contents } = state.editor.selectedText;

@@ -13,6 +13,7 @@ import { getChapterText, useLocalStorage } from "./utils";
 import Switch from "./components/Switch";
 import RadioGroup from "./components/RadioGroup";
 import { Chapter, chapterStatuses } from "./Types";
+import Header from "./components/Header";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -101,6 +102,7 @@ export default function Info() {
 
   return (
     <div className="text-sm xl:text-md">
+      <Header>{currentChapter.title}</Header>
       <InfoSection text={infoText} />
       {/*   <Switch
         label="Include blocks that are hidden in export to count?"

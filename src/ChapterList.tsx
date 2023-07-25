@@ -26,6 +26,7 @@ import {
   getCsrfToken,
   prettyDate,
   useLocalStorage,
+  wordCount,
 } from "./utils";
 import { getSelectedBookChapters, librarySlice } from "./reducers/librarySlice";
 import Input from "./components/Input";
@@ -43,7 +44,8 @@ type SortType =
   | "manual"
   | "recentlyModified"
   | "leastRecentlyModified"
-  | "length";
+  | "shortestToLongest"
+  | "longestToShortest";
 
 export default function ChapterList({
   selectedChapterId,
@@ -93,6 +95,10 @@ export default function ChapterList({
     sortedChapters = sortBy(chapters, ["created_at"]);
   } else if (sortType === "leastRecentlyModified") {
     sortedChapters = sortBy(chapters, ["created_at"]).reverse();
+  } else if (sortType === "shortestToLongest") {
+    sortedChapters = sortBy(chapters, [wordCount]);
+  } else if (sortType === "longestToShortest") {
+    sortedChapters = sortBy(chapters, [wordCount]).reverse();
   }
 
   if (!loaded) {
@@ -275,6 +281,8 @@ export default function ChapterList({
         },
       ];
 
+      const hasHiddenBlocks = wordCount(chapter, true) !== wordCount(chapter);
+
       return (
         <li
           key={chapter.chapterid}
@@ -296,6 +304,17 @@ export default function ChapterList({
               className={`text-xs ${colors.secondaryTextColor} w-full px-2 py-1 ${colors.navBackgroundColor}`}
             >
               {prettyDate(chapter.created_at)}
+            </div>
+          )}
+          {(sortType === "shortestToLongest" ||
+            sortType === "longestToShortest") && (
+            <div
+              className={`text-xs ${colors.secondaryTextColor} w-full px-2 py-1 ${colors.navBackgroundColor}`}
+            >
+              {wordCount(chapter)} words{" "}
+              {hasHiddenBlocks && (
+                <span>({wordCount(chapter, true)} total)</span>
+              )}
             </div>
           )}
         </li>
@@ -493,6 +512,8 @@ export default function ChapterList({
       <option value="alphabetical">Alphabetical</option>
       <option value="recentlyModified">Recently Modified</option>
       <option value="leastRecentlyModified">Least Recently Modified</option>
+      <option value="shortestToLongest">Shortest to Longest</option>
+      <option value="longestToShortest">Longest to Shortest</option>
     </Select>
   );
 

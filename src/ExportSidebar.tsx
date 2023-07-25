@@ -37,10 +37,8 @@ function CopyAs({ setMessage, className = "" }) {
   const suggestions = useSelector(
     (state: RootState) => state.library.suggestions
   );
-  const currentBook = useSelector(getSelectedBook);
   const currentChapter = useSelector(getSelectedChapter);
-  const dispatch = useDispatch();
-  const [type, setType] = React.useState<string>("plain");
+  const [type, setType] = useLocalStorage("exportSidebar-type", "plain");
   const [includeHidden, setIncludeHidden] = useLocalStorage(
     "exportSidebar-includeHidden",
     false
@@ -103,9 +101,8 @@ function CopyAs({ setMessage, className = "" }) {
 }
 
 export default function ExportSidebar() {
-  const state = useSelector((state: RootState) => state.library.editor);
+  const allBooks = useSelector((state: RootState) => state.library.books);
   const currentBook = useSelector(getSelectedBook);
-  const index = state.activeTextIndex;
   const currentChapter = useSelector(getSelectedChapter);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -134,7 +131,29 @@ export default function ExportSidebar() {
     );
   }
 
-  items.push(<CopyAs setMessage={setMessage} key="copyAs" className="mb-sm" />);
+  items.push(
+    <CopyAs setMessage={setMessage} key="copyAs" className="mb-sm" />,
+    <Button
+      key="copyBook"
+      className="w-full mb-sm"
+      onClick={() => {
+        navigator.clipboard.writeText(JSON.stringify(currentBook, null, 2));
+        setMessage("Copied book to clipboard");
+      }}
+    >
+      Copy Book As JSON
+    </Button>,
+    <Button
+      key="copyAllBooks"
+      className="w-full mb-sm"
+      onClick={() => {
+        navigator.clipboard.writeText(JSON.stringify(allBooks, null, 2));
+        setMessage("Copied all books to clipboard");
+      }}
+    >
+      Copy All Books As JSON
+    </Button>
+  );
   const spinner = {
     label: "Loading",
     icon: <Spinner className="w-5 h-5" />,
