@@ -29,7 +29,7 @@ export default function SearchSidebar({}: {}) {
   const state = useSelector((state: RootState) => state.library.editor);
   const index = state.activeTextIndex;
   const dispatch = useDispatch();
-  const currentText = useSelector(getText(index));
+
   const colors = useColors();
 
   /*  const tab = useSelector(
@@ -48,7 +48,6 @@ export default function SearchSidebar({}: {}) {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  if (!currentText) return null;
   function getClassNames({ selected }) {
     const defaultClasses = "w-full py-1 text-sm font-medium text-center";
     return classNames(

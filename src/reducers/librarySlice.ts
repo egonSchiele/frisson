@@ -1251,6 +1251,14 @@ export const librarySlice = createSlice({
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
       if (chapter.text.length === 1) return;
+      if (
+        sourceIndex < 0 ||
+        sourceIndex >= chapter.text.length ||
+        destinationIndex < 0 ||
+        destinationIndex >= chapter.text.length ||
+        sourceIndex === destinationIndex
+      )
+        return;
 
       const [removed] = chapter.text.splice(sourceIndex, 1);
       chapter.text.splice(destinationIndex, 0, removed);
