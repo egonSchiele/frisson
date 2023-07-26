@@ -419,10 +419,6 @@ export function hasVersions(block: t.TextBlock) {
   return block.versions && block.versions.length > 0;
 }
 
-export function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 export function today(): t.Date {
   const d = new Date();
   return {
@@ -647,4 +643,12 @@ export function wordCount(chapter: t.Chapter, showHidden = false): number {
     .map((b) => split(b.text).length)
     .reduce((a, b) => a + b, 0);
   return count;
+}
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function uncapitalize(str: string): string {
+  return str.charAt(0).toLowerCase() + str.slice(1);
 }

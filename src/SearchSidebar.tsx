@@ -1,5 +1,6 @@
 import {
   Bars3Icon,
+  BeakerIcon,
   ComputerDesktopIcon,
   InformationCircleIcon,
   MagnifyingGlassIcon,
@@ -18,6 +19,7 @@ import VersionsSidebar from "./VersionsSidebar";
 import { useColors } from "./lib/hooks";
 import SimpleSearchSidebar from "./SimpleSearchSidebar";
 import AskAQuestionSidebar from "./AskAQuestionSidebar";
+import ReplaceSidebar from "./ReplaceSidebar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -26,8 +28,6 @@ function classNames(...classes) {
 export default function SearchSidebar({}: {}) {
   //const [selectedIndex, setSelectedIndex] = useState(tabIndex);
 
-  const state = useSelector((state: RootState) => state.library.editor);
-  const index = state.activeTextIndex;
   const dispatch = useDispatch();
 
   const colors = useColors();
@@ -65,6 +65,11 @@ export default function SearchSidebar({}: {}) {
             />
           </Tab>
           <Tab className={getClassNames}>
+            <BeakerIcon
+              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+            />
+          </Tab>
+          <Tab className={getClassNames}>
             <ComputerDesktopIcon
               className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
             />
@@ -73,6 +78,9 @@ export default function SearchSidebar({}: {}) {
         <Tab.Panels className="">
           <Tab.Panel>
             <SimpleSearchSidebar />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ReplaceSidebar />
           </Tab.Panel>
           <Tab.Panel>
             <AskAQuestionSidebar />

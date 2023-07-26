@@ -3,6 +3,7 @@ import * as toolkitRaw from "@reduxjs/toolkit";
 import type { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import * as t from "../Types";
 import {
+  capitalize,
   decryptObject,
   encryptObject,
   getTags,
@@ -13,6 +14,7 @@ import {
   parseText,
   restoreBlockFromHistory,
   strSplice,
+  uncapitalize,
   uniq,
 } from "../utils";
 
@@ -316,6 +318,51 @@ export const librarySlice = createSlice({
         console.error("No block found for index", index, chapter.chapterid);
       }
       block.text = text;
+      state.saved = false;
+    },
+    replaceText(
+      state: t.State,
+      action: PayloadAction<{
+        searchTerm: string;
+        replaceTerm: string;
+        followCapitalization: boolean;
+      }>
+    ) {
+      const { searchTerm, replaceTerm, followCapitalization } = action.payload;
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      saveToEditHistory(
+        state,
+        `replace text (${searchTerm} -> ${replaceTerm})`
+      );
+
+      if (followCapitalization) {
+        chapter.text = chapter.text.map((block) => {
+          let text = block.text.replaceAll(
+            uncapitalize(searchTerm),
+            uncapitalize(replaceTerm)
+          );
+          console.log({ text });
+          text = text.replaceAll(
+            capitalize(searchTerm),
+            capitalize(replaceTerm)
+          );
+          console.log({ text });
+          return {
+            ...block,
+            text,
+          };
+        });
+      } else {
+        const searchTermRegex = new RegExp(searchTerm, "gi");
+        chapter.text = chapter.text.map((block) => {
+          return {
+            ...block,
+            text: block.text.replaceAll(searchTermRegex, replaceTerm),
+          };
+        });
+      }
+      state.editor._pushTextToEditor = nanoid();
       state.saved = false;
     },
     setChapterStatus(state: t.State, action: PayloadAction<t.ChapterStatus>) {

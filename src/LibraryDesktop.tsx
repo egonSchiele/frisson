@@ -317,7 +317,7 @@ export default function LibraryDesktop() {
           >
             <SlideTransition show={editHistoryOpen} direction="left">
               <div
-                className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                className={`w-108 absolute top-0 left-0 h-screen overflow-auto mt-9`}
               >
                 <EditHistorySidebar />
               </div>
