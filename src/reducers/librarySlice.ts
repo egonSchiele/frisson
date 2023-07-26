@@ -175,9 +175,9 @@ export const librarySlice = createSlice({
 
       decryptedBooks.forEach((book) => {
         book.chapters.forEach((chapter) => {
-          chapter.created_at = created_at;
+          chapter.lastHeardFromServer = created_at;
         });
-        book.created_at = created_at;
+        book.lastHeardFromServer = created_at;
       });
       state.books = decryptedBooks;
       state.booksLoaded = true;
@@ -521,14 +521,18 @@ export const librarySlice = createSlice({
     },
     updateTimestampForChapter(
       state: t.State,
-      action: PayloadAction<{ chapterid: string; created_at: number }>
+      action: PayloadAction<{ chapterid: string; lastHeardFromServer: number }>
     ) {
-      const { chapterid, created_at } = action.payload;
+      const { chapterid, lastHeardFromServer } = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapterid) return;
       book.chapters = book.chapters.map((chapter) => {
         if (chapter.chapterid === chapterid) {
-          return { ...chapter, created_at };
+          return {
+            ...chapter,
+            created_at: lastHeardFromServer,
+            lastHeardFromServer,
+          };
         }
         return chapter;
       });
@@ -536,13 +540,18 @@ export const librarySlice = createSlice({
     },
     updateTimestampForBook(
       state: t.State,
-      action: PayloadAction<{ bookid: string; created_at: number }>
+      action: PayloadAction<{ bookid: string; lastHeardFromServer: number }>
     ) {
-      const { bookid, created_at } = action.payload;
+      const { bookid, lastHeardFromServer } = action.payload;
 
       state.books = state.books.map((book) => {
         if (book.bookid === bookid) {
-          return { ...book, created_at };
+          return {
+            ...book,
+            // created_at being used as updated_at here
+            created_at: lastHeardFromServer,
+            lastHeardFromServer,
+          };
         }
         return book;
       });

@@ -33,7 +33,7 @@ export const saveBook = async (book, lastHeardFromServer) => {
   const docRef = db.collection("books").doc(book.bookid);
   return await checkForStaleUpdate(
     "book",
-    book.created_at,
+    book.lastHeardFromServer,
     docRef,
     async () => {
       try {
@@ -271,7 +271,7 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapter.chapterid);
   return await checkForStaleUpdate(
     "chapter",
-    chapter.created_at,
+    chapter.lastHeardFromServer,
     docRef,
     async () => {
       try {

@@ -443,6 +443,7 @@ export type Chapter = {
   favorite: boolean;
   created_at?: number;
   updated_at?: number;
+  lastHeardFromServer?: number;
   status?: ChapterStatus;
   embeddings?: number[];
   embeddingsLastCalculatedAt?: number;
@@ -477,6 +478,8 @@ export type Book = {
   genre?: string;
   style?: string;
   created_at?: number;
+  updated_at?: number;
+  lastHeardFromServer?: number;
   lastTrainedAt?: number;
   coverImageUrl?: string;
   tags?: string;

@@ -92,9 +92,9 @@ export default function ChapterList({
   if (sortType === "alphabetical") {
     sortedChapters = sortBy(chapters, ["title"]);
   } else if (sortType === "recentlyModified") {
-    sortedChapters = sortBy(chapters, ["created_at"]);
-  } else if (sortType === "leastRecentlyModified") {
     sortedChapters = sortBy(chapters, ["created_at"]).reverse();
+  } else if (sortType === "leastRecentlyModified") {
+    sortedChapters = sortBy(chapters, ["created_at"]);
   } else if (sortType === "shortestToLongest") {
     sortedChapters = sortBy(chapters, [wordCount]);
   } else if (sortType === "longestToShortest") {

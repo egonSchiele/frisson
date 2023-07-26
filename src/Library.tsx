@@ -517,6 +517,7 @@ export default function Library({ mobile = false }) {
 
       if (result.tag === "success") {
         const data = result.payload;
+        chapter.lastHeardFromServer = data.lastHeardFromServer;
         chapter.created_at = data.lastHeardFromServer;
         dispatch(librarySlice.actions.setSaved(true));
         // Since we depend on a cache version of the selected book when picking a chapter
@@ -525,7 +526,7 @@ export default function Library({ mobile = false }) {
         dispatch(
           librarySlice.actions.updateTimestampForChapter({
             chapterid: chapter.chapterid,
-            created_at: data.lastHeardFromServer,
+            lastHeardFromServer: data.lastHeardFromServer,
           })
         );
       }
@@ -658,12 +659,13 @@ export default function Library({ mobile = false }) {
       // This is because save chapter and save book both happen in the same cycle.
       // saveChapter updates the chapter in the redux store.
       // If we include the chapters here, it will overwrite the updates from saveChapter.
+      bookNoChapters.lastHeardFromServer = data.created_at;
       bookNoChapters.created_at = data.created_at;
       dispatch(librarySlice.actions.setSaved(true));
       dispatch(
         librarySlice.actions.updateTimestampForBook({
           bookid: bookNoChapters.bookid,
-          created_at: data.lastHeardFromServer,
+          lastHeardFromServer: data.lastHeardFromServer,
         })
       );
     }
