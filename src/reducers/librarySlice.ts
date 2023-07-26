@@ -326,41 +326,69 @@ export const librarySlice = createSlice({
         searchTerm: string;
         replaceTerm: string;
         followCapitalization: boolean;
+        replaceInAllBlocks: boolean;
       }>
     ) {
-      const { searchTerm, replaceTerm, followCapitalization } = action.payload;
+      const {
+        searchTerm,
+        replaceTerm,
+        followCapitalization,
+        replaceInAllBlocks,
+      } = action.payload;
       const chapter = getSelectedChapter({ library: state });
+      const searchTermRegex = new RegExp(searchTerm, "gi");
       if (!chapter) return;
       saveToEditHistory(
         state,
         `replace text (${searchTerm} -> ${replaceTerm})`
       );
 
-      if (followCapitalization) {
-        chapter.text = chapter.text.map((block) => {
-          let text = block.text.replaceAll(
-            uncapitalize(searchTerm),
-            uncapitalize(replaceTerm)
-          );
-          console.log({ text });
-          text = text.replaceAll(
-            capitalize(searchTerm),
-            capitalize(replaceTerm)
-          );
-          console.log({ text });
-          return {
-            ...block,
-            text,
-          };
-        });
+      if (replaceInAllBlocks) {
+        if (followCapitalization) {
+          chapter.text = chapter.text.map((block) => {
+            let text = block.text.replaceAll(
+              uncapitalize(searchTerm),
+              uncapitalize(replaceTerm)
+            );
+            console.log({ text });
+            text = text.replaceAll(
+              capitalize(searchTerm),
+              capitalize(replaceTerm)
+            );
+            console.log({ text });
+            return {
+              ...block,
+              text,
+            };
+          });
+        } else {
+          chapter.text = chapter.text.map((block) => {
+            return {
+              ...block,
+              text: block.text.replaceAll(searchTermRegex, replaceTerm),
+            };
+          });
+        }
       } else {
-        const searchTermRegex = new RegExp(searchTerm, "gi");
-        chapter.text = chapter.text.map((block) => {
-          return {
-            ...block,
-            text: block.text.replaceAll(searchTermRegex, replaceTerm),
-          };
-        });
+        const { activeTextIndex } = state.editor;
+        if (chapter.text[activeTextIndex] !== undefined) {
+          const blockText = chapter.text[activeTextIndex].text;
+          if (followCapitalization) {
+            chapter.text[activeTextIndex].text = blockText.replaceAll(
+              uncapitalize(searchTerm),
+              uncapitalize(replaceTerm)
+            );
+            chapter.text[activeTextIndex].text = blockText.replaceAll(
+              capitalize(searchTerm),
+              capitalize(replaceTerm)
+            );
+          } else {
+            chapter.text[activeTextIndex].text = blockText.replaceAll(
+              searchTermRegex,
+              replaceTerm
+            );
+          }
+        }
       }
       state.editor._pushTextToEditor = nanoid();
       state.saved = false;

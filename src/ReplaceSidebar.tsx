@@ -42,6 +42,10 @@ export default function ReplaceSidebar() {
     "replaceSidebar-followCapitalization",
     true
   );
+  const [replaceInAllBlocks, setReplaceInAllBlocks] = useLocalStorage(
+    "replaceSidebar-replaceInAllBlocks",
+    true
+  );
   const searchRef = React.useRef(null);
 
   useEffect(() => {
@@ -87,6 +91,14 @@ export default function ReplaceSidebar() {
       label="Follow Capitalization"
       enabled={followCapitalization}
       setEnabled={(enabled) => setFollowCapitalization(enabled)}
+      className="mt-md"
+    />,
+    <Switch
+      key="replaceInAllBlocks"
+      label="Replace in all blocks"
+      enabled={replaceInAllBlocks}
+      setEnabled={(enabled) => setReplaceInAllBlocks(enabled)}
+      className="mt-md"
     />,
   ];
 
@@ -113,7 +125,7 @@ export default function ReplaceSidebar() {
     </p>
   );
 
-  if (resultCount > 0 && replaceTerm.length > 0) {
+  if (resultCount > 0) {
     items.push(
       <p key="replaceInfo mt-xs">
         Replacing {searchTerm} with {replaceTerm}
@@ -126,6 +138,7 @@ export default function ReplaceSidebar() {
               searchTerm,
               replaceTerm,
               followCapitalization,
+              replaceInAllBlocks,
             })
           );
         }}
