@@ -266,13 +266,12 @@ export default function Nav({
           )}
         </div>
 
-        {/*         {!mobile && (
+        {!mobile && (
           <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll no-scrollbar">
             <Tabs />
           </div>
         )}
- */}
-        <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll no-scrollbar" />
+
         {/* book editor nav */}
         {bookid && !chapterid && (
           <div className="mr-xs">
