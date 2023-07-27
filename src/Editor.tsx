@@ -285,7 +285,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
       <div className="mx-auto w-full max-w-md md:max-w-xl lg:max-w-2xl xl:max-w-[60rem] px-sm  mb-sm h-full ">
         <ContentEditable
           value={currentChapterTitle}
-          className={`${titleFontSize} mb-md tracking-wide font-normal xl:font-semibold text-darkest dark:text-lightest mx-auto text-center w-full mt-lg ${fontClass}`}
+          className={`${titleFontSize} mb-md tracking-wide font-normal text-darkest dark:text-lightest mx-auto text-center w-full mt-lg ${fontClass}`}
           /* // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));

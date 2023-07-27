@@ -732,24 +732,26 @@ function TextEditor({
               )} */}
             </div>
             <div
-              className={`flex-grow grid grid-cols-1 pl-sm`}
+              className={`flex-grow grid grid-cols-1 pl-md`}
               onClick={() => {
                 dispatch(librarySlice.actions.setActiveTextIndex(index));
               }}
             >
               {currentText.caption && (
                 <div
-                  className={`text-sm mb-xs rounded-lg px-xs py-1 w-full ${colors.navBackgroundColor} ${colors.secondaryTextColor}`}
+                  className={`mb-xs rounded-lg px-xs py-1 w-full ${colors.navBackgroundColor} ${colors.secondaryTextColor}`}
                 >
                   {currentText.caption}
                 </div>
               )}
-              <p
-                className="text-gray-500"
-                data-selector={`text-preview-${index}`}
-              >
-                {textPreview}
-              </p>
+              <div className={`${fontClass} ${fontSizeClass} px-1`}>
+                <p
+                  className={`text-gray-500 `}
+                  data-selector={`text-preview-${index}`}
+                >
+                  {textPreview}
+                </p>
+              </div>
             </div>
           </div>
         )}

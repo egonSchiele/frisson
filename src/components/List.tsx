@@ -100,7 +100,7 @@ export default function List({
 
         {rightMenuItem && (
           <div className=" absolute mr-xs right-0">
-            <MenuItem {...rightMenuItem} />
+            <MenuItem key={rightMenuItem.label} {...rightMenuItem} />
           </div>
         )}
       </div>
