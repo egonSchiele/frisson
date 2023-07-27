@@ -301,7 +301,7 @@ export default function LibraryDesktop() {
           >
             <SlideTransition show={blocksOpen} direction="left">
               <div
-                className={`w-48 absolute top-0 left-0 h-screen overflow-auto mt-9`}
+                className={`w-60 absolute top-0 left-0 h-screen overflow-auto mt-9`}
               >
                 <BlocksSidebar />
               </div>

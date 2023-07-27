@@ -33,6 +33,12 @@ export type State = {
   _triggerSaveAll: boolean;
   encryptionPassword: string | null;
   showStructure?: boolean;
+  textForDiff?: TextForDiff | null;
+};
+
+export type TextForDiff = {
+  originalText: string;
+  newText: string;
 };
 
 export type Notification = {

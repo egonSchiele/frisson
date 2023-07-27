@@ -203,6 +203,12 @@ export const librarySlice = createSlice({
       state.showStructure = action.payload;
       localStorage.setItem("showStructure", JSON.stringify(action.payload));
     },
+    setTextForDiff(
+      state: t.State,
+      action: PayloadAction<t.TextForDiff | null>
+    ) {
+      state.textForDiff = action.payload;
+    },
     startRecording(state: t.State) {
       state.recording = true;
     },

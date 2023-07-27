@@ -42,14 +42,23 @@ export default function VersionsSidebar() {
       if (version.id !== null) {
         menuItems.push({
           label: "Delete",
-          /*           icon: <XMarkIcon />,
-           */ onClick: () => {
+          onClick: () => {
             dispatch(
               librarySlice.actions.deleteVersion({
                 index,
                 versionid: version.id,
               })
             );
+          },
+        });
+        menuItems.push({
+          label: "Diff",
+          onClick: () => {
+            const originalText = currentText.text;
+            const newText = version.text;
+            const textForDiff = { originalText, newText };
+            dispatch(librarySlice.actions.setTextForDiff(textForDiff));
+            dispatch(librarySlice.actions.setViewMode("diff"));
           },
         });
       }

@@ -42,6 +42,9 @@ export default function Library({ mobile = false }) {
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
   const activeTab = useSelector((state: RootState) => state.library.activeTab);
   const openTabs = useSelector((state: RootState) => state.library.openTabs);
+  const textForDiff = useSelector(
+    (state: RootState) => state.library.textForDiff
+  );
   const currentText = currentChapter?.text || [];
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
@@ -240,6 +243,7 @@ export default function Library({ mobile = false }) {
       window.plausible("keyboard-shortcut-diff");
 
       if (state.viewMode === "diff") {
+        dispatch(librarySlice.actions.setTextForDiff(null));
         dispatch(librarySlice.actions.setViewMode("default"));
         return;
       }
@@ -247,6 +251,10 @@ export default function Library({ mobile = false }) {
         viewMode !== "diff" &&
         editor.activeTextIndex !== currentText.length - 1
       ) {
+        const originalText = currentText[editor.activeTextIndex].text;
+        const newText = currentText[editor.activeTextIndex + 1].text;
+        const textForDiff = { originalText, newText };
+        dispatch(librarySlice.actions.setTextForDiff(textForDiff));
         dispatch(librarySlice.actions.setViewMode("diff"));
       }
     } else if (event.shiftKey && event.metaKey && event.key === "c") {
@@ -701,19 +709,13 @@ export default function Library({ mobile = false }) {
     fetchBooks,
   };
 
-  if (
-    state.viewMode === "diff" &&
-    currentText &&
-    editor.activeTextIndex != currentText.length - 1
-  ) {
-    const originalText = currentText[editor.activeTextIndex].text;
-    const newText = currentText[editor.activeTextIndex + 1].text;
+  if (state.viewMode === "diff" && currentText && textForDiff) {
     return (
       <LibraryContext.Provider value={libraryUtils}>
         <LibErrorBoundary component="diff mode">
           <DiffViewer
-            originalText={originalText}
-            newText={newText}
+            originalText={textForDiff.originalText}
+            newText={textForDiff.newText}
             onClose={() =>
               dispatch(librarySlice.actions.setViewMode("default"))
             }

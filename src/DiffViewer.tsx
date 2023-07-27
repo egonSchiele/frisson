@@ -57,7 +57,7 @@ const DiffViewer = ({
 
   return (
     <div
-      className="overflow-scroll w-full mx-auto"
+      className="overflow-scroll h-screen w-full mx-auto mt-md"
       id="diff-view"
       ref={diffDiv}
     >
@@ -93,7 +93,7 @@ const DiffViewer = ({
         }
       >
         <div
-          className={`grid grid-cols-2 gap-4 m-md mt-xs font-mono ${className}`}
+          className={`grid grid-cols-2 gap-4 m-md mt-xs font-mono overflow-scroll ${className}`}
         >
           <div className="p-sm border border-gray-300 dark:border-gray-700 rounded-md">
             {originalLines}
