@@ -1504,9 +1504,9 @@ export const librarySlice = createSlice({
       state.saved = false;
     },
     newTab(state: t.State, action: PayloadAction<t.Tab>) {
-      const index = state.openTabs.findIndex(
-        (tab) => tab.chapterid === action.payload.chapterid
-      );
+      const tab = action.payload;
+      const index = findTabIndex(state, tab);
+
       if (index !== -1) {
         state.activeTab = index;
         localStorage.setItem("activeTab", index.toString());
@@ -1514,15 +1514,17 @@ export const librarySlice = createSlice({
       }
 
       state.openTabs.push(action.payload);
+      if (state.openTabs.length > 5) {
+        state.openTabs.shift();
+      }
       localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
 
       state.activeTab = state.openTabs.length - 1;
       localStorage.setItem("activeTab", state.activeTab.toString());
     },
     updateTab(state: t.State, action: PayloadAction<t.Tab>) {
-      const index = state.openTabs.findIndex(
-        (tab) => tab.chapterid === action.payload.chapterid
-      );
+      const tab = action.payload;
+      const index = findTabIndex(state, tab);
       if (index === -1) {
         return;
       }
@@ -1545,14 +1547,13 @@ export const librarySlice = createSlice({
       }
       localStorage.setItem("activeTab", state.activeTab.toString());
     },
-    closeTab(state: t.State, action: PayloadAction<string | null>) {
+    closeTab(state: t.State, action: PayloadAction<t.Tab | null>) {
       let index = 0;
       if (action.payload === null || action.payload === undefined) {
         index = state.activeTab;
       } else {
-        index = state.openTabs.findIndex(
-          (tab) => tab.chapterid === action.payload
-        );
+        const tab = action.payload;
+        index = findTabIndex(state, tab);
       }
 
       if (state.openTabs.length === 0) {
@@ -1586,15 +1587,6 @@ export const librarySlice = createSlice({
       state.activeTab = 0;
       localStorage.setItem("activeTab", "0");
       localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
-    },
-    goToTab(state: t.State, action: PayloadAction<string>) {
-      const index = state.openTabs.findIndex(
-        (tab) => tab.chapterid === action.payload
-      );
-      if (index !== -1) {
-        state.activeTab = index;
-      }
-      localStorage.setItem("activeTab", state.activeTab.toString());
     },
     togglePinToHome(state: t.State) {
       const chapter = getSelectedChapter({ library: state });
@@ -1854,21 +1846,36 @@ export const getAllTags = (state: RootState): string[] => {
 };
 
 export const getOpenTabs = (state: RootState): t.TabStateInfo[] => {
-  const openTabs = state.library.openTabs;
-  const tabs = openTabs.map((tab) => {
-    const chapter = getChapter(tab.chapterid)(state);
-    if (!chapter) return null;
-    const book = state.library.books.find(
-      (book) => book.bookid === chapter.bookid
-    );
-    if (!book) return null;
-    return {
-      chapterid: tab.chapterid,
-      title: chapter.title,
-      bookid: chapter.bookid,
-      bookTitle: book.title,
-      textIndex: tab.textIndex,
-    };
+  const openTabs: t.Tab[] = state.library.openTabs;
+  const tabs: t.TabStateInfo[] = openTabs.map((tab) => {
+    if (tab.tag === "book") {
+      const book = state.library.books.find(
+        (book) => book.bookid === tab.bookid
+      );
+      if (!book) return null;
+      return {
+        tag: "book",
+        chapterid: null,
+        bookid: tab.bookid,
+        title: book.title,
+        scrollTop: tab.scrollTop,
+      };
+    } else {
+      const chapter = getChapter(tab.chapterid)(state);
+      if (!chapter) return null;
+      const book = state.library.books.find(
+        (book) => book.bookid === chapter.bookid
+      );
+      if (!book) return null;
+      return {
+        tag: "chapter",
+        chapterid: tab.chapterid,
+        title: chapter.title,
+        bookid: chapter.bookid,
+        bookTitle: book.title,
+        textIndex: tab.textIndex,
+      };
+    }
   });
   return tabs.filter((tab) => tab !== null);
 };
@@ -1958,4 +1965,18 @@ function toggleRightSidebarBase(state, activePanel) {
     "rightSidebarOpen",
     String(state.panels.rightSidebar.open)
   );
+}
+
+function findTabIndex(state: t.State, tab: t.Tab) {
+  let index;
+  if (tab.tag === "book") {
+    index = state.openTabs.findIndex(
+      (_tab) => _tab.tag === "book" && _tab.bookid === tab.bookid
+    );
+  } else {
+    index = state.openTabs.findIndex(
+      (_tab) => _tab.tag === "chapter" && _tab.chapterid === tab.chapterid
+    );
+  }
+  return index;
 }

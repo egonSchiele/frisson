@@ -652,3 +652,14 @@ export function capitalize(str: string): string {
 export function uncapitalize(str: string): string {
   return str.charAt(0).toLowerCase() + str.slice(1);
 }
+
+export function getBlockBorderColor(color: t.BlockColor): string {
+  const blockColorBorders = {
+    red: "border-red-400",
+    green: "border-green-600",
+    blue: "border-blue-600",
+    yellow: "border-yellow-600",
+    none: "",
+  };
+  return blockColorBorders[color];
+}

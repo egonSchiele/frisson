@@ -3,7 +3,7 @@ import * as fd from "./lib/fetchData";
 import md5 from "md5";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   getAllTags,
   getSelectedBook,
@@ -16,7 +16,7 @@ import { Book, Character } from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import { getChapterText, getFontSizeClass, getTags, isString } from "./utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
 import LibraryContext from "./LibraryContext";
@@ -604,11 +604,31 @@ export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const dispatch = useDispatch();
+  const bookEditorDiv = useRef(null);
   const { settings, saveBook } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
 
   const colors = useColors();
+  const { scrollTop } = useParams();
+  useEffect(() => {
+    if (!bookEditorDiv.current) return;
+    bookEditorDiv.current.scroll({ top: scrollTop });
+  }, [scrollTop]);
+
+  useEffect(() => {
+    if (!bookEditorDiv.current) return;
+    bookEditorDiv.current.addEventListener("scroll", (e) => {
+      dispatch(
+        librarySlice.actions.updateTab({
+          tag: "book",
+          bookid: book.bookid,
+          scrollTop: bookEditorDiv.current.scrollTop,
+        })
+      );
+    });
+  }, [bookEditorDiv.current]);
+
   let referenceBlocks = [];
   const chapterHashes = {};
   if (chapters) {
@@ -650,6 +670,7 @@ export default function BookEditor({ className = "" }) {
     <div
       className={`flex h-screen overflow-auto w-full mx-auto pt-lg ${className}`}
       id="bookeditor"
+      ref={bookEditorDiv}
     >
       <div className=" px-sm lg:px-md h-screen w-[40rem] xl:w-[50rem] 2xl:w-[60rem]">
         <ContentEditable

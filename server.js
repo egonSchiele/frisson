@@ -921,6 +921,20 @@ app.get("/book/:bookid", requireLogin, checkBookAccess, async (req, res) => {
   }
 });
 
+app.get(
+  "/book/:bookid/:scrollTop",
+  requireLogin,
+  checkBookAccess,
+  async (req, res) => {
+    const userid = getUserId(req);
+    if (isMobile(req)) {
+      serveFile("mobile.html", res, userid);
+    } else {
+      serveFile("library.html", res, userid);
+    }
+  }
+);
+
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   const lastHeardFromServer = req.cookies.lastHeardFromServer;

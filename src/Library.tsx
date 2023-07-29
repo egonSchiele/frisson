@@ -65,17 +65,27 @@ export default function Library({ mobile = false }) {
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
 
   useEffect(() => {
-    if (chapterid && state.booksLoaded) {
-      dispatch(
-        librarySlice.actions.newTab({
-          chapterid,
-          textIndex: editor.activeTextIndex,
-        })
-      );
-      dispatch(librarySlice.actions.setChapter(chapterid));
-      // dispatch(librarySlice.actions.closeLeftSidebar());
-      //dispatch(librarySlice.actions.toggleOutline());
-      return;
+    if (state.booksLoaded) {
+      if (chapterid) {
+        dispatch(
+          librarySlice.actions.newTab({
+            tag: "chapter",
+            chapterid,
+            textIndex: editor.activeTextIndex,
+          })
+        );
+        dispatch(librarySlice.actions.setChapter(chapterid));
+        // dispatch(librarySlice.actions.closeLeftSidebar());
+        //dispatch(librarySlice.actions.toggleOutline());
+        return;
+      } else if (bookid) {
+        dispatch(
+          librarySlice.actions.newTab({
+            tag: "book",
+            bookid,
+          })
+        );
+      }
     }
     dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
@@ -110,20 +120,24 @@ export default function Library({ mobile = false }) {
     if (activeTab === -1) {
       navigate("/");
     } else if (activeTab !== null) {
-      const chapter = state.openTabs[activeTab];
-      if (!chapter) {
-        console.log("no chapter found.", activeTab, state.openTabs);
+      const tab = state.openTabs[activeTab];
+      if (!tab) {
+        console.log("no tab found.", activeTab, state.openTabs);
         navigate("/");
         return;
       }
-      const activeChapterId = chapter.chapterid;
-      state.books.forEach((book) => {
-        book.chapters.forEach((chapter) => {
-          if (chapter.chapterid === activeChapterId) {
-            navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
-          }
+      if (tab.tag === "book") {
+        navigate(`/book/${tab.bookid}`);
+      } else if (tab.tag === "chapter") {
+        const activeChapterId = tab.chapterid;
+        state.books.forEach((book) => {
+          book.chapters.forEach((chapter) => {
+            if (chapter.chapterid === activeChapterId) {
+              navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+            }
+          });
         });
-      });
+      }
     } else {
       if (!state.selectedChapterId && state.selectedBookId) {
         navigate(`/book/${state.selectedBookId}`);
@@ -200,10 +214,10 @@ export default function Library({ mobile = false }) {
       window.plausible("keyboard-shortcut-new-chapter");
     } else if (event.metaKey && event.shiftKey && event.code === "KeyX") {
       if (!state.activeTab) return;
-      const chapter = state.openTabs[state.activeTab];
-      if (chapter) {
+      const tab = state.openTabs[state.activeTab];
+      if (tab) {
         event.preventDefault();
-        dispatch(librarySlice.actions.closeTab(chapter.chapterid));
+        dispatch(librarySlice.actions.closeTab(tab));
       }
     } else if (event.metaKey && event.code === "BracketLeft") {
       event.preventDefault();

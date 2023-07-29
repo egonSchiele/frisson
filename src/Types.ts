@@ -54,17 +54,28 @@ export type EditHistory = {
   books: Book[];
 };
 
-export type Tab = {
+export type Tab = ChapterTab | BookTab;
+
+export type ChapterTab = {
+  tag: "chapter";
   chapterid: string;
   textIndex?: number;
 };
 
-export type TabStateInfo = {
-  title: string;
-  chapterid: string;
+export type BookTab = {
+  tag: "book";
   bookid: string;
-  bookTitle: string;
+  scrollTop?: number;
+};
+
+export type TabStateInfo = {
+  tag: "chapter" | "book";
+  title: string;
+  chapterid: string | null;
+  bookid: string;
+  bookTitle?: string;
   textIndex?: number;
+  scrollTop?: number;
 };
 
 export type ActivePanel =

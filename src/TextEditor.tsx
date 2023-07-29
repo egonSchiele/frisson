@@ -1,6 +1,6 @@
 import PlainClipboard from "./components/PlainClipboard";
 import highlightErrors from "./focusModeChecks";
-import { isTextishBlock } from "./utils";
+import { getBlockBorderColor, isTextishBlock } from "./utils";
 
 import {
   ChevronDownIcon,
@@ -321,7 +321,13 @@ function TextEditor({
     const editor = quillRef.current.getEditor();
     editor.focus();
 
-    dispatch(librarySlice.actions.updateTab({ chapterid, textIndex: index }));
+    dispatch(
+      librarySlice.actions.updateTab({
+        tag: "chapter",
+        chapterid,
+        textIndex: index,
+      })
+    );
   };
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
@@ -612,18 +618,10 @@ function TextEditor({
 
   if (currentText.type === "embeddedText") return null;
 
-  const blockColorBorders = {
-    red: "border-red-400",
-    green: "border-green-400",
-    blue: "border-blue-400",
-    yellow: "border-yellow-400",
-    none: "",
-  };
-
   let blockColorBorder = "";
   if (currentText.blockColor && currentText.blockColor !== "none") {
     blockColorBorder =
-      "border-l-2 " + blockColorBorders[currentText.blockColor];
+      "border-l-2 " + getBlockBorderColor(currentText.blockColor);
   }
 
   return (

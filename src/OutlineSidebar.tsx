@@ -17,6 +17,7 @@ import { useColors } from "./lib/hooks";
 import { Square2StackIcon } from "@heroicons/react/24/outline";
 import { nanoid } from "nanoid";
 import { get } from "cypress/types/lodash";
+import { getBlockBorderColor } from "./utils";
 
 function getLabelForText(text: t.TextBlock) {
   let label = text.caption;
@@ -42,6 +43,11 @@ function OutlineItem({ text, i }) {
   if (i === index) {
     selectedCss = "bg-gray-200 dark:bg-gray-700 dark:text-gray-200";
   }
+  let blockColorBorder = "";
+  if (text.blockColor && text.blockColor !== "none") {
+    blockColorBorder = "border-l-2 " + getBlockBorderColor(text.blockColor);
+  }
+  //  border-b ${colors.borderColor}
   return (
     <li
       key={i}
@@ -52,7 +58,7 @@ function OutlineItem({ text, i }) {
           }/${i}`
         );
       }}
-      className={`w-full flex text-sm mb-xs cursor-pointer p-xs border-b ${colors.borderColor} ${colors.itemHover}  ${selectedCss}`}
+      className={`w-full flex text-sm mb-xs cursor-pointer p-xs ${blockColorBorder} ${colors.itemHover}  ${selectedCss}`}
     >
       <p
         className={`flex-grow line-clamp-1 ${

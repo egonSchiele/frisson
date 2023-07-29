@@ -13,6 +13,7 @@ export default function App() {
         />
         <Route path="/book/:bookid/chapter/:chapterid" element={<Library />} />
         <Route path="/book/:bookid" element={<Library />} />
+        <Route path="/book/:bookid/:scrollTop" element={<Library />} />
         <Route path="/" element={<Library />} />
         {/*         <Route path="/grid/:bookid" element={<Book />} />
          */}{" "}
