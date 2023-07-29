@@ -234,13 +234,9 @@ function Block({ block, chapter, bookid, index }) {
   const navigate = useNavigate();
   const colors = useColors();
   return (
-    <div
+    <Link
       className={`flex flex-col my-sm ${colors.selectedBackground} rounded-md p-sm pb-md cursor-pointer`}
-      onClick={() => {
-        // @ts-ignore
-        window.plausible("bookeditor-block-click");
-        navigate(`/book/${bookid}/chapter/${chapter.chapterid}/${index}`);
-      }}
+      to={`/book/${bookid}/chapter/${chapter.chapterid}/${index}`}
     >
       <h3 className="text-xl font-semibold mb-sm">
         {chapter.title}
@@ -249,7 +245,7 @@ function Block({ block, chapter, bookid, index }) {
       <pre className="text-gray-800 dark:text-gray-300 font-sans px-xs">
         "{block.text.substring(0, 250)}"
       </pre>
-    </div>
+    </Link>
   );
 }
 
@@ -613,6 +609,7 @@ export default function BookEditor({ className = "" }) {
   const { scrollTop } = useParams();
   useEffect(() => {
     if (!bookEditorDiv.current) return;
+    if (!scrollTop) return;
     bookEditorDiv.current.scroll({ top: scrollTop });
   }, [scrollTop]);
 

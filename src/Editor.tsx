@@ -291,12 +291,12 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));
           }} */
           onSubmit={(title) => {
-            dispatch(
+            /* dispatch(
               librarySlice.actions.setTitle({
                 title,
                 chapterid: currentChapterId,
               })
-            );
+            ); */
           }}
           nextFocus={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(0));

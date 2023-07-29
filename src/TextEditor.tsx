@@ -36,6 +36,9 @@ class SpanClass extends Inline {
     if (value) {
       node.setAttribute("class", `inline ${value}`);
       node.setAttribute("title", value);
+      if (value === "link") {
+        node.setAttribute("onClick", `linkClick(event)`); // TODO
+      }
     }
     return node;
   }

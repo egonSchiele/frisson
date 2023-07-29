@@ -1514,7 +1514,7 @@ export const librarySlice = createSlice({
       }
 
       state.openTabs.push(action.payload);
-      if (state.openTabs.length > 5) {
+      if (state.openTabs.length > 8) {
         state.openTabs.shift();
       }
       localStorage.setItem("openTabs", JSON.stringify(state.openTabs));
