@@ -61,7 +61,7 @@ export default function Library({ mobile = false }) {
     }
   }, [settings]);
 
-  const { bookid, chapterid } = useParams();
+  const { bookid, chapterid, textindex } = useParams();
   const [cachedBooks, setCachedBooks] = useLocalStorage<any>("cachedBooks", []);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Library({ mobile = false }) {
           librarySlice.actions.newTab({
             tag: "chapter",
             chapterid,
-            textIndex: editor.activeTextIndex,
+            textIndex: textindex || editor.activeTextIndex,
           })
         );
         dispatch(librarySlice.actions.setChapter(chapterid));
@@ -133,7 +133,11 @@ export default function Library({ mobile = false }) {
         state.books.forEach((book) => {
           book.chapters.forEach((chapter) => {
             if (chapter.chapterid === activeChapterId) {
-              navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+              navigate(
+                `/book/${book.bookid}/chapter/${chapter.chapterid}/${
+                  tab.textIndex || textindex
+                }`
+              );
             }
           });
         });

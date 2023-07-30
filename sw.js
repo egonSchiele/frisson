@@ -308,7 +308,7 @@ function clearCache() {
 }
 
 self.addEventListener("fetch", async (event) => {
-  console.log("[service worker] fetch", event.request.url);
+  // console.log("[service worker] fetch", event.request.url);
   if (event.request.url.endsWith("/api/books")) {
     event.respondWith(getBooksFromCacheOrServer());
   } else if (event.request.url.endsWith("/api/saveChapter")) {

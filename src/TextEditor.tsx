@@ -633,7 +633,12 @@ function TextEditor({
       {/*       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
  */}
-      <div className="mb-sm h-full w-full scroll-mt-lg" ref={inputDiv}>
+      <div
+        className={`mb-sm h-full w-full scroll-mt-lg transition-colors duration-150 ease-out ${
+          highlight && "bg-gray-800"
+        }`}
+        ref={inputDiv}
+      >
         {open && (
           <div className="flex relative">
             <div
