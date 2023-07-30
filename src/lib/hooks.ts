@@ -36,7 +36,6 @@ export const useKeyboardScroll = (htmlRef, speed = 400, callback = null) => {
     }
     if (newScroll !== curScroll) {
       div.scroll({ top: newScroll, behavior: "smooth" });
-      console.log(newScroll, "<<");
       if (callback) {
         callback(newScroll);
       }
@@ -211,6 +210,7 @@ export function lightColors() {
  */
 
 export function useSSEUpdates(setSettings) {
+  // TODO this solution doesn't handle multiple tabs in the same browser
   const clientid = getCookie("clientid");
   const dispatch = useDispatch();
 
@@ -279,12 +279,11 @@ export function useRecording() {
     const file = new File([blob], "recording.wav");
 
     const response = await fd.uploadAudio(file);
-    console.log(response);
+
     if (response.tag === "success") {
       const { text } = response.payload;
       dispatch(librarySlice.actions.addToContents(text));
     } else {
-      console.log(response);
       dispatch(librarySlice.actions.setError(response.message));
     }
     setLoading(false);

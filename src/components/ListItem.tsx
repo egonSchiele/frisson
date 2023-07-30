@@ -36,13 +36,7 @@ export default function ListItem({
 }) {
   const navigate = useNavigate();
   const colors = useColors();
-  let _onClick = onClick;
-  if (link) {
-    _onClick = () => {
-      navigate(link);
-    };
-  }
-  _onClick = _onClick || (() => {});
+
   const selectedCss = selected
     ? `border-l-4 ${colors.selectedBorderColor}`
     : "";
@@ -51,50 +45,57 @@ export default function ListItem({
     plausibleEventNameCss = `plausible-event-name=${plausibleEventName}`;
     plausibleEventNameCss += ` plausible-event-title=${title}`;
   }
+
+  const itemToWrap = (
+    <div
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer ${plausibleEventNameCss}`}
+      data-selector={`${selector}-list-item-link`}
+    >
+      {!content && (
+        <div className="w-full">
+          <p
+            className="px-xs overflow-hidden text-ellipsis whitespace-nowrap flex content-start"
+            data-selector={`${selector}-list-item`}
+          >
+            {tag === "compost" && (
+              <BoltIcon className="w-5 h-5 flex-grow mr-xs" />
+            )}{" "}
+            <span
+              className={`flex-grow w-full text-lg md:text-sm ${className}`}
+            >
+              {title}
+            </span>
+          </p>
+        </div>
+      )}
+      {content && (
+        <div className="w-full py-xs">
+          <p
+            className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold ${className}`}
+            data-selector={`${selector}-list-item`}
+          >
+            {title}
+          </p>
+          <p
+            className={`px-xs ${colors.secondaryTextColor} line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
+          >
+            {content}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  const wrappedItem = link ? <Link to={link}>{itemToWrap}</Link> : itemToWrap;
+
   return (
     <div
       className={`flex  w-full ${colors.primaryTextColor} text-sm xl:text-md items-center ${colors.itemHover} ${selectedCss} `}
     >
-      <div
-        onClick={_onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        className={`flex flex-grow items-center overflow-hidden py-xs mr-xs cursor-pointer ${plausibleEventNameCss}`}
-        data-selector={`${selector}-list-item-link`}
-      >
-        {!content && (
-          <div className="w-full">
-            <p
-              className="px-xs overflow-hidden text-ellipsis whitespace-nowrap flex content-start"
-              data-selector={`${selector}-list-item`}
-            >
-              {tag === "compost" && (
-                <BoltIcon className="w-5 h-5 flex-grow mr-xs" />
-              )}{" "}
-              <span
-                className={`flex-grow w-full text-lg md:text-sm ${className}`}
-              >
-                {title}
-              </span>
-            </p>
-          </div>
-        )}
-        {content && (
-          <div className="w-full py-xs">
-            <p
-              className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold ${className}`}
-              data-selector={`${selector}-list-item`}
-            >
-              {title}
-            </p>
-            <p
-              className={`px-xs ${colors.secondaryTextColor} line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
-            >
-              {content}
-            </p>
-          </div>
-        )}
-      </div>
+      {wrappedItem}
       {tag !== "compost" && menuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu

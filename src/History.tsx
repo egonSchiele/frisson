@@ -34,7 +34,6 @@ function HistoryPanel({
   onClick: (e: React.MouseEvent, patch: string) => void;
   editCommitMessage: (message: string) => void;
 }) {
-  console.log({ commit, index });
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState(commit.message);
@@ -168,8 +167,6 @@ function History({ bookid, chapterid, triggerHistoryRerender }) {
         credentials: "include",
       });
       if (!res.ok) {
-        console.log(res.statusText);
-        // dispatch({ type: "SET_ERROR", payload: res.statusText });
         return;
       }
       const data = await res.json();

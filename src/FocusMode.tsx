@@ -14,6 +14,8 @@ import jargon from "./jargon";
 import { normalize, findSubarray, split } from "./utils";
 import * as fd from "./lib/fetchData";
 import { useKeyboardScroll } from "./lib/hooks";
+import { librarySlice } from "./reducers/librarySlice";
+import { useDispatch } from "react-redux";
 
 type Annotation = {
   type: AnnotationType;
@@ -27,6 +29,7 @@ type Annotation = {
 type AnnotationType = "hedge" | "filler" | "cliche" | "jargon" | "longline";
 
 function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
+  const dispatch = useDispatch();
   const selected = words[index];
   const [synonyms, setSynonyms] = useState([]);
   const fetchSynonyms = async () => {
@@ -35,7 +38,7 @@ function FocusList({ words, index, onSynonymClick, onDelete, annotations }) {
 
     const res = await fd.fetchSynonyms(normalize(selected));
     if (res.tag === "error") {
-      console.log("error w synonyms", res.message);
+      dispatch(librarySlice.actions.setError("Error fetching synonyms"));
       return;
     }
 

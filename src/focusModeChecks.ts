@@ -134,7 +134,6 @@ function clearFormatting(words: string[]): t.FormatData[] {
 export default function highlightErrors(text: string): t.FormatData[] {
   const lines = text.split(/[.!?:;\n–] ?/);
   const words = text.split(" ");
-  console.log({ text, words });
   const formats = [
     //...clearFormatting(words),
     ...highlightWords(words, fillers, "filler", "fillers"),
@@ -143,6 +142,5 @@ export default function highlightErrors(text: string): t.FormatData[] {
     ...findMultiWordAnnotations(words, jargonTextAsWords, "jargon", "jargon"),
     ...findLongLines(lines),
   ];
-  console.log("done");
   return formats;
 }

@@ -350,7 +350,6 @@ export default function BlockInfoSidebar({}: {}) {
         <BlockLanguage
           language={currentText.language as string}
           setLanguage={(newLanguage) => {
-            console.log({ newLanguage });
             dispatch(
               librarySlice.actions.setLanguage({
                 index: state.activeTextIndex,
@@ -369,7 +368,6 @@ export default function BlockInfoSidebar({}: {}) {
         <BlockImageDisplay
           display={currentText.display}
           setDisplay={(newDisplay) => {
-            console.log({ newDisplay });
             dispatch(
               librarySlice.actions.setDisplay({
                 index: state.activeTextIndex,

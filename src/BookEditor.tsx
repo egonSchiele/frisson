@@ -405,12 +405,10 @@ function CoverImage({
     window.plausible("bookeditor-coverimage-upload");
     [...files].forEach(async (file, i) => {
       const res = await fd.upload(file);
-      console.log({ res });
       if (res.tag === "success") {
         const { s3key } = res.payload;
         const imageUrl = "/image/" + s3key;
         setUrl(imageUrl);
-        console.log({ imageUrl });
         dispatch(librarySlice.actions.setCoverImageUrl(imageUrl));
         setEditing(false);
       }
@@ -563,7 +561,6 @@ function Tags() {
                 key={tag}
                 className="cursor-pointer"
                 onClick={() => {
-                  console.log({ tag });
                   const currentTags = getTags(book.tags);
                   if (!currentTags.includes(tag)) {
                     dispatch(

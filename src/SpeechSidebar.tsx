@@ -64,7 +64,6 @@ function PriorAudio({ chapterid }) {
           setStatus("error");
         }
       } catch (e) {
-        console.log(e);
         setStatus("error");
       }
     };

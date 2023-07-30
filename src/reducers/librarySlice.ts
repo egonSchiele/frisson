@@ -107,11 +107,11 @@ export const fetchBooksThunk: AsyncThunk<void, null, RootState> =
         signal,
       });
       //console.log("got res", res);
+
       const json = await res.json();
       //console.log("got json", json);
       const { books, lastEdited, deepEqual, serviceWorkerRunning, fromCache } =
         json;
-      console.log("got books", books, deepEqual, serviceWorkerRunning);
 
       const isEncrypted = isObjectEncrypted(books);
       if (isEncrypted) {
@@ -315,10 +315,8 @@ export const librarySlice = createSlice({
     },
     setText(state: t.State, action: PayloadAction<t.NewTextForBlock>) {
       const { index, text } = action.payload;
-      console.log("setText", index, text);
       const chapter = getSelectedChapter({ library: state });
       if (!chapter) return;
-      console.log(chapter.text);
       const block = chapter.text[index];
       if (!block) {
         console.error("No block found for index", index, chapter.chapterid);
@@ -356,12 +354,12 @@ export const librarySlice = createSlice({
               uncapitalize(searchTerm),
               uncapitalize(replaceTerm)
             );
-            console.log({ text });
+
             text = text.replaceAll(
               capitalize(searchTerm),
               capitalize(replaceTerm)
             );
-            console.log({ text });
+
             return {
               ...block,
               text,
@@ -1041,11 +1039,11 @@ export const librarySlice = createSlice({
     },
     cycleBlockColor(state: t.State, action: PayloadAction<{ index: number }>) {
       const chapter = getSelectedChapter({ library: state });
-      console.log("cycleBlockColor", chapter);
+
       if (!chapter) return;
       const { index } = action.payload;
       const text = chapter.text[index];
-      console.log(">>>", index);
+
       if (text.type === "embeddedText") return;
       const currentColor = current(text).blockColor;
 
@@ -1062,7 +1060,7 @@ export const librarySlice = createSlice({
       if (text.blockColor === undefined) {
         text.blockColor = "red";
       }
-      console.log(text.blockColor, index, currentColor, nexts[currentColor]);
+
       state.saved = false;
     },
     resetBlockColor(state: t.State, action: PayloadAction<{ index: number }>) {

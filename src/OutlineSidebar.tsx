@@ -84,7 +84,6 @@ function DraggableChapterOutline({ chapter }: { chapter: t.Chapter }) {
   const colors = useColors();
 
   function onDragEnd(result: any) {
-    console.log({ result });
     if (!result.destination) return;
     // const ids = sortedChapters.map((chapter) => chapter.chapterid);
     //

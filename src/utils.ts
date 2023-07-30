@@ -497,14 +497,12 @@ export function prettyDate(timestamp: number) {
 }
 
 export function _encryptMessage(message: string, password: string) {
-  console.log("encrypting", { message, password });
   return CryptoJS.AES.encrypt(message, password).toString();
 }
 
 export function _decryptMessage(message: string, password: string) {
   var bytes = CryptoJS.AES.decrypt(message, password);
   const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-  console.log("decrypted", { decrypted, message, password });
   return decrypted;
 }
 

@@ -136,7 +136,6 @@ export default function Library({ mobile = false }) {
     } else if (activeTab !== null) {
       const tab = state.openTabs[activeTab];
       if (!tab) {
-        console.log("no tab found.", activeTab, state.openTabs);
         navigate("/");
         return;
       }
@@ -180,12 +179,12 @@ export default function Library({ mobile = false }) {
   }, [state.selectedBookId, chapterid]);
 
   // TODO handle encryption before enabling
-  // useSSEUpdates(setSettings);
+  useSSEUpdates(setSettings);
 
   async function saveAllBooks() {
     setLoading(true);
     const books = state.books;
-    console.log("Saving all books", { books });
+
     books.map(async (book) => {
       const promises = book.chapters.map(async (chapter) => {
         await saveChapter(chapter);
@@ -390,7 +389,6 @@ export default function Library({ mobile = false }) {
     setLoading(false);
 
     if (result.tag === "success") {
-      console.log(result.payload);
       setCachedBooks(
         result.payload.books.map((book) => ({
           title: book.title,
@@ -434,18 +432,15 @@ export default function Library({ mobile = false }) {
     const _state = someState || state;
     const chapter = getSelectedChapter({ library: _state });
     if (!chapter) {
-      console.log("No chapter to save");
     } else {
       await saveChapter(chapter, _state.suggestions);
     }
     const book = getSelectedBook({ library: _state });
     if (!book) {
-      console.log("No book to save");
     } else {
       try {
         await saveBook(book);
       } catch (e) {
-        console.log("Error saving book", e);
         dispatch(librarySlice.actions.setError(e.message));
       }
     }
@@ -537,7 +532,6 @@ export default function Library({ mobile = false }) {
     _chapter: t.Chapter,
     suggestions: t.Suggestion[] | null = null
   ) {
-    console.log("Saving chapter", _chapter);
     let chapter: t.Chapter = { ..._chapter };
     if (suggestions !== null) {
       chapter.suggestions = suggestions;
@@ -550,7 +544,11 @@ export default function Library({ mobile = false }) {
     try {
       addToWritingStreak(chapter);
     } catch (e) {
-      console.log("Error adding to writing streak", e);
+      dispatch(
+        librarySlice.actions.setError(
+          `Error adding to writing streak: ${e.message}`
+        )
+      );
     }
     try {
       const result = await makeApiCall(fd.saveChapter, [chapter]);
@@ -571,14 +569,21 @@ export default function Library({ mobile = false }) {
         );
       }
     } catch (e) {
-      console.log("Error saving chapter", e);
+      dispatch(
+        librarySlice.actions.setError(`Error saving chapter: ${e.message}`)
+      );
     }
   }
 
   async function checkIfStale() {
     const result = await fd.checkIfStale();
     if (result.tag === "error") {
-      console.log("Error checking if stale", result.message);
+      dispatch(
+        librarySlice.actions.setError(
+          `Error checking if stale: ${result.message}`
+        )
+      );
+
       return false;
     } else if (result.payload.stale) {
       if (state.saved) {
@@ -606,7 +611,7 @@ export default function Library({ mobile = false }) {
   async function saveSettings() {
     const _settings = { ...settings };
     _settings.customKey = null;
-    console.log("Saving settings", _settings);
+
     const result = await fetch("/api/settings", {
       method: "POST",
       headers: {
@@ -616,7 +621,7 @@ export default function Library({ mobile = false }) {
     });
     if (result.ok) {
       const data = await result.json();
-      console.log("Settings saved", data);
+
       setSettings((settings) => {
         return { ...settings, created_at: data.lastHeardFromServer };
       });
@@ -632,8 +637,6 @@ export default function Library({ mobile = false }) {
       const chapter = getSelectedChapter({ library: state });
       if (chapter) {
         await saveChapter(chapter, state.suggestions);
-      } else {
-        console.log("No chapter to save");
       }
       const book = getSelectedBook({ library: state });
 
@@ -678,7 +681,6 @@ export default function Library({ mobile = false }) {
 
   async function saveBook(book: t.Book) {
     if (!book) {
-      console.log("no book");
       return;
     }
 

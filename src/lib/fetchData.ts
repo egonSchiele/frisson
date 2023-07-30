@@ -331,7 +331,6 @@ export async function saveChapter(chapter: t.Chapter) {
     const text = await res.text();
     return t.error(`Error saving chapter: ${text}`);
   }
-  console.log("saved chapter, getting json");
   const data = await res.json();
   return t.success(data);
 }
@@ -378,7 +377,6 @@ export async function getSpeechTaskStatus(chapterid: string, task_id: string) {
     return t.error(`Error getting speech task: ${text}`);
   }
   const contentType = res.headers.get("Content-Type");
-  console.log("contentType", contentType);
   if (contentType === "audio/mpeg") {
     const data = await res.blob();
     return t.success({ type: "audio", data });

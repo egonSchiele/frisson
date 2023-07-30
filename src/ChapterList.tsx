@@ -135,12 +135,10 @@ export default function ChapterList({
     const files = x.target.files;
     [...files].forEach(async (file, i) => {
       const response = await fd.uploadAudio(file);
-      console.log(response);
       if (response.tag === "success") {
         const { text } = response.payload;
         await newChapter(file.name, text);
       } else {
-        console.log(response);
         dispatch(librarySlice.actions.setError(response.message));
       }
     });

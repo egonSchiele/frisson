@@ -72,7 +72,6 @@ export default function TodoListBlock({
     const lines = text.text.split("\n");
     const line = lines[index];
     let newLine;
-    console.log("toggleTodo", index, line, isDone(line));
     if (isDone(line)) {
       newLine = "- [ ] " + cleanLine(line);
     } else {
