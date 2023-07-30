@@ -130,7 +130,7 @@ export default function Library({ mobile = false }) {
     }
   }, [bookid]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (activeTab === -1) {
       navigate("/");
     } else if (activeTab !== null) {
@@ -160,7 +160,7 @@ export default function Library({ mobile = false }) {
         navigate(`/book/${state.selectedBookId}`);
       }
     }
-  }, [activeTab, openTabs]);
+  }, [activeTab, openTabs]); */
 
   // if the chapter id is null set the book list open to true
   // so that we do not end up with an empty screen.
