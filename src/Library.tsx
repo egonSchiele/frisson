@@ -18,7 +18,9 @@ import {
   getChapter,
   getCompostBookId,
   getSelectedBook,
+  getSelectedBookTitle,
   getSelectedChapter,
+  getSelectedChapterTitle,
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
@@ -37,6 +39,8 @@ import { nanoid } from "nanoid";
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const currentChapter = getSelectedChapter({ library: state });
+  const currentChapterTitle = useSelector(getSelectedChapterTitle);
+  const currentBookTitle = useSelector(getSelectedBookTitle);
   const compostBookId = useSelector(getCompostBookId);
   const editor = useSelector((state: RootState) => state.library.editor);
   const viewMode = useSelector((state: RootState) => state.library.viewMode);
@@ -75,6 +79,7 @@ export default function Library({ mobile = false }) {
           })
         );
         dispatch(librarySlice.actions.setChapter(chapterid));
+        dispatch(librarySlice.actions.closeFileNavigator());
         // dispatch(librarySlice.actions.closeLeftSidebar());
         //dispatch(librarySlice.actions.toggleOutline());
         return;
@@ -85,21 +90,30 @@ export default function Library({ mobile = false }) {
             bookid,
           })
         );
+        document.title = `${currentBookTitle} - Chisel Editor`;
+      } else {
+        document.title = `Chisel Editor`;
       }
     }
     dispatch(librarySlice.actions.setNoChapter());
   }, [chapterid, state.selectedBookId, state.booksLoaded]);
 
   useEffect(() => {
+    if (currentChapterTitle) {
+      document.title = `${currentChapterTitle} - Chisel Editor`;
+    }
+  }, [currentChapterTitle]);
+
+  useEffect(() => {
     if (state.booksLoaded) {
-      setCachedBooks(
+      /*   setCachedBooks(
         state.books.map((book) => ({
           title: book.title,
           bookid: book.bookid,
           tag: book.tag,
         }))
       );
-
+ */
       async function checkStale() {
         await checkIfStale();
       }

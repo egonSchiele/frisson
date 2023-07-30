@@ -1681,6 +1681,17 @@ export const getSelectedBook = (state: RootState): t.Book | null => {
   return book;
 };
 
+export const getSelectedBookTitle = (state: RootState): t.Book | null => {
+  if (!state.library.booksLoaded) return null;
+
+  const book = state.library.books.find(
+    (book) => book.bookid === state.library.selectedBookId
+  );
+
+  if (!book) return null;
+  return book.title;
+};
+
 export const getSelectedChapter = (state: RootState): t.Chapter | null => {
   if (!state.library.booksLoaded) return null;
 
