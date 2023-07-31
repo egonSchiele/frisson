@@ -34,6 +34,7 @@ import TodoListBlock from "./TodoListBlock";
 import ImageBlock from "./ImageBlock";
 import ShowAllVersions from "./ShowAllVersions";
 import Structure from "./Structure";
+import Calendar from "./Calendar";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
@@ -188,6 +189,7 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   if (showStructure) {
     renderedBlocks.push(<Structure key="structure" />);
+    renderedBlocks.push(<Calendar key="Calendar" />);
   }
 
   currentText.forEach((text, index) => {
