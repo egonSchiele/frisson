@@ -145,6 +145,7 @@ function TextEditor({
 
   const quillRef = useRef();
   const inputDiv = useRef<HTMLDivElement>();
+  const closedDiv = useRef<HTMLDivElement>();
   const { textindex } = useParams();
   const highlight = textindex && textindex === index.toString();
   const open = currentText.open; // || highlight;
@@ -311,18 +312,16 @@ function TextEditor({
     if (!inputDiv.current) return;
     if (textindex === index.toString()) {
       // @ts-ignore
-      inputDiv.current.scrollIntoViewIfNeeded(false);
-      window.scrollTo(0, 0);
       dispatch(librarySlice.actions.setActiveTextIndex(parseInt(textindex)));
     }
   }, [inputDiv, textindex]);
 
   const focus = () => {
-    if (!quillRef.current) return;
-
-    // @ts-ignore
-    const editor = quillRef.current.getEditor();
-    editor.focus();
+    if (quillRef.current) {
+      // @ts-ignore
+      const editor = quillRef.current.getEditor();
+      editor.focus();
+    }
 
     dispatch(
       librarySlice.actions.updateTab({
@@ -331,6 +330,15 @@ function TextEditor({
         textIndex: index,
       })
     );
+    if (inputDiv.current) {
+      // @ts-ignore
+      inputDiv.current.scrollIntoViewIfNeeded(false);
+      window.scrollTo(0, 0);
+    } else if (closedDiv.current) {
+      // @ts-ignore
+      closedDiv.current.scrollIntoViewIfNeeded(false);
+      window.scrollTo(0, 0);
+    }
   };
   const handleTextChange = (value) => {
     if (!quillRef.current) return;
@@ -709,9 +717,8 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex relative 
-              
-            `}
+            className={`flex relative ${isActive && "bg-gray-700"} `}
+            ref={closedDiv}
           >
             {/* <div
               className={`hidden md:inline-block absolute -left-20 top-0 text-sm mr-xs w-4 md:w-16 ${textColor}`}

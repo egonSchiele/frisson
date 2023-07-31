@@ -237,11 +237,23 @@ export default function Library({ mobile = false }) {
         dispatch(librarySlice.actions.closeTab(tab));
       }
     } else if (event.metaKey && event.code === "BracketLeft") {
-      event.preventDefault();
-      dispatch(librarySlice.actions.prevTab());
+      if (state.editor.activeTextIndex > 0) {
+        event.preventDefault();
+        dispatch(
+          librarySlice.actions.setActiveTextIndex(
+            state.editor.activeTextIndex - 1
+          )
+        );
+      }
     } else if (event.metaKey && event.code === "BracketRight") {
-      event.preventDefault();
-      dispatch(librarySlice.actions.nextTab());
+      if (state.editor.activeTextIndex < currentChapter.text.length - 1) {
+        event.preventDefault();
+        dispatch(
+          librarySlice.actions.setActiveTextIndex(
+            state.editor.activeTextIndex + 1
+          )
+        );
+      }
     } else if (event.key === "Escape") {
       event.preventDefault();
       if (state.popupOpen) {
