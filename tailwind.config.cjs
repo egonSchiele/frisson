@@ -5,6 +5,7 @@ module.exports = {
     "./pages/*.html",
     "./src/*.(tsx|ts|jsx|js)",
     "./src/**/*.(tsx|ts|jsx|js)",
+    require.resolve("react-widgets/styles.css"),
   ],
   theme: {
     extend: {

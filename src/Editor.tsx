@@ -189,7 +189,6 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
 
   if (showStructure) {
     renderedBlocks.push(<Structure key="structure" />);
-    renderedBlocks.push(<Calendar key="Calendar" />);
   }
 
   currentText.forEach((text, index) => {

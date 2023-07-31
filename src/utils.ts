@@ -421,10 +421,14 @@ export function hasVersions(block: t.TextBlock) {
 
 export function today(): t.Date {
   const d = new Date();
+  return dateToDate(d);
+}
+
+export function dateToDate(date: Date): t.Date {
   return {
-    day: d.getDate(),
-    month: d.getMonth() + 1,
-    year: d.getFullYear(),
+    day: date.getDate(),
+    month: date.getMonth() + 1,
+    year: date.getFullYear(),
   };
 }
 
@@ -660,4 +664,9 @@ export function getBlockBorderColor(color: t.BlockColor): string {
     none: "",
   };
   return blockColorBorders[color];
+}
+
+export function pluralize(num: number, word: string): string {
+  if (num === 1) return `${num} ${word}`;
+  return `${num} ${word}s`;
 }

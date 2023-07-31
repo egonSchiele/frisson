@@ -1823,6 +1823,14 @@ export const getNextChapter = (state: RootState): t.Chapter | null => {
   return chapters[index + 1];
 };
 
+export const getSelectedChapterWritingStreak = (
+  state: RootState
+): t.Date[] | null => {
+  const selectedChapter = getSelectedChapter(state);
+  if (!selectedChapter) return null;
+  return selectedChapter.writingStreak;
+};
+
 export const getPreviousChapter = (state: RootState): t.Chapter | null => {
   const chapters = getSelectedBookChapters(state);
   const selectedChapter = getSelectedChapter(state);

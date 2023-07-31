@@ -14,6 +14,7 @@ import Switch from "./components/Switch";
 import RadioGroup from "./components/RadioGroup";
 import { Chapter, chapterStatuses } from "./Types";
 import Header from "./components/Header";
+import CalendarWidget from "./Calendar";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);
@@ -118,6 +119,9 @@ export default function Info() {
       />
       <div className="mt-sm">
         <ChapterStatus chapter={currentChapter} />
+      </div>
+      <div className="mt-sm">
+        <CalendarWidget />
       </div>
       <CharacterInfo />
     </div>
