@@ -89,7 +89,13 @@ export default function ListItem({
     </div>
   );
 
-  const wrappedItem = link ? <Link to={link}>{itemToWrap}</Link> : itemToWrap;
+  const wrappedItem = link ? (
+    <Link to={link} className={`flex flex-grow`}>
+      {itemToWrap}
+    </Link>
+  ) : (
+    itemToWrap
+  );
 
   return (
     <div

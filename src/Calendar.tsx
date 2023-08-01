@@ -29,7 +29,7 @@ function Day({ date, label }) {
     return <div>{label}</div>;
   }
   const _date = dateToDate(date);
-  console.log({ _date, writingStreak });
+
   const isInWritingStreak = writingStreak.findIndex(
     (date) =>
       date.day === _date.day &&
