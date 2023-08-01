@@ -415,13 +415,7 @@ export default function ChapterList({
   };
 
   const dropdownMenuItems = [
-    /*     {
-      label: "Grid mode",
-      icon: <ViewColumnsIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
-      onClick: () => navigate(`/grid/${bookid}`),
-      className: buttonStyles,
-    },
- */ {
+    {
       label: "Import",
       icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
       onClick: () => {

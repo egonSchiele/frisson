@@ -253,11 +253,11 @@ export default function LibraryDesktop() {
           </PanelPlaceholder>
         </LibErrorBoundary>
 
-        <LibErrorBoundary component="chapter list">
+        {/*    <LibErrorBoundary component="chapter list">
           <PanelPlaceholder
             loaded={state.booksLoaded}
             show={state.panels.leftSidebar.open}
-            className={`top-0 left-72`}
+            className={`top-0 left-72 hidden 2xl:visible`}
           >
             <SlideTransition show={fileNavigatorOpen} direction="left">
               <div className={`absolute top-0 left-72 w-72 h-full z-10 mt-9`}>
@@ -265,7 +265,7 @@ export default function LibraryDesktop() {
               </div>
             </SlideTransition>
           </PanelPlaceholder>
-        </LibErrorBoundary>
+        </LibErrorBoundary> */}
 
         <LibErrorBoundary component="Prompts sidebar">
           <PanelPlaceholder

@@ -16,15 +16,29 @@ import TextArea from "./components/TextArea";
 import { Book, Character } from "./Types";
 import Button from "./components/Button";
 import Input from "./components/Input";
-import { getChapterText, getFontSizeClass, getTags, isString } from "./utils";
+import {
+  encryptMessage,
+  getChapterText,
+  getFontSizeClass,
+  getTags,
+  isString,
+  pluralize,
+  prettyDate,
+  wordCount,
+} from "./utils";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpRightIcon,
+  ArrowsUpDownIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { chapterToMarkdown } from "./serverUtils";
 import LibraryContext from "./LibraryContext";
 import QuillTextArea from "./components/QuillTextArea";
-import { useColors } from "./lib/hooks";
+import { useColors, useFonts } from "./lib/hooks";
 import readingTime from "reading-time/lib/reading-time";
 import CalendarWidget from "./Calendar";
+import ListMenu from "./components/ListMenu";
 
 function BookInfo({ book }: { book: Book }) {
   const text = book.chapters
@@ -194,6 +208,13 @@ function Chapter({ chapter, bookid, index }) {
       }
     });
   }
+  let status = "";
+  if (chapter.status && chapter.status === "done") {
+    status = `✅`;
+  } else if (chapter.status && chapter.status === "in-progress") {
+    status = `🚧`;
+  }
+  //const hasHiddenBlocks = wordCount(chapter, true) !== wordCount(chapter);
 
   return (
     <div className="flex flex-col my-sm">
@@ -203,15 +224,28 @@ function Chapter({ chapter, bookid, index }) {
         >
           {index}.
         </span>
-        <span className="mb-xs">{chapter.title}</span>
+        <span className="mb-xs">
+          {chapter.title} {status}
+        </span>
       </h3>
-      <p
-        className={`${colors.secondaryTextColor} text-lg px-sm mt-sm font-sans line-clamp-3 tracking-wide leading-8 cursor-pointer`}
-        onClick={() => navigate(`/book/${bookid}/chapter/${chapter.chapterid}`)}
-      >
-        {getChapterText(chapter).slice(0, 350)}
-      </p>
+      <Link to={`/book/${bookid}/chapter/${chapter.chapterid}`}>
+        <p
+          className={`${colors.secondaryTextColor} text-lg px-sm mt-sm font-sans line-clamp-3 tracking-wide leading-8 cursor-pointer`}
+        >
+          {getChapterText(chapter).slice(0, 350)}
+        </p>
+      </Link>
       <div className="flex flex-row justify-end">
+        {/*   <p className="text-sm font-sans text-gray-500">
+          {wordCount(chapter)} words{" "}
+          {hasHiddenBlocks && <span>({wordCount(chapter, true)} total)</span>} |{" "}
+        </p> */}
+        {/* <p
+          className={`text-md px-sm mt-md font-sans ${colors.secondaryTextColor}`}
+        >
+          Last edited: {prettyDate(chapter.created_at)}
+        </p> */}
+
         <Button
           onClick={() => {
             // @ts-ignore
@@ -485,7 +519,7 @@ function CoverImage({
 function Heading({ text, className = "", children = null }) {
   const colors = useColors();
   return (
-    <div className="text-xl font-semibold mt-[8rem] w-full mb-xs">
+    <div className="text-xl font-semibold mt-[4rem] w-full mb-xs">
       <div
         className={`text-2xl font-semibold mb-xs w-full uppercase pb-sm relative text-center tracking-[1em] border-b-2 ${colors.selectedBorderColor} ${className}`}
       >
@@ -599,11 +633,18 @@ export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
   const writingStreak = useSelector(getSelectedBookWritingStreak);
+  const encryptionPassword: string | null = useSelector(
+    (state: RootState) => state.library.encryptionPassword
+  );
+  const { fontClass, fontSizeClass, titleFontSize } = useFonts();
+
   const dispatch = useDispatch();
   const bookEditorDiv = useRef(null);
-  const { settings, saveBook } = useContext(
+  const { settings, saveBook, setLoading, newChapter } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
+  const uploadFileRef = React.useRef<HTMLInputElement>(null);
+  const uploadAudioRef = React.useRef<HTMLInputElement>(null);
 
   const colors = useColors();
   const { scrollTop } = useParams();
@@ -654,14 +695,35 @@ export default function BookEditor({ className = "" }) {
     }
   }
 
+  function handleUpload(x) {
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      let text = await file.text();
+      if (encryptionPassword !== null) {
+        text = encryptMessage(text, encryptionPassword);
+      }
+      await newChapter(file.name, text);
+    });
+  }
+
+  function handleAudioUpload(x) {
+    setLoading(true);
+    const files = x.target.files;
+    [...files].forEach(async (file, i) => {
+      const response = await fd.uploadAudio(file);
+      if (response.tag === "success") {
+        const { text } = response.payload;
+        await newChapter(file.name, text);
+      } else {
+        dispatch(librarySlice.actions.setError(response.message));
+      }
+    });
+    setLoading(false);
+  }
+
   if (!book) {
     return <div>loading</div>;
   }
-  /* if (book.tag === "compost") {
-    return <CompostBook />;
-  } */
-  let fontSize = settings.design?.fontSize || 18;
-  const fontSizeClass = getFontSizeClass(fontSize);
 
   return (
     <div
@@ -688,20 +750,65 @@ export default function BookEditor({ className = "" }) {
             dispatch(librarySlice.actions.setBookSynopsis(value));
           }}
           title="Synopsis"
-          inputClassName={`typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none ${fontSizeClass}`}
+          inputClassName={`typography border-0 bg-editor text-editortext dark:bg-dmeditor dark:text-dmeditortext resize-none  ${fontSizeClass}`}
         />
 
-        <CoverImage book={book} className="mt-lg" />
+        {/* <CoverImage book={book} className="mt-lg" /> */}
         {/* this (bookinfo) was causing a lot of re-renderings when editing a tag or character */}
         {/* <BookInfo book={book} /> */}
         {/* <CalendarWidget writingStreak={writingStreak} /> */}
-        <div className={`grid gap-md grid-cols-1 mt-lg`}>
+        <input
+          type="file"
+          id="imgupload"
+          className="hidden"
+          key="upload"
+          ref={uploadFileRef}
+          multiple={true}
+          onChange={handleUpload}
+        />
+
+        <input
+          type="file"
+          id="audioupload"
+          className="hidden"
+          key="audioupload"
+          ref={uploadAudioRef}
+          multiple={true}
+          onChange={handleAudioUpload}
+        />
+        <div className={`grid gap-md grid-cols-1 mt-md`}>
           <div className="grid gap-sm grid-cols-1 ">
-            <Heading
-              text={`${chapters.length} ${
-                chapters.length === 1 ? "Chapter" : "Chapters"
-              }`}
-            />
+            <Heading text={`${pluralize(chapters.length, "Chapter")}`}>
+              <Button
+                onClick={() => {
+                  // @ts-ignore
+                  window.plausible("bookeditor-chapter-add-button-click");
+                  newChapter("New chapter");
+                  //if (uploadFileRef.current) uploadFileRef.current.click();
+                }}
+                rounded={true}
+                className="ml-xs mb-xs absolute right-0 top-0"
+                size="small"
+                selector="add-chapter-button"
+              >
+                Add Chapter
+              </Button>
+              {settings.admin && (
+                <Button
+                  onClick={() => {
+                    // @ts-ignore
+                    window.plausible("bookeditor-chapter-import-audio-click");
+                    if (uploadAudioRef.current) uploadAudioRef.current.click();
+                  }}
+                  rounded={true}
+                  className="ml-xs mb-xs absolute left-0 top-0"
+                  size="small"
+                  selector="import-audio-button"
+                >
+                  Import Audio
+                </Button>
+              )}
+            </Heading>
             {chapters &&
               chapters.map((chapter, i) => (
                 <Chapter
