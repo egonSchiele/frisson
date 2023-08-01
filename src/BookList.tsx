@@ -134,7 +134,7 @@ export default function BookList({ cachedBooks = null }) {
   }
 
   function bookListItem(book, tag: string | null = null) {
-    const menuItems = [
+    /* const menuItems = [
       {
         label: "Delete",
         onClick: () => deleteBook(book.bookid, onDelete),
@@ -148,14 +148,14 @@ export default function BookList({ cachedBooks = null }) {
           window.location.pathname = `/api/exportBook/${book.bookid}/${title}.zip`;
         },
       },
-    ];
+    ]; */
     return (
       <ListItem
         link={`/book/${book.bookid}`}
         title={book.title}
         selected={book.bookid === selectedBookId}
         selector={tag ? `booklist-${tag}` : "booklist"}
-        menuItems={menuItems}
+        /* menuItems={menuItems} */
         tag={tag}
       />
     );

@@ -682,7 +682,7 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow w-full px-0 xl:pl-sm xl:pr-md ${blockColorBorder} `}
+              className={`flex-grow w-full pl-sm pr-md ${blockColorBorder} `}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}

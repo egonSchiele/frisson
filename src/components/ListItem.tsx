@@ -102,7 +102,7 @@ export default function ListItem({
       className={`flex  w-full ${colors.primaryTextColor} text-sm xl:text-md items-center ${colors.itemHover} ${selectedCss} `}
     >
       {wrappedItem}
-      {/* {tag !== "compost" && menuItems.length > 0 && (
+      {tag !== "compost" && menuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu
             items={menuItems}
@@ -110,7 +110,7 @@ export default function ListItem({
             className="-translate-x-3/4"
           />
         </div>
-      )} */}
+      )}
     </div>
   );
 }
