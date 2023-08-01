@@ -172,7 +172,7 @@ export default function ChapterList({
       textindex: number;
     }[] = [];
     const term = searchTerm.toLowerCase();
-    const previewLength = mobile ? 100 : 50;
+    const previewLength = 100;
     chapters.forEach((chapter, i) => {
       chapter.text.forEach((text, textindex) => {
         const textText = text.text.toLowerCase();
@@ -240,7 +240,7 @@ export default function ChapterList({
       } else if (chapter.status && chapter.status === "in-progress") {
         title = `🚧 ${title}`;
       }
-      const previewLength = mobile ? 100 : 50;
+      const previewLength = 100;
       let content = chapter.text.map((t) => t.text).join(". ");
 
       if (content.length > previewLength) {

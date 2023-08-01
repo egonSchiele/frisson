@@ -57,7 +57,7 @@ export default function ListItem({
       {!content && (
         <div className="w-full">
           <p
-            className="px-xs overflow-hidden text-ellipsis whitespace-nowrap flex content-start"
+            className="px-xs overflow-hidden text-ellipsis break-words flex content-start"
             data-selector={`${selector}-list-item`}
           >
             {tag === "compost" && (
@@ -74,7 +74,7 @@ export default function ListItem({
       {content && (
         <div className="w-full py-xs">
           <p
-            className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis whitespace-nowrap font-bold ${className}`}
+            className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis break-words font-bold ${className}`}
             data-selector={`${selector}-list-item`}
           >
             {title}
@@ -102,7 +102,7 @@ export default function ListItem({
       className={`flex  w-full ${colors.primaryTextColor} text-sm xl:text-md items-center ${colors.itemHover} ${selectedCss} `}
     >
       {wrappedItem}
-      {tag !== "compost" && menuItems.length > 0 && (
+      {/* {tag !== "compost" && menuItems.length > 0 && (
         <div className="flex flex-none cursor-pointer items-center mr-xs">
           <ListMenu
             items={menuItems}
@@ -110,7 +110,7 @@ export default function ListItem({
             className="-translate-x-3/4"
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

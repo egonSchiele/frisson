@@ -30,9 +30,9 @@ function Section({ title, children }) {
   const colors = useColors();
   const [open, setOpen] = useLocalStorage(`booklist-section-${title}`, true);
   return (
-    <div className={`mb-sm grid grid-cols-1`}>
+    <div className={`mb-md grid grid-cols-1`}>
       <div
-        className={`settings_label cursor-pointer pl-xs py-1 ${colors.selectedBackground} flex`}
+        className={`cursor-pointer pl-xs py-1 settings_label flex ${colors.secondaryTextColor}`}
         onClick={() => setOpen(!open)}
       >
         <p className="flex-grow">{title}</p>
@@ -312,6 +312,7 @@ export default function BookList({ cachedBooks = null }) {
         /* className={colors.backgroundAlt} */
         /* swipeToClose="left"
         close={close} */
+        className={`${colors.background} border-r ${colors.borderColor}`}
         open={open}
       />
     </>

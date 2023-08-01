@@ -244,7 +244,7 @@ export default function LibraryDesktop() {
           >
             <SlideTransition show={fileNavigatorOpen} direction="left">
               <div
-                className={`absolute top-0 left-0 h-full w-48 z-10 mt-9`}
+                className={`absolute top-0 left-0 h-full w-72 z-10 mt-9`}
                 id="booklist"
               >
                 <BookList />
@@ -257,10 +257,10 @@ export default function LibraryDesktop() {
           <PanelPlaceholder
             loaded={state.booksLoaded}
             show={state.panels.leftSidebar.open}
-            className={`top-0 left-48`}
+            className={`top-0 left-72`}
           >
             <SlideTransition show={fileNavigatorOpen} direction="left">
-              <div className={`absolute top-0 left-48 w-60 h-full z-10 mt-9`}>
+              <div className={`absolute top-0 left-72 w-72 h-full z-10 mt-9`}>
                 <ChapterList selectedChapterId={chapterid || ""} />
               </div>
             </SlideTransition>
