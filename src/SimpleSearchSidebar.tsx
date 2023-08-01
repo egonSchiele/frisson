@@ -10,7 +10,7 @@ import ListItem from "./components/ListItem";
 import LibraryContext from "./LibraryContext";
 import { useColors } from "./lib/hooks";
 import { RootState } from "./store";
-import { getChapterText } from "./utils";
+import { getChapterText, getStringContext } from "./utils";
 
 function SearchResult({ book, chapter, index }) {
   return (
@@ -44,13 +44,14 @@ export default function SimpleSearchSidebar() {
     }
   }, [searchRef]);
 
-  const line = (book, chapter) => (
+  const line = (book, chapter, content) => (
     <ListItem
       title={`${book.title}/${chapter.title}`}
       key={chapter.chapterid}
       link={`/book/${book.bookid}/chapter/${chapter.chapterid}`}
       className="w-full"
       selected={false}
+      content={content}
     />
   );
 
@@ -74,10 +75,18 @@ export default function SimpleSearchSidebar() {
         if (
           getChapterText(chapter, true)
             .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
+            .includes(searchTerm.toLowerCase())
+        ) {
+          const context = getStringContext(
+            getChapterText(chapter, true),
+            searchTerm,
+            50
+          );
+          results.push(line(book, chapter, context));
+        } else if (
           chapter.title.toLowerCase().includes(searchTerm.toLowerCase())
         ) {
-          results.push(line(book, chapter));
+          results.push(line(book, chapter, ""));
         }
       });
     });

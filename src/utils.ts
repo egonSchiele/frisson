@@ -670,3 +670,14 @@ export function pluralize(num: number, word: string): string {
   if (num === 1) return `${num} ${word}`;
   return `${num} ${word}s`;
 }
+
+export function getStringContext(
+  str: string,
+  substring: string,
+  window: number
+): string {
+  const index = str.toLowerCase().indexOf(substring.toLowerCase());
+  const start = Math.max(0, index - window);
+  const end = Math.min(str.length, index + substring.length + window);
+  return str.substring(start, end);
+}

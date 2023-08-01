@@ -74,13 +74,13 @@ export default function ListItem({
       {content && (
         <div className="w-full py-xs">
           <p
-            className={`px-xs overflow-hidden text-lg md:text-sm text-ellipsis break-words font-bold ${className}`}
+            className={`px-xs overflow-hidden text-sm xl:text-md text-ellipsis break-words font-bold ${className}`}
             data-selector={`${selector}-list-item`}
           >
             {title}
           </p>
           <p
-            className={`px-xs ${colors.secondaryTextColor} line-clamp-2 leading-4  text-ellipsis ${contentClassName}`}
+            className={`px-xs mt-1 ${colors.secondaryTextColor} line-clamp-2 leading-6 text-ellipsis ${contentClassName}`}
           >
             {content}
           </p>

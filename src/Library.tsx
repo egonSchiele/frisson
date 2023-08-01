@@ -179,7 +179,8 @@ export default function Library({ mobile = false }) {
   }, [state.selectedBookId, chapterid]);
 
   // TODO handle encryption before enabling
-  useSSEUpdates(setSettings);
+  // This doesn't handle multiple tabs in the same browser.
+  // useSSEUpdates(setSettings);
 
   async function saveAllBooks() {
     setLoading(true);
