@@ -8,6 +8,7 @@ import {
   getAllTags,
   getSelectedBook,
   getSelectedBookChapters,
+  getSelectedBookWritingStreak,
   librarySlice,
 } from "./reducers/librarySlice";
 import ContentEditable from "./components/ContentEditable";
@@ -23,6 +24,7 @@ import LibraryContext from "./LibraryContext";
 import QuillTextArea from "./components/QuillTextArea";
 import { useColors } from "./lib/hooks";
 import readingTime from "reading-time/lib/reading-time";
+import CalendarWidget from "./Calendar";
 
 function BookInfo({ book }: { book: Book }) {
   const text = book.chapters
@@ -596,6 +598,7 @@ function Tags() {
 export default function BookEditor({ className = "" }) {
   const book = useSelector(getSelectedBook);
   const chapters = useSelector(getSelectedBookChapters);
+  const writingStreak = useSelector(getSelectedBookWritingStreak);
   const dispatch = useDispatch();
   const bookEditorDiv = useRef(null);
   const { settings, saveBook } = useContext(
@@ -689,8 +692,9 @@ export default function BookEditor({ className = "" }) {
         />
 
         <CoverImage book={book} className="mt-lg" />
-        {/* this was causing a lot of re-renderings when editing a tag or character */}
+        {/* this (bookinfo) was causing a lot of re-renderings when editing a tag or character */}
         {/* <BookInfo book={book} /> */}
+        {/* <CalendarWidget writingStreak={writingStreak} /> */}
         <div className={`grid gap-md grid-cols-1 mt-lg`}>
           <div className="grid gap-sm grid-cols-1 ">
             <Heading

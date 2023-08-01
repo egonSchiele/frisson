@@ -1831,6 +1831,20 @@ export const getSelectedChapterWritingStreak = (
   return selectedChapter.writingStreak;
 };
 
+export const getSelectedBookWritingStreak = (
+  state: RootState
+): t.Date[] | null => {
+  const selectedBook = getSelectedBook(state);
+  if (!selectedBook) return null;
+  const writingStreak = [];
+  selectedBook.chapters.forEach((chapter) => {
+    if (chapter && chapter.writingStreak)
+      writingStreak.push(...chapter.writingStreak);
+  });
+  // TODO this uniq is not working because this is an array of objects. Convert to timestamps or strings
+  return uniq(writingStreak);
+};
+
 export const getPreviousChapter = (state: RootState): t.Chapter | null => {
   const chapters = getSelectedBookChapters(state);
   const selectedChapter = getSelectedChapter(state);

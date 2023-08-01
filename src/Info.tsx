@@ -6,6 +6,7 @@ import { RootState } from "./store";
 import {
   getCharacters,
   getSelectedChapter,
+  getSelectedChapterWritingStreak,
   librarySlice,
 } from "./reducers/librarySlice";
 import readingTime from "reading-time/lib/reading-time";
@@ -94,6 +95,7 @@ export default function Info() {
   const state = useSelector((state: RootState) => state.library);
   const dispatch = useDispatch();
   const currentChapter = useSelector(getSelectedChapter);
+  const writingStreak = useSelector(getSelectedChapterWritingStreak);
   const [showHidden, setShowHidden] = useLocalStorage("Info/showHidden", false);
   if (!currentChapter) return null;
   let infoText = getChapterText(currentChapter, showHidden);
@@ -121,7 +123,7 @@ export default function Info() {
         <ChapterStatus chapter={currentChapter} />
       </div>
       <div className="mt-sm">
-        <CalendarWidget />
+        <CalendarWidget writingStreak={writingStreak} />
       </div>
       <CharacterInfo />
     </div>

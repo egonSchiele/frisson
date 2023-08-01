@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
+import { createContext } from "react";
+import * as t from "./Types";
+
 import { Fragment } from "react";
 import {
   ChevronDownIcon,
@@ -17,8 +20,10 @@ import {
 import Calendar from "react-widgets/Calendar";
 import { pluralize, dateToDate } from "./utils";
 
+const WritingStreakContext = createContext<t.Date[] | null>(null);
+
 function Day({ date, label }) {
-  const writingStreak = useSelector(getSelectedChapterWritingStreak);
+  const writingStreak = useContext(WritingStreakContext) as t.Date[] | null;
 
   if (!writingStreak) {
     return <div>{label}</div>;
@@ -47,8 +52,11 @@ function Day({ date, label }) {
   }
 }
 
-export default function CalendarWidget() {
-  const writingStreak = useSelector(getSelectedChapterWritingStreak);
+export default function CalendarWidget({
+  writingStreak,
+}: {
+  writingStreak: t.Date[] | null;
+}) {
   const colors = useColors();
   if (!writingStreak)
     return <p className="text-sm text-gray-400">No writing streak.</p>;
@@ -57,7 +65,9 @@ export default function CalendarWidget() {
       <label className="settings_label mb-xs">
         Writing Streak ({pluralize(writingStreak.length, "day")})
       </label>
-      <Calendar renderDay={Day} className="" />
+      <WritingStreakContext.Provider value={writingStreak}>
+        <Calendar renderDay={Day} className="" />
+      </WritingStreakContext.Provider>
     </div>
   );
 }
