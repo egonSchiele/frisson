@@ -195,18 +195,33 @@ function Chapter({ chapter, bookid, index }) {
 
   const { deleteChapter } = useContext(LibraryContext) as t.LibraryContextType;
   const colors = useColors();
-  function _deleteChapter() {
+  async function _deleteChapter() {
     const chapterid = chapter.chapterid;
     dispatch(librarySlice.actions.loading());
     deleteChapter(chapterid);
     // @ts-ignore
     window.plausible("bookeditor-chapter-delete-button-click");
-    fd.deleteChapter(bookid, chapterid).then((res) => {
-      dispatch(librarySlice.actions.loaded());
-      if (res.tag === "error") {
-        dispatch(librarySlice.actions.setError(res.message));
+    const res = await fd.deleteChapter(bookid, chapterid);
+    dispatch(librarySlice.actions.loaded());
+    if (res.tag === "error") {
+      dispatch(librarySlice.actions.setError(res.message));
+    } else {
+      console.log("deleted chapter", { res });
+      if (res.payload && res.payload.lastHeardFromServer) {
+        dispatch(
+          librarySlice.actions.updateTimestampForBook({
+            bookid,
+            lastHeardFromServer: res.payload.lastHeardFromServer,
+          })
+        );
+      } else {
+        dispatch(
+          librarySlice.actions.setError(
+            "Couldn't update timestamp for book in _deleteChapter"
+          )
+        );
       }
-    });
+    }
   }
   let status = "";
   if (chapter.status && chapter.status === "done") {

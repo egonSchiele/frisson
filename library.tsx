@@ -45,8 +45,13 @@ document.addEventListener("copy", function (e) {
   // @ts-ignore
   const clipdata = e.clipboardData || window.clipboardData;
 
+  // i.e. for vs code
   clipdata.setData("text/plain", text_only);
-  clipdata.setData("text/html", text_only);
+
+  // i.e. for google docs, email, slack.
+  // Disabling, because if html is not set, it will grab the text/plain version.
+  // Otherwise it will try to render `text_only` as html, which removes all line breaks.
+  // clipdata.setData("text/html", text_only);
   e.preventDefault();
 });
 

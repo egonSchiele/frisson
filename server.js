@@ -756,6 +756,7 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
   } else {
     const settings = user.settings;
     settings.admin = user.admin;
+    settings.email = user.email;
     res.status(200).json({ settings, usage: user.usage });
   }
 });

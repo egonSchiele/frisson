@@ -101,7 +101,7 @@ export default function SimpleSearchSidebar() {
       rightMenuItem={null}
       className="border-r w-full"
       selector="searchList"
-      showScrollbar={true}
+      showScrollbar={false}
     />
   );
 }

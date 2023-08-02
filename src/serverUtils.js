@@ -52,6 +52,7 @@ export async function checkForStaleUpdate(
   const doc = await docRef.get();
   const lastHeardFromServer = parseInt(_lastHeardFromServer);
   const FUDGE_FACTOR = 1000 * 60;
+
   if (doc.exists) {
     const data = doc.data();
     if (lastHeardFromServer === null) {

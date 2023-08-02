@@ -24,7 +24,7 @@ export function failure(message) {
   return { success: false, message };
 }
 
-export const saveBook = async (book, lastHeardFromServer) => {
+export const saveBook = async (book) => {
   if (!book) {
     console.log("no book to save");
     return failure("No book to save");
@@ -36,8 +36,9 @@ export const saveBook = async (book, lastHeardFromServer) => {
     book.lastHeardFromServer,
     docRef,
     async () => {
+      const created_at = Date.now();
       try {
-        book.created_at = Date.now();
+        book.created_at = created_at;
 
         if (book.chapterOrder) {
           book.chapterOrder = _.uniq(book.chapterOrder);
@@ -48,7 +49,7 @@ export const saveBook = async (book, lastHeardFromServer) => {
         console.error("Error syncing book to Firestore:", error);
         return failure("Error saving book");
       }
-      return success({});
+      return success({ lastHeardFromServer: created_at });
     }
   );
 };
@@ -303,6 +304,7 @@ export const getChapter = async (chapterid) => {
 
 export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
   const docRef = db.collection("chapters").doc(chapterid);
+
   return await checkForStaleUpdate(
     "chapter",
     lastHeardFromServer,
@@ -332,7 +334,7 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
           (_chapterid) => _chapterid !== chapterid
         );
       }
-      return await saveBook(book, lastHeardFromServer);
+      return await saveBook(book);
     }
   );
 };

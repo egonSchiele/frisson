@@ -535,6 +535,7 @@ export type UserSettings = {
   prompts: Prompt[];
   design?: DesignPreferences | null;
   admin?: boolean;
+  email?: string;
   autocompleteCache?: { [key: string]: number };
   created_at?: number;
   encrypted?: boolean;

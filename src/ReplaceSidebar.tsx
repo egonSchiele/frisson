@@ -158,7 +158,7 @@ export default function ReplaceSidebar() {
       rightMenuItem={null}
       className="border-r w-full"
       selector="replaceList"
-      showScrollbar={true}
+      showScrollbar={false}
     />
   );
 }

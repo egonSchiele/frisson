@@ -221,7 +221,7 @@ export default function DebugSidebar() {
       rightMenuItem={null}
       className="border-r w-full"
       selector="debugList"
-      showScrollbar={true}
+      showScrollbar={false}
     />
   );
 }

@@ -73,7 +73,46 @@ export default function Nav({
       ></div>
     );
   }
-  const fromCache = true; //state.fromCache;
+  const fromCache = state.fromCache;
+
+  const saveIcons = [];
+  if (!state.saved) {
+    saveIcons.push(
+      <NavButton
+        color="nav"
+        label="Unsaved"
+        onClick={async () => {
+          //await onTextEditorSave();
+        }}
+      >
+        <MinusIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
+      </NavButton>
+    );
+  }
+
+  if (state.saved && !state.serviceWorkerRunning) {
+    saveIcons.push(
+      <NavButton color="nav" label="Saved" onClick={() => {}}>
+        <CheckCircleIcon
+          className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
+          aria-hidden="true"
+        />
+      </NavButton>
+    );
+  }
+  if (state.saved && state.serviceWorkerRunning) {
+    saveIcons.push(
+      <NavButton color="nav" label="Saved" onClick={() => {}}>
+        <CheckIcon
+          className={`h-8 w-8 md:h-5 md:w-5  ${
+            fromCache ? "text-green-500" : colors.highlightTextColor
+          }`}
+          aria-hidden="true"
+        />
+      </NavButton>
+    );
+  }
+
   return (
     <div
       className={`h-9 w-screen absolute left-0 top-0 z-50 flex-grow ${colors.navBackgroundColor} align-middle `}
@@ -274,43 +313,7 @@ export default function Nav({
         <div className="flex-grow w-[calc(100%-50rem)] overflow-x-scroll no-scrollbar" />
 
         {/* book editor nav */}
-        {bookid && !chapterid && (
-          <div className="mr-xs">
-            {!state.saved && (
-              <NavButton
-                color="nav"
-                label="Unsaved"
-                onClick={async () => {
-                  //await onTextEditorSave();
-                }}
-              >
-                <MinusIcon
-                  className="h-8 w-8 md:h-5 md:w-5"
-                  aria-hidden="true"
-                />
-              </NavButton>
-            )}
-
-            {state.saved && !state.serviceWorkerRunning && (
-              <NavButton color="nav" label="Saved" onClick={() => {}}>
-                <CheckCircleIcon
-                  className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
-                  aria-hidden="true"
-                />
-              </NavButton>
-            )}
-            {state.saved && state.serviceWorkerRunning && (
-              <NavButton color="nav" label="Saved" onClick={() => {}}>
-                <CheckIcon
-                  className={`h-8 w-8 md:h-5 md:w-5  ${
-                    fromCache ? "text-green-500" : colors.highlightTextColor
-                  }`}
-                  aria-hidden="true"
-                />
-              </NavButton>
-            )}
-          </div>
-        )}
+        {bookid && !chapterid && <div className="mr-xs">{saveIcons}</div>}
 
         {/* right side nav */}
         {chapterid && (
@@ -350,34 +353,8 @@ export default function Nav({
                   focus mode
                 </span>
               )}
-              {!state.saved && (
-                <NavButton color="nav" label="Unsaved" onClick={() => {}}>
-                  <MinusIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
 
-              {state.saved && !state.serviceWorkerRunning && (
-                <NavButton color="nav" label="Saved" onClick={() => {}}>
-                  <CheckCircleIcon
-                    className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-
-              {state.saved && state.serviceWorkerRunning && (
-                <NavButton color="nav" label="Saved" onClick={() => {}}>
-                  <CheckIcon
-                    className={`h-8 w-8 md:h-5 md:w-5  ${
-                      fromCache ? "text-green-500" : colors.highlightTextColor
-                    }`}
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
+              {saveIcons}
 
               {state.viewMode !== "readonly" && !mobile && (
                 <NavButton

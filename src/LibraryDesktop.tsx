@@ -68,6 +68,11 @@ export default function LibraryDesktop() {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "filenavigator";
 
+  const chapterListOpen =
+    state.panels.leftSidebar.open &&
+    state.panels.leftSidebar.activePanel === "filenavigator" &&
+    chapterid;
+
   const promptsOpen =
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "prompts";
@@ -181,6 +186,9 @@ export default function LibraryDesktop() {
         {state.popupOpen && state.popupData && (
           <LibErrorBoundary component="popup">
             <Popup {...state.popupData} />
+            <div className="bg-gray-800 p-xs absolute bottom-0 right-0 z-50 text-gray-500">
+              {settings.email}
+            </div>
           </LibErrorBoundary>
         )}
         {state.helpOpen && (
@@ -253,19 +261,19 @@ export default function LibraryDesktop() {
           </PanelPlaceholder>
         </LibErrorBoundary>
 
-        {/*    <LibErrorBoundary component="chapter list">
+        <LibErrorBoundary component="chapter list">
           <PanelPlaceholder
             loaded={state.booksLoaded}
             show={state.panels.leftSidebar.open}
             className={`top-0 left-72 hidden 2xl:visible`}
           >
-            <SlideTransition show={fileNavigatorOpen} direction="left">
+            <SlideTransition show={chapterListOpen} direction="left">
               <div className={`absolute top-0 left-72 w-72 h-full z-10 mt-9`}>
                 <ChapterList selectedChapterId={chapterid || ""} />
               </div>
             </SlideTransition>
           </PanelPlaceholder>
-        </LibErrorBoundary> */}
+        </LibErrorBoundary>
 
         <LibErrorBoundary component="Prompts sidebar">
           <PanelPlaceholder

@@ -153,7 +153,8 @@ export async function deleteChapter(bookid: string, chapterid: string) {
     const text = await res.text();
     return t.error(`Error deleting book: ${text}`);
   }
-  return t.success();
+  const data = await res.json();
+  return t.success(data);
 }
 
 export async function newBook() {

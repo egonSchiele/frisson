@@ -332,7 +332,8 @@ function TextEditor({
     );
     if (inputDiv.current) {
       // @ts-ignore
-      inputDiv.current.scrollIntoViewIfNeeded(false);
+      // disabling, otherwise editor jumps each time I click on a text block
+      // inputDiv.current.scrollIntoViewIfNeeded(false);
       window.scrollTo(0, 0);
     } else if (closedDiv.current) {
       // @ts-ignore
