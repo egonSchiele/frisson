@@ -285,6 +285,7 @@ app.post("/loginGuestUser", async (req, res) => {
 app.get("/logout", async (req, res) => {
   res.clearCookie("userid");
   res.clearCookie("token");
+  res.json({ clearLocalStorage: true });
   res.redirect("/login");
 });
 
