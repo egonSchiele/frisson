@@ -813,14 +813,14 @@ export default function BookEditor({ className = "" }) {
                   onClick={() => {
                     // @ts-ignore
                     window.plausible("bookeditor-chapter-import-audio-click");
-                    if (uploadAudioRef.current) uploadAudioRef.current.click();
+                    if (settings.customKey && uploadAudioRef.current) uploadAudioRef.current.click();
                   }}
                   rounded={true}
                   className="ml-xs mb-xs absolute left-0 top-0"
                   size="small"
                   selector="import-audio-button"
                 >
-                  Import Audio
+                  {settings.customKey ? <MicIcon /> : 'Import Audio'}
                 </Button>
               )}
             </Heading>
