@@ -373,7 +373,7 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     const response = run(`
     curl --request POST \
   --url https://api.openai.com/v1/audio/transcriptions \
-  --header 'Authorization: Bearer ${settings.openAiApiKey}' \
+  --header 'Authorization: Bearer ${fields.customKey || settings.openAiApiKey}' \
   --header 'Content-Type: multipart/form-data' \
   --form file=@${mp3Path} \
   --form model=whisper-1`);
