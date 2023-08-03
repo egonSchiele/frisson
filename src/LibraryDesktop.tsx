@@ -68,10 +68,11 @@ export default function LibraryDesktop() {
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "filenavigator";
 
-  const chapterListOpen =
+  const chapterListOpen = !!(
     state.panels.leftSidebar.open &&
     state.panels.leftSidebar.activePanel === "filenavigator" &&
-    chapterid;
+    chapterid
+  );
 
   const promptsOpen =
     state.panels.leftSidebar.open &&
