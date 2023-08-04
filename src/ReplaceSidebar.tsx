@@ -29,6 +29,12 @@ export default function ReplaceSidebar() {
   const { settings } = useContext(LibraryContext) as LibraryContextType;
 
   const currentChapter = useSelector(getSelectedChapter);
+  const activeTextIndex = useSelector(
+    (state: RootState) => state.library.editor.activeTextIndex
+  );
+  const currentText = currentChapter
+    ? currentChapter.text[activeTextIndex]
+    : [];
   const colors = useColors();
   const [searchTerm, setSearchTerm] = useLocalStorage(
     "replaceSidebar-searchTerm",
@@ -103,32 +109,43 @@ export default function ReplaceSidebar() {
   ];
 
   const countInString = (str: string): number => {
-    const re = new RegExp(searchTerm, "gi");
+    const term = searchTerm.replaceAll("\\", "\\\\");
+
+    const re = new RegExp(term, "gi");
     return (str.match(re) || []).length;
   };
 
   let resultCount = 0;
   if (searchTerm.length > 0) {
-    currentChapter.text.forEach((block: t.TextBlock) => {
+    const blocksToSearch = replaceInAllBlocks
+      ? currentChapter.text
+      : [currentText];
+    blocksToSearch.forEach((block: t.TextBlock) => {
       resultCount += countInString(block.text);
-      if (block.type !== "embeddedText" && block.versions) {
+      // TODO also replace in versions
+      /*       if (block.type !== "embeddedText" && block.versions) {
         block.versions.forEach((version: t.Version) => {
           resultCount += countInString(version.text);
         });
       }
+ */
     });
   }
 
-  items.push(
-    <p key="resultCount">
-      {resultCount} results in {currentChapter.text.length} blocks
-    </p>
-  );
+  if (replaceInAllBlocks) {
+    items.push(
+      <p key="resultCount">
+        {resultCount} results in {currentChapter.text.length} blocks
+      </p>
+    );
+  } else {
+    items.push(<p key="resultCount">{resultCount} results in 1 block</p>);
+  }
 
   if (resultCount > 0) {
     items.push(
       <p key="replaceInfo mt-xs">
-        Replacing {searchTerm} with {replaceTerm}
+        Replacing {searchTerm} with {replaceTerm}, excluding versions
       </p>,
       <Button
         key="replaceButton"

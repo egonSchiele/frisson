@@ -1503,7 +1503,8 @@ async function usingLocalAi(
 function sanitize(str) {
   return str
     .split(" ")
-    .map((word) => {
+    .map((_word) => {
+      const word = _word.trim().replaceAll(/[^a-zA-Z0-9]/g, "");
       if (
         blocklist.includes(word.toLowerCase()) ||
         secondaryBlocklist.includes(word.toLowerCase())

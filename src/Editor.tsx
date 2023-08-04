@@ -223,7 +223,8 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
     } else if (text.type === "image") {
       renderedBlocks.push(<ImageBlock text={text} index={index} key={key} />);
       return;
-    } else if (text.showAllVersions) {
+    }
+    if (text.showAllVersions && text.open) {
       renderedBlocks.push(
         <ShowAllVersions key={`${key}-allVersions`} index={index} />
       );

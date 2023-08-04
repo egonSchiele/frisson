@@ -1,7 +1,7 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LibraryContext from "./LibraryContext";
 import * as t from "./Types";
 import Button from "./components/Button";
@@ -49,15 +49,11 @@ function OutlineItem({ text, i }) {
   }
   //  border-b ${colors.borderColor}
   return (
-    <li
+    <Link
       key={i}
-      onClick={() => {
-        navigate(
-          `/book/${currentBook!.bookid}/chapter/${
-            currentChapter!.chapterid
-          }/${i}`
-        );
-      }}
+      to={`/book/${currentBook!.bookid}/chapter/${
+        currentChapter!.chapterid
+      }/${i}`}
       className={`w-full flex text-sm mb-xs cursor-pointer p-xs ${blockColorBorder} ${colors.itemHover}  ${selectedCss}`}
     >
       <p
@@ -75,7 +71,7 @@ function OutlineItem({ text, i }) {
             aria-hidden="true"
           />
         )}
-    </li>
+    </Link>
   );
 }
 
@@ -151,6 +147,12 @@ export default function OutlineSidebar() {
 
   if (editing) {
     items.push(
+      <DraggableChapterOutline
+        key="draggableOutline"
+        chapter={currentChapter!}
+      />
+    );
+    items.push(
       <Button
         onClick={() => {
           setEditing(false);
@@ -161,12 +163,6 @@ export default function OutlineSidebar() {
       >
         Done
       </Button>
-    );
-    items.push(
-      <DraggableChapterOutline
-        key="draggableOutline"
-        chapter={currentChapter!}
-      />
     );
   } else {
     items.push(

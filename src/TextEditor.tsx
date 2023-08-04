@@ -335,9 +335,12 @@ function TextEditor({
       // disabling, otherwise editor jumps each time I click on a text block
       // inputDiv.current.scrollIntoViewIfNeeded(false);
       window.scrollTo(0, 0);
-    } else if (closedDiv.current) {
+    }
+
+    if (closedDiv.current) {
+      console.log("scrolling to closedDiv");
       // @ts-ignore
-      closedDiv.current.scrollIntoViewIfNeeded(false);
+      closedDiv.current.scrollIntoViewIfNeeded();
       window.scrollTo(0, 0);
     }
   };
@@ -637,15 +640,13 @@ function TextEditor({
   }
 
   return (
-    <div className="">
+    <div className={``}>
       {/* h-full"> */}
       {/*       <div className="ql-editor hidden">hi</div>
       <div className="ql-toolbar ql-snow hidden">hi</div>
  */}
       <div
-        className={`mb-sm h-full w-full scroll-mt-lg transition-colors duration-150 ease-out ${
-          highlight && "bg-gray-800"
-        }`}
+        className={`mb-sm h-full w-full scroll-mt-lg transition-colors duration-150 ease-out `}
         ref={inputDiv}
       >
         {open && (
@@ -683,7 +684,9 @@ function TextEditor({
             </div>
 
             <div
-              className={`flex-grow w-full pl-sm pr-md ${blockColorBorder} `}
+              className={`flex-grow w-full pl-sm pr-md ${blockColorBorder} ${
+                isActive && highlight && "bg-gray-800"
+              } `}
               onClick={() => {
                 dispatch(librarySlice.actions.clearCachedSelectedText());
               }}
@@ -718,7 +721,8 @@ function TextEditor({
         )}
         {!open && (
           <div
-            className={`flex relative ${isActive && "bg-gray-700"} `}
+            className={`flex relative `}
+            id={`closedDiv-${index}`}
             ref={closedDiv}
           >
             {/* <div
@@ -753,14 +757,16 @@ function TextEditor({
             >
               {currentText.caption && (
                 <div
-                  className={`mb-xs rounded-lg px-xs py-1 w-full ${colors.navBackgroundColor} ${colors.secondaryTextColor}`}
+                  className={`mb-xs rounded-lg px-xs py-1 w-full ${
+                    isActive ? "bg-gray-600" : colors.navBackgroundColor
+                  } ${colors.secondaryTextColor} `}
                 >
                   {currentText.caption}
                 </div>
               )}
               <div className={`${fontClass} ${fontSizeClass} px-1`}>
                 <p
-                  className={`text-gray-500 `}
+                  className={`${isActive ? "text-gray-400" : "text-gray-500"} `}
                   data-selector={`text-preview-${index}`}
                 >
                   {textPreview}
