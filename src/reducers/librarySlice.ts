@@ -324,6 +324,7 @@ export const librarySlice = createSlice({
       block.text = text;
       state.saved = false;
     },
+    // TODO also replace in versions
     replaceText(
       state: t.State,
       action: PayloadAction<{
@@ -1277,6 +1278,10 @@ export const librarySlice = createSlice({
       const cur = chapter.text[index];
       const prev = chapter.text[index - 1];
       prev.text += `\n${cur.text}`;
+      if (cur.versions) {
+        prev.versions ||= [];
+        prev.versions.push(...cur.versions);
+      }
       cur.text = "";
       chapter.text.splice(index, 1);
       prev.id = nanoid();
@@ -1292,6 +1297,10 @@ export const librarySlice = createSlice({
       const cur = chapter.text[index];
       const next = chapter.text[index + 1];
       cur.text += `\n${next.text}`;
+      if (next.versions) {
+        cur.versions ||= [];
+        cur.versions.push(...next.versions);
+      }
       chapter.text.splice(index + 1, 1);
       cur.id = nanoid();
 
@@ -1310,6 +1319,13 @@ export const librarySlice = createSlice({
       const next = chapter.text[index + 1];
       const prev = chapter.text[index - 1];
       prev.text += `\n${cur.text}\n${next.text}`;
+      prev.versions ||= [];
+      if (cur.versions) {
+        prev.versions.push(...cur.versions);
+      }
+      if (next.versions) {
+        prev.versions.push(...next.versions);
+      }
       cur.text = "";
       chapter.text.splice(index, 2);
       prev.id = nanoid();
@@ -1924,14 +1940,21 @@ export function newBlockFromCurrent(
     return null;
 
   const text = chapter.text[state.editor.activeTextIndex];
+  let block: t.TextBlock | null = null;
   if (text.type === "plain") {
-    return t.plainTextBlock(defaultText);
+    block = t.plainTextBlock(defaultText);
   } else if (text.type === "markdown") {
-    return t.markdownBlock(defaultText);
+    block = t.markdownBlock(defaultText);
   } else if (text.type === "code") {
-    return t.codeBlock(defaultText, text.language || "javascript");
+    block = t.codeBlock(defaultText, text.language || "javascript");
   }
-  return null;
+  if (block && block.type !== "embeddedText" && text.type !== "embeddedText") {
+    block.hideInExport = text.hideInExport;
+    block.reference = text.reference;
+    block.blockColor = text.blockColor;
+    block.caption = text.caption;
+  }
+  return block;
 }
 
 export const defaultSettings: t.UserSettings = {
