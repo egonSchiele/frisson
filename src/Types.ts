@@ -212,18 +212,11 @@ export type CodeBlock = BaseBlock & {
   type: "code";
   language?: string;
 };
-
-export type EmbeddedTextBlock = {
+export type EmbeddedTextBlock = BaseBlock & {
   type: "embeddedText";
-  text: string;
   bookid: string;
-  reference: false;
   chapterid?: string;
   textindex?: number;
-  open?: boolean;
-  hideInExport?: boolean;
-  id?: string;
-  caption?: string;
 };
 
 export const blockTypes = [
