@@ -145,6 +145,11 @@ function deepEqual(obj1, obj2) {
   }
 }
 
+function prettyDate(date) {
+  const d = new Date(date);
+  return d.toLocaleString();
+}
+
 async function getBooksFromCacheOrServer() {
   const cachedBooks = await fetchBooksFromCache();
   if (!cachedBooks) {
@@ -159,8 +164,16 @@ async function getBooksFromCacheOrServer() {
   }
 
   const freshLastEdited = await lastEditedFromServer();
-  console.log("cached last edited", cachedLastEdited);
-  console.log("fresh last edited", freshLastEdited);
+  console.log(
+    "cached last edited",
+    cachedLastEdited,
+    prettyDate(cachedLastEdited)
+  );
+  console.log(
+    "fresh last edited",
+    freshLastEdited,
+    prettyDate(freshLastEdited)
+  );
 
   if (!freshLastEdited) {
     console.warn("no last edited from server, fetching from server");
