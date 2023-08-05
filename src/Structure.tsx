@@ -26,6 +26,12 @@ export default function Structure({}) {
     0
   );
 
+  const uncoloredLength = visibleBlocks
+    .filter((block) => !block.blockColor || block.blockColor === "none")
+    .reduce((acc, block) => acc + block.text.length, 0);
+
+  const uncoloredPercent = round((uncoloredLength / totalLength) * 100);
+
   let currentX = 0;
   const blockRects = [];
   currentChapter.text.forEach((block, index) => {
@@ -51,7 +57,7 @@ export default function Structure({}) {
         onMouseEnter={() =>
           setCurrentText(block.text.substring(0, 200) + ` (${width})%`)
         }
-        onMouseLeave={() => setCurrentText("")}
+        onMouseLeave={() => setCurrentText(`Uncolored: ${uncoloredPercent}%`)}
         onClick={(event) => {
           if (event.metaKey) {
             dispatch(librarySlice.actions.resetBlockColor({ index }));
