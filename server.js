@@ -1511,7 +1511,7 @@ function sanitize(str) {
       ) {
         return "****";
       } else {
-        return word;
+        return _word;
       }
     })
     .join(" ");
