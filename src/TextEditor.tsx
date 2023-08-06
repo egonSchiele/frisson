@@ -398,6 +398,69 @@ function TextEditor({
     }
   }
 
+  function addQuotesToLine() {
+    const rightQuote = '"';
+    const leftQuote = '"';
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      const text = quill.getText(range.index);
+      const pieces = text.split(/[.,\n;!?]/);
+      const length = pieces[0].length + 1;
+      quill.insertText(range.index, leftQuote, "user");
+      quill.insertText(range.index + length + 1, rightQuote, "user");
+      quill.setSelection(range.index + length + 1, 0);
+    }
+  }
+
+  function addPeriodToLine() {
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      const text = quill.getText(range.index);
+      // Any character that is a word character
+      const regex = /\w/g;
+
+      const letterIndex = text.search(regex);
+      const letter = text[letterIndex];
+      const upperCaseLetter = letter.toUpperCase();
+
+      quill.deleteText(range.index - 1, 1, "user");
+      quill.insertText(range.index - 1, ".", "user");
+      quill.deleteText(range.index + letterIndex, 1, "user");
+      quill.insertText(range.index + letterIndex, upperCaseLetter, "user");
+
+      quill.setSelection(range.index + letterIndex + 1, 0);
+    }
+  }
+
+  function addCommaToLine() {
+    if (!quillRef.current) return;
+    // @ts-ignore
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+    if (range) {
+      const text = quill.getText(range.index);
+      // Any character that is a word character
+      const regex = /\w/g;
+
+      const letterIndex = text.search(regex);
+      const letter = text[letterIndex];
+      const lowerCaseLetter = letter.toLowerCase();
+
+      quill.deleteText(range.index - 1, 1, "user");
+      quill.insertText(range.index - 1, ",", "user");
+      quill.deleteText(range.index + letterIndex, 1, "user");
+      quill.insertText(range.index + letterIndex, lowerCaseLetter, "user");
+
+      quill.setSelection(range.index + letterIndex + 1, 0);
+    }
+  }
+
   function prepend(char: string) {
     if (!quillRef.current) return;
     // @ts-ignore
@@ -439,6 +502,15 @@ function TextEditor({
     } else if (event.code === "Quote" && textIsSelected()) {
       event.preventDefault();
       addQuotes("'");
+    } else if (event.metaKey && event.code === "Quote") {
+      event.preventDefault();
+      addQuotesToLine();
+    } else if (event.metaKey && event.code === "Period") {
+      event.preventDefault();
+      addPeriodToLine();
+    } else if (event.metaKey && event.code === "Comma") {
+      event.preventDefault();
+      addCommaToLine();
     } else if (
       event.shiftKey &&
       event.code === "Backquote" &&
