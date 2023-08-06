@@ -647,19 +647,19 @@ export const librarySlice = createSlice({
       if (!chapter) return;
       const currentBlock = chapter.text[activeTextIndex];
       let { index, length, contents } = state.editor.selectedText;
+
       if (index === 0 && state.editor._cachedSelectedText) {
         index = state.editor._cachedSelectedText.index;
         length = state.editor._cachedSelectedText.length;
         contents = state.editor._cachedSelectedText.contents;
       }
       let newText = "";
-      if (index) {
+      if (index !== undefined) {
         newText = strSplice(currentBlock.text, index, length, toAdd);
-      } else if (
-        currentBlock.type === "todoList" ||
-        currentBlock.type === "image"
-      ) {
+      } else if (currentBlock.type === "todoList") {
         newText = `${currentBlock.text}\n${toAdd}`;
+      } else if (currentBlock.type === "image") {
+        newText = `${currentBlock.text}\n\n${toAdd}`;
       } else {
         newText = `${currentBlock.text} ${toAdd}`;
       }
