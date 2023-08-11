@@ -210,7 +210,7 @@ export default function LibraryDesktop() {
           className="h-full w-full absolute top-0 left-0 bg-editor dark:bg-dmeditor z-0"
           id="editor"
         >
-          <div className="h-full w-full">
+          {/*   <div className="h-full w-full">
             {!bookid && !currentChapter && (
               <LibErrorBoundary component="home">
                 <EditorPlaceholder loaded={state.booksLoaded}>
@@ -220,7 +220,7 @@ export default function LibraryDesktop() {
                 </EditorPlaceholder>
               </LibErrorBoundary>
             )}
-          </div>
+          </div> */}
 
           <div className="h-full w-full">
             {/* Has to be chapterid and not currentChapter! Otherwise book editor loads and kicks off a save. This bug is now fixed but leaving comment */}

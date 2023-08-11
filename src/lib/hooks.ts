@@ -211,7 +211,8 @@ export function lightColors() {
 
 export function useSSEUpdates(setSettings) {
   // TODO this solution doesn't handle multiple tabs in the same browser
-  const clientid = getCookie("clientid");
+  const clientSessionId = sessionStorage.getItem("clientSessionId");
+  console.log({ clientSessionId });
   const dispatch = useDispatch();
 
   function listen(eventName, eventSource, func) {
@@ -226,8 +227,8 @@ export function useSSEUpdates(setSettings) {
   }
 
   return useEffect(() => {
-    if (clientid) {
-      const eventSourceUrl = `/api/sseUpdates`;
+    if (clientSessionId) {
+      const eventSourceUrl = `/api/sseUpdates/${clientSessionId}`;
       const eventSource = new EventSource(eventSourceUrl, {
         withCredentials: true,
       });
@@ -267,7 +268,7 @@ export function useSSEUpdates(setSettings) {
         eventSource.close();
       };
     }
-  }, [clientid]);
+  }, [clientSessionId]);
 }
 
 export function useRecording() {

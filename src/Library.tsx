@@ -180,7 +180,7 @@ export default function Library({ mobile = false }) {
 
   // TODO handle encryption before enabling
   // This doesn't handle multiple tabs in the same browser.
-  // useSSEUpdates(setSettings);
+  useSSEUpdates(setSettings);
 
   async function saveAllBooks() {
     setLoading(true);
@@ -428,7 +428,9 @@ export default function Library({ mobile = false }) {
       await Promise.all([fetchBooks(), fetchSettings()]);
       //await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
     };
-    setCookie("clientid", nanoid(), 1);
+    sessionStorage.setItem("clientSessionId", nanoid());
+
+    //setCookie("clientid", nanoid(), 1);
     func();
   }, []);
 

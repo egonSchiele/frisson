@@ -10,7 +10,7 @@ import ListItem from "./components/ListItem";
 import LibraryContext from "./LibraryContext";
 import { useColors } from "./lib/hooks";
 import { RootState } from "./store";
-import { getChapterText, getStringContext } from "./utils";
+import { getChapterText, getStringContext, useLocalStorage } from "./utils";
 
 function SearchResult({ book, chapter, index }) {
   return (
@@ -35,7 +35,7 @@ export default function SimpleSearchSidebar() {
   const navigate = useNavigate();
   const { settings } = useContext(LibraryContext) as LibraryContextType;
   const colors = useColors();
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = useLocalStorage("searchTerm", "");
   const searchRef = React.useRef(null);
 
   useEffect(() => {
