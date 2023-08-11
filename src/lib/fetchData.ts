@@ -198,7 +198,11 @@ export async function postWithCsrf(url: string, body: any) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ...body, csrfToken: getCsrfToken() }),
+    body: JSON.stringify({
+      ...body,
+      csrfToken: getCsrfToken(),
+      clientSessionId: sessionStorage.getItem("clientSessionId"),
+    }),
   });
   return res;
 }

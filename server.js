@@ -1091,9 +1091,9 @@ app.get(
   }
 );
 
-app.get("/api/sseUpdates", requireLogin, async (req, res) => {
+app.get("/api/sseUpdates/:clientSessionId", requireLogin, async (req, res) => {
   const userid = getUserId(req);
-  SE.connectClient(userid, req, res);
+  SE.connectClient(userid, req.params.clientSessionId, req, res);
 });
 
 app.get(
