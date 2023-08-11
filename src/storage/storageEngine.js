@@ -21,7 +21,8 @@ export function getLastEdited(userid) {
 // 3. Edits the created at timestamp to send back to the client and in the last edited cache on the server. And
 // 4. Updates other clients if updateData is given.
 export async function save(req, res, updateData, saveFunc) {
-  const clientidOfWriter = req.cookies.clientid;
+  const clientidOfWriter = req.body.clientSessionId;
+  console.log({ clientidOfWriter }, "in save");
   const userid = getUserId(req);
   const lastHeardFromServer = Date.now();
   if (updateData) {
@@ -73,7 +74,7 @@ export function updateClients(userid, clientidOfWriter, eventName, _data) {
   }
 }
 
-export function connectClient(userid, req, res) {
+export function connectClient(userid, clientid, req, res) {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -83,7 +84,6 @@ export function connectClient(userid, req, res) {
   // flush the headers to establish SSE with client
   // needs to be done if using compression
   res.flushHeaders();
-  const clientid = req.cookies.clientid;
   const newConnection = { clientid, res };
   console.log("New connection", { userid, clientid });
   if (clientsToUpdate[userid]) {
