@@ -880,6 +880,33 @@ export default function LibraryLauncher({ onLauncherClose }) {
     });
   }
 
+  if (currentTextBlock.versions && currentTextBlock.versions.length === 1) {
+    launchItems.push({
+      label: "Diff With Version",
+      onClick: async () => {
+        const originalText = currentTextBlock.text;
+        const newText = currentTextBlock.versions![0].text;
+        const textForDiff = { originalText, newText };
+        dispatch(librarySlice.actions.setTextForDiff(textForDiff));
+        dispatch(librarySlice.actions.setViewMode("diff"));
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+
+    launchItems.push({
+      label: "Switch To Other Version",
+      onClick: async () => {
+        dispatch(
+          librarySlice.actions.switchVersion({
+            index: state.editor.activeTextIndex,
+            versionid: currentTextBlock.versions![0].id,
+          })
+        );
+      },
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+    });
+  }
+
   /* if (settings.admin) {
     launchItems.push({
       label: state.recording ? "Stop Recording" : "Start Recording",
