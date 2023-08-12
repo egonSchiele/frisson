@@ -379,23 +379,19 @@ export default function LibraryLauncher({ onLauncherClose }) {
   });
 
   settings.prompts.forEach((prompt, i) => {
-    const onLoad = () => {
-      dispatch(librarySlice.actions.openRightSidebar());
-      dispatch(librarySlice.actions.setActivePanel("suggestions"));
-    };
-
-    function setLoading(bool) {
-      if (bool) {
-        dispatch(librarySlice.actions.loading());
-      } else {
-        dispatch(librarySlice.actions.loaded());
-      }
-    }
-
     launchItems.push({
       label: prompt.label,
       onClick: async () => {
-        await fetchSuggestions(prompt, []);
+        if (prompt.action === "replaceSelection") {
+          await fetchSuggestions(prompt, [], {
+            type: "replaceSelection",
+            selection: state.editor._cachedSelectedText,
+          });
+        } else {
+          await fetchSuggestions(prompt, [], {
+            type: "addToSuggestionsList",
+          });
+        }
       },
 
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,

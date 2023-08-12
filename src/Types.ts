@@ -544,6 +544,7 @@ export type DesignPreferences = {
 export type Prompt = {
   label: string;
   text: string;
+  action: PromptActionName;
 };
 
 export type Theme = "default" | "dark" | "light" | "solarized";
@@ -639,7 +640,11 @@ export type LibraryContextType = {
   onTextEditorSave: (state: State, shouldSaveToHistory?: boolean) => void;
   mobile: boolean;
   fetchBooks: () => Promise<void>;
-  fetchSuggestions: (prompt: Prompt, messages: ChatHistory[]) => Promise<void>;
+  fetchSuggestions: (
+    prompt: Prompt,
+    messages: ChatHistory[],
+    action?: PromptAction
+  ) => Promise<void>;
 };
 
 export type ChatHistory = {
@@ -671,4 +676,16 @@ export type FetchSuggestionsParams = {
     text: string;
     synopsis: string;
   };
+};
+
+export type PromptAction = AddToSuggestionsList | ReplaceSelection;
+export type PromptActionName = "addToSuggestionsList" | "replaceSelection";
+
+export type AddToSuggestionsList = {
+  type: "addToSuggestionsList";
+};
+
+export type ReplaceSelection = {
+  type: "replaceSelection";
+  selection: SelectedText;
 };

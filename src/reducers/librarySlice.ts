@@ -690,6 +690,33 @@ export const librarySlice = createSlice({
       state.editor._pushTextToEditor = newText;
       state.saved = false;
     },
+    replaceContents(
+      state: t.State,
+      action: PayloadAction<{
+        text: string;
+        index: number;
+        length: number;
+      }>
+    ) {
+      const { text, index, length } = action.payload;
+      saveToEditHistory(
+        state,
+        `replace contents at ${index}, length ${length}`
+      );
+      const { activeTextIndex } = state.editor;
+      const chapter = getSelectedChapter({ library: state });
+      if (!chapter) return;
+      const currentBlock = chapter.text[activeTextIndex];
+
+      if (length > 0) {
+        const newText = strSplice(currentBlock.text, index, length, text);
+        currentBlock.text = newText;
+      } else {
+        currentBlock.text = text;
+      }
+      state.editor._pushTextToEditor = nanoid();
+      state.saved = false;
+    },
     setSelectedText(state: t.State, action: PayloadAction<t.SelectedText>) {
       state.editor.selectedText = action.payload;
     },

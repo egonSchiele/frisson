@@ -10,7 +10,15 @@ import { librarySlice } from "./reducers/librarySlice";
 import { AppDispatch } from "./store";
 import { useDispatch } from "react-redux";
 
-function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
+function Prompt({
+  label,
+  text,
+  action,
+  onLabelChange,
+  onTextChange,
+  onDelete,
+  onActionChange,
+}) {
   return (
     <div className="mb-sm p-3 rounded-md dark:bg-dmsettingspanel bg-gray-200">
       <div className="mb-sm w-full">
@@ -32,6 +40,17 @@ function Prompt({ label, text, onLabelChange, onTextChange, onDelete }) {
           onChange={(e) => onTextChange(e.target.value)}
           selector={`prompt-${label}-text`}
         />
+      </div>
+      <div className="w-full">
+        <Select
+          key="action"
+          name="action"
+          value={action}
+          onChange={(e) => onActionChange(e.target.value)}
+        >
+          <option value="addToSuggestionsList">Add To List (default)</option>
+          <option value="replaceSelection">Replace Selection</option>
+        </Select>
       </div>
       <Button
         size="small"
@@ -213,8 +232,10 @@ function Settings({ settings, setSettings, usage, onSave }) {
             key={i}
             label={prompt.label}
             text={prompt.text}
+            action={prompt.action || "addToSuggestionsList"}
             onLabelChange={(value) => handlePromptChange(i, "label", value)}
             onTextChange={(value) => handlePromptChange(i, "text", value)}
+            onActionChange={(value) => handlePromptChange(i, "action", value)}
             onDelete={() => deletePrompt(i)}
           />
         ))}

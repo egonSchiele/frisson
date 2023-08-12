@@ -764,7 +764,11 @@ export default function Library({ mobile = false }) {
     return text;
   }
 
-  async function fetchSuggestions(prompt: t.Prompt, messages: t.ChatHistory[]) {
+  async function fetchSuggestions(
+    prompt: t.Prompt,
+    messages: t.ChatHistory[],
+    action: t.PromptAction = { type: "addToSuggestionsList" }
+  ) {
     setLoading(true);
 
     const params: t.FetchSuggestionsParams = {
@@ -772,7 +776,7 @@ export default function Library({ mobile = false }) {
       num_suggestions: settings.num_suggestions || 1,
       max_tokens: settings.max_tokens || 1,
       prompt: prompt.text,
-      messages: [],
+      messages,
       customKey: settings.customKey || null,
       replaceParams: {
         text: getTextForSuggestions(),
@@ -790,12 +794,22 @@ export default function Library({ mobile = false }) {
 
     result.payload.forEach((choice: { text: any }) => {
       const generatedText = choice.text;
-      dispatch(
-        librarySlice.actions.addSuggestion({
-          label: prompt.label,
-          value: generatedText,
-        })
-      );
+      if (action.type === "addToSuggestionsList") {
+        dispatch(
+          librarySlice.actions.addSuggestion({
+            label: prompt.label,
+            value: generatedText,
+          })
+        );
+      } else if (action.type === "replaceSelection") {
+        dispatch(
+          librarySlice.actions.replaceContents({
+            text: generatedText,
+            index: action.selection.index,
+            length: action.selection.length,
+          })
+        );
+      }
     });
     dispatch(librarySlice.actions.openRightSidebar());
     dispatch(librarySlice.actions.setActivePanel("suggestions"));
