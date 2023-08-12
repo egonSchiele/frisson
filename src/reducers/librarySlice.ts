@@ -542,9 +542,17 @@ export const librarySlice = createSlice({
       const { chapter, created_at } = action.payload;
       const book = getSelectedBook({ library: state });
       if (!book || !chapter) return;
+      let decryptedChapter = chapter;
+      if (state.encryptionPassword) {
+        decryptedChapter = decryptObject(chapter, state.encryptionPassword);
+      }
       book.chapters = book.chapters.map((c) => {
-        if (c.chapterid === chapter.chapterid) {
-          return { ...chapter, created_at };
+        if (c.chapterid === decryptedChapter.chapterid) {
+          return {
+            ...decryptedChapter,
+            created_at,
+            lastHeardFromServer: created_at,
+          };
         }
 
         return c;
@@ -605,11 +613,16 @@ export const librarySlice = createSlice({
     ) {
       const { book, created_at } = action.payload;
       if (!book) return;
+      let decryptedBook = book;
+      if (state.encryptionPassword) {
+        decryptedBook = decryptObject(book, state.encryptionPassword);
+      }
       state.books = state.books.map((b) => {
-        if (b.bookid === book.bookid) {
+        if (b.bookid === decryptedBook.bookid) {
           return {
-            ...book,
+            ...decryptedBook,
             created_at,
+            lastHeardFromServer: created_at,
             chapters: b.chapters,
             chapterOrder: b.chapterOrder,
           };
