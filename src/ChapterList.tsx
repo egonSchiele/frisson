@@ -39,14 +39,6 @@ import Select from "./components/Select";
 
 // import Draggable from "react-draggable";
 
-type SortType =
-  | "alphabetical"
-  | "manual"
-  | "recentlyModified"
-  | "leastRecentlyModified"
-  | "shortestToLongest"
-  | "longestToShortest";
-
 export default function ChapterList({
   selectedChapterId,
   mobile = false,
@@ -72,7 +64,7 @@ export default function ChapterList({
   const loaded = useSelector((state: RootState) => state.library.booksLoaded);
 
   const [editing, setEditing] = React.useState(false);
-  const [sortType, setSortType] = useLocalStorage<SortType>(
+  const [sortType, setSortType] = useLocalStorage<t.SortType>(
     "chapterListSort",
     "manual"
   );
@@ -130,10 +122,10 @@ export default function ChapterList({
       await newChapter(file.name, text);
     });
   }
-  function handleAudioUpload(x) {
+  async function handleAudioUpload(x) {
     setLoading(true);
     const files = x.target.files;
-    [...files].forEach(async (file, i) => {
+    const promises = [...files].map(async (file, i) => {
       const response = await fd.uploadAudio(file);
       if (response.tag === "success") {
         const { text } = response.payload;
@@ -142,6 +134,7 @@ export default function ChapterList({
         dispatch(librarySlice.actions.setError(response.message));
       }
     });
+    await Promise.all(promises);
     setLoading(false);
   }
 
