@@ -209,9 +209,7 @@ export function lightColors() {
 }
  */
 
-export function useSSEUpdates(setSettings) {
-  // TODO this solution doesn't handle multiple tabs in the same browser
-  const clientSessionId = sessionStorage.getItem("clientSessionId");
+export function useSSEUpdates(setSettings, clientSessionId) {
   console.log({ clientSessionId });
   const dispatch = useDispatch();
 

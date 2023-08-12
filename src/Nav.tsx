@@ -316,128 +316,130 @@ export default function Nav({
         {bookid && !chapterid && <div className="mr-xs">{saveIcons}</div>}
 
         {/* right side nav */}
-        {chapterid && (
-          <LibErrorBoundary component="navigation">
-            <div className="flex-none">
-              {state.loading && (
-                <NavButton
-                  color="nav"
-                  label="Loading"
-                  onClick={() => {}}
-                  className="p-0"
-                >
-                  <Spinner className="w-5 h-5" />
-                </NavButton>
-              )}
+        <LibErrorBoundary component="navigation">
+          <div className="flex-none">
+            {state.loading && (
+              <NavButton
+                color="nav"
+                label="Loading"
+                onClick={() => {}}
+                className="p-0"
+              >
+                <Spinner className="w-5 h-5" />
+              </NavButton>
+            )}
 
-              {/*               {state.editor.selectedText &&
+            {/*               {state.editor.selectedText &&
                 state.editor.selectedText.length > 0 && (
                   <NavButton
                   color="nav"
-                    label="Extract Block"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.extractBlock());
-                    }}
+                  label="Extract Block"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.extractBlock());
+                  }}
                   >
-                    <ScissorsIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
+                  <ScissorsIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
                   </NavButton>
                 )} */}
 
-              {state.viewMode === "readonly" && !mobile && (
-                <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
-                  read only
-                </span>
-              )}
-              {state.viewMode === "focus" && !mobile && (
-                <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
-                  focus mode
-                </span>
-              )}
+            {chapterid && (
+              <span>
+                {state.viewMode === "readonly" && !mobile && (
+                  <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
+                    read only
+                  </span>
+                )}
+                {state.viewMode === "focus" && !mobile && (
+                  <span className="text-gray-500 dark:text-gray-300 text-xs uppercase mr-xs inline-block align-middle h-6">
+                    focus mode
+                  </span>
+                )}
 
-              {saveIcons}
+                {saveIcons}
 
-              {state.viewMode !== "readonly" && !mobile && (
-                <NavButton
-                  color="nav"
-                  label="Read only"
-                  onClick={() =>
-                    dispatch(librarySlice.actions.setViewMode("readonly"))
-                  }
-                  selector="readonly-open"
-                >
-                  <PencilIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-              {state.viewMode === "readonly" && !mobile && (
-                <NavButton
-                  color="nav"
-                  label="Exit read only"
-                  onClick={() =>
-                    dispatch(librarySlice.actions.setViewMode("default"))
-                  }
-                  selector="readonly-close"
-                >
-                  <PencilIcon
-                    className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-
-              {!state.recording && settings.admin && (
-                <NavButton
-                  color="nav"
-                  label="Record"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.startRecording());
-                    startRecording();
-                  }}
-                >
-                  <MicrophoneIcon
-                    className={`h-8 w-8 md:h-5 md:w-5`}
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-
-              {state.recording && settings.admin && (
-                <NavButton
-                  color="nav"
-                  label="Record"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.stopRecording());
-                    stopRecording();
-                  }}
-                >
-                  {/* <p className="w-36 text-sm">{status}</p> */}
-                  <MicrophoneIcon
-                    className={`h-8 w-8 md:h-5 md:w-5 text-red-700`}
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-
-              {!mobile && (
-                <>
+                {state.viewMode !== "readonly" && !mobile && (
                   <NavButton
                     color="nav"
-                    label="Focus Mode"
+                    label="Read only"
                     onClick={() =>
-                      dispatch(librarySlice.actions.toggleViewMode("focus"))
+                      dispatch(librarySlice.actions.setViewMode("readonly"))
                     }
+                    selector="readonly-open"
                   >
-                    <EyeIcon
-                      className={`h-8 w-8 md:h-5 md:w-5 ${
-                        state.viewMode === "focus" && colors.highlightTextColor
-                      }`}
+                    <PencilIcon
+                      className="h-8 w-8 md:h-5 md:w-5"
                       aria-hidden="true"
                     />
                   </NavButton>
+                )}
+                {state.viewMode === "readonly" && !mobile && (
+                  <NavButton
+                    color="nav"
+                    label="Exit read only"
+                    onClick={() =>
+                      dispatch(librarySlice.actions.setViewMode("default"))
+                    }
+                    selector="readonly-close"
+                  >
+                    <PencilIcon
+                      className={`h-8 w-8 md:h-5 md:w-5 ${colors.highlightTextColor}`}
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
 
-                  {/*   <NavButton
+                {!state.recording && settings.admin && (
+                  <NavButton
+                    color="nav"
+                    label="Record"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.startRecording());
+                      startRecording();
+                    }}
+                  >
+                    <MicrophoneIcon
+                      className={`h-8 w-8 md:h-5 md:w-5`}
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+
+                {state.recording && settings.admin && (
+                  <NavButton
+                    color="nav"
+                    label="Record"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.stopRecording());
+                      stopRecording();
+                    }}
+                  >
+                    {/* <p className="w-36 text-sm">{status}</p> */}
+                    <MicrophoneIcon
+                      className={`h-8 w-8 md:h-5 md:w-5 text-red-700`}
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+
+                {!mobile && (
+                  <>
+                    <NavButton
+                      color="nav"
+                      label="Focus Mode"
+                      onClick={() =>
+                        dispatch(librarySlice.actions.toggleViewMode("focus"))
+                      }
+                    >
+                      <EyeIcon
+                        className={`h-8 w-8 md:h-5 md:w-5 ${
+                          state.viewMode === "focus" &&
+                          colors.highlightTextColor
+                        }`}
+                        aria-hidden="true"
+                      />
+                    </NavButton>
+
+                    {/*   <NavButton
                   color="nav"
                     label="Prompts"
                     onClick={() => {
@@ -451,81 +453,81 @@ export default function Nav({
                     <SparklesIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
                   </NavButton> */}
 
+                    <NavButton
+                      color="nav"
+                      label="Sidebar"
+                      onClick={() => {
+                        dispatch(librarySlice.actions.toggleRightSidebar());
+                      }}
+                      selector="sidebar-button"
+                    >
+                      <EllipsisHorizontalCircleIcon
+                        className="h-8 w-8 md:h-5 md:w-5"
+                        aria-hidden="true"
+                      />
+                    </NavButton>
+                  </>
+                )}
+                <NavButton
+                  color="nav"
+                  label="Chat"
+                  onClick={() => {
+                    dispatch(librarySlice.actions.toggleChat());
+                  }}
+                  selector="chat-button"
+                >
+                  <ChatBubbleLeftIcon
+                    className="h-8 w-8 md:h-5 md:w-5"
+                    aria-hidden="true"
+                  />
+                </NavButton>
+                {settings.encrypted && !mobile && (
                   <NavButton
                     color="nav"
-                    label="Sidebar"
+                    label="Encryption"
                     onClick={() => {
-                      dispatch(librarySlice.actions.toggleRightSidebar());
+                      dispatch(librarySlice.actions.toggleEncryption());
                     }}
-                    selector="sidebar-button"
+                    selector="chat-button"
                   >
-                    <EllipsisHorizontalCircleIcon
+                    <LockClosedIcon
                       className="h-8 w-8 md:h-5 md:w-5"
                       aria-hidden="true"
                     />
                   </NavButton>
-                </>
-              )}
-              <NavButton
-                color="nav"
-                label="Chat"
-                onClick={() => {
-                  dispatch(librarySlice.actions.toggleChat());
-                }}
-                selector="chat-button"
-              >
-                <ChatBubbleLeftIcon
-                  className="h-8 w-8 md:h-5 md:w-5"
-                  aria-hidden="true"
-                />
-              </NavButton>
-              {settings.encrypted && !mobile && (
-                <NavButton
-                  color="nav"
-                  label="Encryption"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.toggleEncryption());
-                  }}
-                  selector="chat-button"
-                >
-                  <LockClosedIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-              {!settings.encrypted && !mobile && (
-                <NavButton
-                  color="nav"
-                  label="Encryption"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.toggleEncryption());
-                  }}
-                  selector="chat-button"
-                >
-                  <LockOpenIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
-              {settings.admin && (
-                <NavButton
-                  color="nav"
-                  label="Text to speech"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.toggleSpeech());
-                  }}
-                  selector="texttospeech-button"
-                >
-                  <PlayIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
-              )}
+                )}
+                {!settings.encrypted && !mobile && (
+                  <NavButton
+                    color="nav"
+                    label="Encryption"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.toggleEncryption());
+                    }}
+                    selector="chat-button"
+                  >
+                    <LockOpenIcon
+                      className="h-8 w-8 md:h-5 md:w-5"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+                {settings.admin && (
+                  <NavButton
+                    color="nav"
+                    label="Text to speech"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.toggleSpeech());
+                    }}
+                    selector="texttospeech-button"
+                  >
+                    <PlayIcon
+                      className="h-8 w-8 md:h-5 md:w-5"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
 
-              {/* {mobile && (
+                {/* {mobile && (
                 <NavButton
                   color="nav"
                   label="Reload"
@@ -538,9 +540,10 @@ export default function Nav({
                   <ArrowPathIcon className={`h-8 w-8 md:h-5 md:w-5 `} aria-hidden="true" />
                 </NavButton>
               )} */}
-            </div>
-          </LibErrorBoundary>
-        )}
+              </span>
+            )}
+          </div>
+        </LibErrorBoundary>
       </div>
     </div>
   );

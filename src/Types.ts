@@ -650,3 +650,11 @@ export type DecryptedMessage = {
   message: string;
   created_at: number;
 };
+
+export type SortType =
+  | "alphabetical"
+  | "manual"
+  | "recentlyModified"
+  | "leastRecentlyModified"
+  | "shortestToLongest"
+  | "longestToShortest";

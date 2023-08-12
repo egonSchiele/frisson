@@ -178,9 +178,11 @@ export default function Library({ mobile = false }) {
     }
   }, [state.selectedBookId, chapterid]);
 
+  const clientSessionId = sessionStorage.getItem("clientSessionId");
+
   // TODO handle encryption before enabling
   // This doesn't handle multiple tabs in the same browser.
-  useSSEUpdates(setSettings);
+  useSSEUpdates(setSettings, clientSessionId);
 
   async function saveAllBooks() {
     setLoading(true);

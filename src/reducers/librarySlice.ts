@@ -563,8 +563,14 @@ export const librarySlice = createSlice({
         if (chapter.chapterid === chapterid) {
           return {
             ...chapter,
-            created_at: lastHeardFromServer,
-            lastHeardFromServer,
+            created_at: Math.max(
+              chapter.created_at || null,
+              lastHeardFromServer
+            ),
+            lastHeardFromServer: Math.max(
+              chapter.lastHeardFromServer || null,
+              lastHeardFromServer
+            ),
           };
         }
         return chapter;
@@ -582,8 +588,11 @@ export const librarySlice = createSlice({
           return {
             ...book,
             // created_at being used as updated_at here
-            created_at: lastHeardFromServer,
-            lastHeardFromServer,
+            created_at: Math.max(book.created_at || null, lastHeardFromServer),
+            lastHeardFromServer: Math.max(
+              book.lastHeardFromServer || null,
+              lastHeardFromServer
+            ),
           };
         }
         return book;

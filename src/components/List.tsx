@@ -107,7 +107,7 @@ export default function List({
       <ul className="pt-xs px-xs" data-title={title}>
         {items}
       </ul>
-      <div className="h-24 block"></div> {/* Spacer */}
+      <div className="h-60 2xl:h-24 block"></div> {/* Spacer */}
     </div>
   );
 }

@@ -721,10 +721,10 @@ export default function BookEditor({ className = "" }) {
     });
   }
 
-  function handleAudioUpload(x) {
+  async function handleAudioUpload(x) {
     setLoading(true);
     const files = x.target.files;
-    [...files].forEach(async (file, i) => {
+    const promises = [...files].map(async (file, i) => {
       const response = await fd.uploadAudio(file);
       if (response.tag === "success") {
         const { text } = response.payload;
@@ -733,6 +733,7 @@ export default function BookEditor({ className = "" }) {
         dispatch(librarySlice.actions.setError(response.message));
       }
     });
+    await Promise.all(promises);
     setLoading(false);
   }
 
