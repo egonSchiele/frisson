@@ -4,8 +4,8 @@ import { librarySlice } from "./reducers/librarySlice";
 import { useState } from "react";
 import React from "react";
 import { useColors, useFonts } from "./lib/hooks";
-function Image({ url }) {
-  return <img src={url} />;
+function Image({ url, className = "" }) {
+  return <img src={url} className={`${className}`} />;
 }
 
 export default function ImageBlock({
@@ -38,11 +38,11 @@ export default function ImageBlock({
   if (text.display === "linear") {
     return (
       <div
-        className="my-sm grid grid-cols-1 gap-2"
+        className="mb-lg grid grid-cols-1 gap-2"
         onClick={setActiveTextIndex}
       >
         {images.map((url) => (
-          <Image url={url} key={url} />
+          <Image url={url} key={url} className="max-w-60 mx-auto" />
         ))}
       </div>
     );
