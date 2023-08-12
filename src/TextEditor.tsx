@@ -277,6 +277,8 @@ function TextEditor({
         quill.formatText(index + 5, lineLength - 5, { class: "h4" });
       } else if (line.startsWith("http")) {
         quill.formatText(index, lineLength, { class: "link" });
+      } else if (line.startsWith("> ")) {
+        quill.formatText(index, lineLength, { class: "grayedout" });
       }
       index += lineLength + 1;
     });

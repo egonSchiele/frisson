@@ -584,6 +584,12 @@ export default function Library({ mobile = false }) {
             lastHeardFromServer: data.lastHeardFromServer,
           })
         );
+        dispatch(
+          librarySlice.actions.updateTimestampForBook({
+            bookid: chapter.bookid,
+            lastHeardFromServer: data.lastHeardFromServer,
+          })
+        );
       }
     } catch (e) {
       dispatch(
