@@ -14,3 +14,4 @@ yarn-error.log
 .idea/
 secondaryBlocklist.js
 instantBlocklist.js
+*.DS_Store

@@ -320,8 +320,24 @@ function clearCache() {
   localStorage.clear();
 }
 
+async function serveFromCache(request) {
+  console.log("serveFromCache", request.url);
+  // Try to get the response from a cache.
+  const cachedResponse = await caches.match(request);
+  // Return it if we found one.
+  if (cachedResponse) return cachedResponse;
+  // If we didn't find a match in the cache, use the network.
+  console.log("serveFromCache: not found in cache", request.url);
+  const response = await fetch(request);
+  const cache = await caches.open("v1");
+  const clone = response.clone();
+  cache.put(request, clone);
+  return response;
+}
+
 self.addEventListener("fetch", async (event) => {
-  // console.log("[service worker] fetch", event.request.url);
+  //console.warn("[service worker] fetch", event.request.url);
+  //console.log(event.request);
   if (event.request.url.endsWith("/api/books")) {
     event.respondWith(getBooksFromCacheOrServer());
   } else if (event.request.url.endsWith("/api/saveChapter")) {
@@ -344,5 +360,9 @@ self.addEventListener("fetch", async (event) => {
     event.respondWith(deleteBook(event.request));
   } else if (event.request.url.endsWith("/logout")) {
     clearCache();
+  } else if (event.request.url.includes("/css")) {
+    event.respondWith(serveFromCache(event.request));
+  } else if (event.request.url.includes("/images")) {
+    event.respondWith(serveFromCache(event.request));
   }
 });
