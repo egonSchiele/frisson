@@ -286,17 +286,7 @@ export default function LibraryDesktop() {
               <div
                 className={`w-48 absolute top-0 left-0 h-screen overflow-auto  mt-9`}
               >
-                <PromptsSidebar
-                  closeSidebar={() =>
-                    dispatch(librarySlice.actions.closePrompts())
-                  }
-                  onLoad={() => {
-                    dispatch(librarySlice.actions.openRightSidebar());
-                    dispatch(
-                      librarySlice.actions.setActivePanel("suggestions")
-                    );
-                  }}
-                />
+                <PromptsSidebar />
               </div>
             </SlideTransition>
           </PanelPlaceholder>

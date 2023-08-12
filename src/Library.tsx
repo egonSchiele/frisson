@@ -21,6 +21,7 @@ import {
   getSelectedBookTitle,
   getSelectedChapter,
   getSelectedChapterTitle,
+  getText,
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
@@ -39,6 +40,7 @@ import { nanoid } from "nanoid";
 export default function Library({ mobile = false }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const currentChapter = getSelectedChapter({ library: state });
+  const currentBook = useSelector(getSelectedBook);
   const currentChapterTitle = useSelector(getSelectedChapterTitle);
   const currentBookTitle = useSelector(getSelectedBookTitle);
   const compostBookId = useSelector(getCompostBookId);
@@ -50,6 +52,7 @@ export default function Library({ mobile = false }) {
     (state: RootState) => state.library.textForDiff
   );
   const currentText = currentChapter?.text || [];
+  const currentTextBlock = useSelector(getText(state.editor.activeTextIndex));
   const dispatch = useDispatch<AppDispatch>();
   const [settings, setSettings] = useState<t.UserSettings>(defaultSettings);
   const [usage, setUsage] = useState<t.Usage | null>(null);
@@ -748,6 +751,56 @@ export default function Library({ mobile = false }) {
     }
   }
 
+  function getTextForSuggestions() {
+    if (!currentText) return "";
+    let { text } = currentTextBlock;
+    if (
+      state.editor._cachedSelectedText &&
+      state.editor._cachedSelectedText.contents &&
+      state.editor._cachedSelectedText.contents.length > 0
+    ) {
+      text = state.editor._cachedSelectedText.contents;
+    }
+    return text;
+  }
+
+  async function fetchSuggestions(prompt: t.Prompt, messages: t.ChatHistory[]) {
+    setLoading(true);
+
+    const params: t.FetchSuggestionsParams = {
+      model: settings.model,
+      num_suggestions: settings.num_suggestions || 1,
+      max_tokens: settings.max_tokens || 1,
+      prompt: prompt.text,
+      messages: [],
+      customKey: settings.customKey || null,
+      replaceParams: {
+        text: getTextForSuggestions(),
+        synopsis: currentBook?.synopsis || "",
+      },
+    };
+
+    const result = await fd.fetchSuggestions(params);
+    setLoading(false);
+
+    if (result.tag === "error") {
+      dispatch(librarySlice.actions.setError(result.message));
+      return;
+    }
+
+    result.payload.forEach((choice: { text: any }) => {
+      const generatedText = choice.text;
+      dispatch(
+        librarySlice.actions.addSuggestion({
+          label: prompt.label,
+          value: generatedText,
+        })
+      );
+    });
+    dispatch(librarySlice.actions.openRightSidebar());
+    dispatch(librarySlice.actions.setActivePanel("suggestions"));
+  }
+
   const libraryUtils: t.LibraryContextType = {
     newChapter,
     newBook,
@@ -764,6 +817,7 @@ export default function Library({ mobile = false }) {
     onTextEditorSave,
     mobile,
     fetchBooks,
+    fetchSuggestions,
   };
 
   if (state.viewMode === "diff" && currentText && textForDiff) {

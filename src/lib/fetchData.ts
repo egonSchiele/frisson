@@ -68,29 +68,17 @@ export const fetchBookTitles = async () => {
   return t.success(data);
 };
 
-export const fetchSuggestions = async (
-  text: string,
-  synopsis: string,
-  model: string,
-  num_suggestions: number,
-  max_tokens: number,
-  _prompt: string,
-  messages: t.ChatHistory[] = [],
-  _customKey?: string | null
-) => {
-  // @ts-ignore
-  let prompt = _prompt.replaceAll("{{text}}", text);
-  prompt = prompt.replaceAll("{{synopsis}}", synopsis);
-  const customKey = _customKey || null;
+export const fetchSuggestions = async (_params: t.FetchSuggestionsParams) => {
+  const prompt = _params.prompt
+    .replaceAll("{{text}}", _params.replaceParams.text)
+    .replaceAll("{{synopsis}}", _params.replaceParams.synopsis);
 
-  const res = await postWithCsrf(`/api/suggestions`, {
+  const params = {
+    ..._params,
     prompt,
-    model,
-    max_tokens,
-    num_suggestions,
-    customKey,
-    messages,
-  });
+  };
+
+  const res = await postWithCsrf(`/api/suggestions`, params);
 
   if (!res.ok) {
     try {

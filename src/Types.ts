@@ -639,6 +639,7 @@ export type LibraryContextType = {
   onTextEditorSave: (state: State, shouldSaveToHistory?: boolean) => void;
   mobile: boolean;
   fetchBooks: () => Promise<void>;
+  fetchSuggestions: (prompt: Prompt, messages: ChatHistory[]) => Promise<void>;
 };
 
 export type ChatHistory = {
@@ -658,3 +659,16 @@ export type SortType =
   | "leastRecentlyModified"
   | "shortestToLongest"
   | "longestToShortest";
+
+export type FetchSuggestionsParams = {
+  model: string;
+  num_suggestions: number;
+  max_tokens: number;
+  prompt: string;
+  messages: ChatHistory[];
+  customKey: string | null;
+  replaceParams: {
+    text: string;
+    synopsis: string;
+  };
+};

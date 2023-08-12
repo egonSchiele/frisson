@@ -210,7 +210,6 @@ export function lightColors() {
  */
 
 export function useSSEUpdates(setSettings, clientSessionId) {
-  console.log({ clientSessionId });
   const dispatch = useDispatch();
 
   function listen(eventName, eventSource, func) {
@@ -226,6 +225,7 @@ export function useSSEUpdates(setSettings, clientSessionId) {
 
   return useEffect(() => {
     if (clientSessionId) {
+      console.log("setting up SSE");
       const eventSourceUrl = `/api/sseUpdates/${clientSessionId}`;
       const eventSource = new EventSource(eventSourceUrl, {
         withCredentials: true,

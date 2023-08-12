@@ -88,65 +88,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   return [storedValue, setValue] as const;
 }
 
-export const fetchSuggestionsWrapper = async (
-  settings: {
-    model: any;
-    max_tokens: any;
-    num_suggestions: any;
-    theme?: t.Theme;
-    version_control?: boolean;
-    prompts?: t.Prompt[];
-    customKey?: string;
-  },
-  setLoading: {
-    (value: SetStateAction<boolean>): void;
-    (bool: any): void;
-    (arg0: boolean): void;
-  },
-  onLoad: { (): void; (): void; (): void },
-  prompt: string,
-  label: string,
-  text: string,
-  synopsis: string,
-  dispatch: Dispatch<AnyAction>
-) => {
-  console.log("fetchSuggestionsWrapper", settings);
-  const _max_tokens = parseInt(settings.max_tokens, 10) || 1;
-  const _num_suggestions = parseInt(settings.num_suggestions, 10) || 1;
-
-  const max_tokens_with_min = Math.min(_max_tokens, 3000);
-  const _customKey = settings.customKey || null;
-  setLoading(true);
-  const result = await fd.fetchSuggestions(
-    text,
-    synopsis,
-    settings.model,
-    _num_suggestions,
-    max_tokens_with_min,
-    prompt,
-    [],
-    _customKey
-  );
-  setLoading(false);
-
-  if (result.tag === "error") {
-    setLoading(false);
-    console.log("error", result.message);
-    dispatch(librarySlice.actions.setError(result.message));
-    return;
-  }
-
-  result.payload.forEach((choice: { text: any }) => {
-    const generatedText = choice.text;
-    dispatch(
-      librarySlice.actions.addSuggestion({ label, value: generatedText })
-    );
-  });
-  dispatch(librarySlice.actions.setSuggestions(false));
-
-  onLoad();
-};
-
 export function split(text: string) {
   // @ts-ignore
   let parts = text.replaceAll("\n", "\n ").split(" ");

@@ -49,7 +49,6 @@ import {
   librarySlice,
 } from "../reducers/librarySlice";
 import { AppDispatch, RootState } from "../store";
-import { fetchSuggestionsWrapper } from "../utils";
 
 export default function LibraryLauncher({ onLauncherClose }) {
   const state: State = useSelector((state: RootState) => state.library);
@@ -76,6 +75,7 @@ export default function LibraryLauncher({ onLauncherClose }) {
     renameChapter,
     settings,
     setSettings,
+    fetchSuggestions,
   } = useContext(LibraryContext) as LibraryContextType;
   const { startRecording, stopRecording } = useRecording();
 
@@ -394,17 +394,8 @@ export default function LibraryLauncher({ onLauncherClose }) {
 
     launchItems.push({
       label: prompt.label,
-      onClick: () => {
-        fetchSuggestionsWrapper(
-          settings,
-          setLoading,
-          onLoad,
-          prompt.text,
-          prompt.label,
-          getTextForSuggestions(),
-          currentBook?.synopsis || "",
-          dispatch
-        );
+      onClick: async () => {
+        await fetchSuggestions(prompt, []);
       },
 
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
