@@ -74,10 +74,10 @@ export default function Launcher({
       <Dialog as="div" className="relative z-10" onClose={close}>
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
+          enter="ease-out duration-75"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-200"
+          leave="ease-in duration-75"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
@@ -87,10 +87,10 @@ export default function Launcher({
         <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-out duration-75"
             enterFrom="opacity-0 scale-95"
             enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
+            leave="ease-in duration-75"
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >

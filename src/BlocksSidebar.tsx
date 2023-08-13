@@ -23,13 +23,15 @@ export default function BlockSidebar({}: {}) {
   const tab = useSelector(
     (state: RootState) => state.library.panels.leftSidebar.activePanel
   );
-  let selectedIndex = 0;
-  if (tab === "versions") selectedIndex = 1;
 
   const index = state.activeTextIndex;
   const currentText = useSelector(getText(index));
   const colors = useColors();
   const dispatch = useDispatch();
+
+  let selectedIndex = 0;
+  if (tab === "versions") selectedIndex = 1;
+
   function setSelectedIndex(index: number) {
     if (index === 0) {
       dispatch(librarySlice.actions.toggleBlocks());
