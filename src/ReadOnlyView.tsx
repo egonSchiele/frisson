@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import LibraryContext from "./LibraryContext";
 import { getFontSizeClass } from "./utils";
-import ImageBlock from "./ImageBlock";
+import ImageBlock from "./components/ImageBlock";
 export default function ReadOnlyView({ textBlocks, fontClass }) {
   const state: t.State = useSelector((state: RootState) => state.library);
   const { settings } = useContext(LibraryContext) as t.LibraryContextType;

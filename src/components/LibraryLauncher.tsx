@@ -30,7 +30,7 @@ import sortBy from "lodash/sortBy";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Launcher from "../Launcher";
+import Launcher from "./Launcher";
 import LibraryContext from "../LibraryContext";
 import * as t from "../Types";
 import {

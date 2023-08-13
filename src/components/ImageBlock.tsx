@@ -1,9 +1,9 @@
-import * as t from "./Types";
+import * as t from "../Types";
 import { useDispatch } from "react-redux";
-import { librarySlice } from "./reducers/librarySlice";
+import { librarySlice } from "../reducers/librarySlice";
 import { useState } from "react";
 import React from "react";
-import { useColors, useFonts } from "./lib/hooks";
+import { useColors, useFonts } from "../lib/hooks";
 function Image({ url, className = "" }) {
   return <img src={url} className={`${className}`} />;
 }

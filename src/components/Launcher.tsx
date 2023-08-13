@@ -5,7 +5,7 @@ import { apStyleTitleCase } from "ap-style-title-case";
 import React, { Fragment, useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MenuItem } from "./Types";
+import { MenuItem } from "../Types";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

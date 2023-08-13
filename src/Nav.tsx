@@ -25,7 +25,7 @@ import {
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import LibErrorBoundary from "./LibErrorBoundary";
+import LibErrorBoundary from "./components/LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
 import Tabs from "./Tabs";
 import * as t from "./Types";

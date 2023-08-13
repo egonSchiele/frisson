@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { createContext } from "react";
-import * as t from "./Types";
+import * as t from "../Types";
 
 import { Fragment } from "react";
 import {
@@ -10,15 +10,15 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
 import { Menu, Transition } from "@headlessui/react";
-import { useColors } from "./lib/hooks";
+import { useColors } from "../lib/hooks";
 import { useSelector } from "react-redux";
 import {
   getSelectedChapter,
   getSelectedChapterWritingStreak,
-} from "./reducers/librarySlice";
+} from "../reducers/librarySlice";
 
 import Calendar from "react-widgets/Calendar";
-import { pluralize, dateToDate } from "./utils";
+import { pluralize, dateToDate } from "../utils";
 
 const WritingStreakContext = createContext<t.Date[] | null>(null);
 

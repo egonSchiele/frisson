@@ -14,9 +14,12 @@ import EncryptionSidebar from "./EncryptionSidebar";
 import FocusSidebar from "./FocusSidebar";
 import Help from "./Help";
 import Home from "./Home";
-import LibErrorBoundary from "./LibErrorBoundary";
+import LibErrorBoundary from "./components/LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
-import { EditorPlaceholder, PanelPlaceholder } from "./LoadingPlaceholder";
+import {
+  EditorPlaceholder,
+  PanelPlaceholder,
+} from "./components/LoadingPlaceholder";
 import Nav from "./Nav";
 import OutlineSidebar from "./OutlineSidebar";
 import ProgressBar from "./ProgressBar";

@@ -1,15 +1,15 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as t from "./Types";
-import { RootState } from "./store";
-import Select from "./components/Select";
-import { librarySlice } from "./reducers/librarySlice";
+import * as t from "../Types";
+import { RootState } from "../store";
+import Select from "./Select";
+import { librarySlice } from "../reducers/librarySlice";
 import Launcher from "./Launcher";
-import Button from "./components/Button";
-import ReadOnlyView from "./ReadOnlyView";
+import Button from "./Button";
+import ReadOnlyView from "../ReadOnlyView";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import BlockMenu from "./components/BlockMenu";
+import BlockMenu from "./BlockMenu";
 
 export default function EmbeddedTextBlock({
   chapterid,

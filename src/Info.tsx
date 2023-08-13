@@ -15,7 +15,7 @@ import Switch from "./components/Switch";
 import RadioGroup from "./components/RadioGroup";
 import { Chapter, chapterStatuses } from "./Types";
 import Header from "./components/Header";
-import CalendarWidget from "./Calendar";
+import CalendarWidget from "./components/Calendar";
 const countSyllables = (text: string) => {
   try {
     return syllable(text);

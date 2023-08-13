@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import DiffViewer from "./DiffViewer";
-import LibErrorBoundary from "./LibErrorBoundary";
+import LibErrorBoundary from "./components/LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
 import LibraryDesktop from "./LibraryDesktop";
 import LibraryMobile from "./LibraryMobile";

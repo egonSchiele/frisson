@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DiffViewer from "./DiffViewer";
-import EmbeddedTextBlock from "./EmbeddedTextBlock";
+import EmbeddedTextBlock from "./components/EmbeddedTextBlock";
 import ReadOnlyView from "./ReadOnlyView";
 import TextEditor from "./TextEditor";
 import * as t from "./Types";
@@ -31,10 +31,10 @@ import {
   ArrowSmallRightIcon,
 } from "@heroicons/react/24/outline";
 import TodoListBlock from "./TodoListBlock";
-import ImageBlock from "./ImageBlock";
+import ImageBlock from "./components/ImageBlock";
 import ShowAllVersions from "./ShowAllVersions";
 import Structure from "./Structure";
-import Calendar from "./Calendar";
+import Calendar from "./components/Calendar";
 export default function Editor({ settings }: { settings: t.UserSettings }) {
   const dispatch = useDispatch();
   const currentChapterTitle = useSelector(getSelectedChapterTitle);

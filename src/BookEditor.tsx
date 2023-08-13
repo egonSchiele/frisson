@@ -37,7 +37,7 @@ import LibraryContext from "./LibraryContext";
 import QuillTextArea from "./components/QuillTextArea";
 import { useColors, useFonts } from "./lib/hooks";
 import readingTime from "reading-time/lib/reading-time";
-import CalendarWidget from "./Calendar";
+import CalendarWidget from "./components/Calendar";
 import ListMenu from "./components/ListMenu";
 
 function BookInfo({ book }: { book: Book }) {
