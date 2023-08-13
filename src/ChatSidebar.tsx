@@ -81,15 +81,20 @@ export default function ChatSidebar() {
     newChatHistory.push({ role: "user", content: prompt });
     setChatHistory(newChatHistory);
 
-    const result = await fd.fetchSuggestions(
-      "",
-      "",
-      settings.model,
-      1,
-      settings.max_tokens,
+    const params: t.FetchSuggestionsParams = {
+      model: settings.model,
+      num_suggestions: 1,
+      max_tokens: settings.max_tokens || 1,
       prompt,
-      chatHistory.slice(start, end)
-    );
+      messages: chatHistory.slice(start, end),
+      customKey: settings.customKey || null,
+      replaceParams: {
+        text: getTextForSuggestions(),
+        synopsis: currentBook?.synopsis || "",
+      },
+    };
+
+    const result = await fd.fetchSuggestions(params);
 
     if (result.tag === "error") {
       dispatch(librarySlice.actions.setError(result.message));

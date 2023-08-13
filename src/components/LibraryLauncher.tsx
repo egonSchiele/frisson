@@ -382,18 +382,8 @@ export default function LibraryLauncher({ onLauncherClose }) {
     launchItems.push({
       label: prompt.label,
       onClick: async () => {
-        if (prompt.action === "replaceSelection") {
-          await fetchSuggestions(prompt, [], {
-            type: "replaceSelection",
-            selection: state.editor._cachedSelectedText,
-          });
-        } else {
-          await fetchSuggestions(prompt, [], {
-            type: "addToSuggestionsList",
-          });
-        }
+        await fetchSuggestions(prompt, []);
       },
-
       icon: <SparklesIcon className="h-4 w-4" aria-hidden="true" />,
     });
   });

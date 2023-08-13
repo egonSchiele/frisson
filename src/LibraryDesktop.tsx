@@ -36,6 +36,7 @@ import {
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
 import ExportSidebar from "./ExportSidebar";
+import MultipleChoicePopup from "./MultipleChoicePopup";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -190,6 +191,11 @@ export default function LibraryDesktop() {
             <div className="bg-gray-800 p-xs absolute bottom-0 right-0 z-50 text-gray-500">
               {settings.email}
             </div>
+          </LibErrorBoundary>
+        )}
+        {state.multipleChoicePopupOpen && state.multipleChoicePopupData && (
+          <LibErrorBoundary component="multiple-choice-popup">
+            <MultipleChoicePopup {...state.multipleChoicePopupData} />
           </LibErrorBoundary>
         )}
         {state.helpOpen && (

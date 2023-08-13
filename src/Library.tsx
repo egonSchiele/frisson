@@ -264,6 +264,8 @@ export default function Library({ mobile = false }) {
       event.preventDefault();
       if (state.popupOpen) {
         dispatch(librarySlice.actions.hidePopup());
+      } else if (state.multipleChoicePopupOpen) {
+        dispatch(librarySlice.actions.hideMultipleChoicePopup());
       } else if (state.launcherOpen) {
         dispatch(librarySlice.actions.toggleLauncher());
         /* } else if (state.viewMode === "focus") {
@@ -764,18 +766,31 @@ export default function Library({ mobile = false }) {
     return text;
   }
 
-  async function fetchSuggestions(
-    prompt: t.Prompt,
-    messages: t.ChatHistory[],
-    action: t.PromptAction = { type: "addToSuggestionsList" }
-  ) {
+  async function fetchSuggestions(prompt: t.Prompt, messages: t.ChatHistory[]) {
+    let action: t.PromptAction = {
+      type: "addToSuggestionsList",
+    };
+    let promptText = prompt.text;
+    if (prompt.action === "replaceSelection") {
+      action = {
+        type: "replaceSelection",
+        selection: state.editor._cachedSelectedText,
+      };
+    } else if (prompt.action === "showMultipleChoice") {
+      action = {
+        type: "showMultipleChoice",
+        selection: state.editor._cachedSelectedText,
+      };
+      promptText += "\nGive the result as comma separated values.";
+    }
+
     setLoading(true);
 
     const params: t.FetchSuggestionsParams = {
       model: settings.model,
       num_suggestions: settings.num_suggestions || 1,
       max_tokens: settings.max_tokens || 1,
-      prompt: prompt.text,
+      prompt: promptText,
       messages,
       customKey: settings.customKey || null,
       replaceParams: {
@@ -809,10 +824,43 @@ export default function Library({ mobile = false }) {
             length: action.selection.length,
           })
         );
+      } else if (action.type === "showMultipleChoice") {
+        const { index, length } = action.selection;
+        dispatch(
+          librarySlice.actions.setSelection({
+            index,
+            length,
+          })
+        );
+
+        const options = generatedText.split(/[,\n] ?/).map((text: string) => ({
+          label: text,
+          value: text,
+        }));
+
+        dispatch(
+          librarySlice.actions.showMultipleChoicePopup({
+            title: "",
+            options,
+            onClick: (value: string) => {
+              dispatch(
+                librarySlice.actions.replaceContents({
+                  text: value,
+                  index,
+                  length,
+                })
+              );
+            },
+          })
+        );
+
+        console.log(generatedText, generatedText.split(","));
       }
     });
-    dispatch(librarySlice.actions.openRightSidebar());
-    dispatch(librarySlice.actions.setActivePanel("suggestions"));
+    if (action.type === "addToSuggestionsList") {
+      dispatch(librarySlice.actions.openRightSidebar());
+      dispatch(librarySlice.actions.setActivePanel("suggestions"));
+    }
   }
 
   const libraryUtils: t.LibraryContextType = {

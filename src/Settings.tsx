@@ -50,6 +50,7 @@ function Prompt({
         >
           <option value="addToSuggestionsList">Add To List (default)</option>
           <option value="replaceSelection">Replace Selection</option>
+          <option value="showMultipleChoice">Show Multiple Choice</option>
         </Select>
       </div>
       <Button

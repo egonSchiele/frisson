@@ -83,9 +83,18 @@ export const initialState = (_chapter: t.Chapter | null): t.State => {
     viewMode: "default",
     launcherOpen: false,
     popupOpen: false,
+    multipleChoicePopupOpen: false,
     helpOpen: false,
     recording: false,
     popupData: null,
+    multipleChoicePopupData: null /* {
+      title: "",
+      options: [
+        { label: "adit", value: "hiya" },
+        { label: "adit2", value: "hiya" },
+      ],
+      onClick: console.log,
+    }, */,
     openTabs: localStorageOrDefault("openTabs", []),
     activeTab: localStorageOrDefault("activeTab", null),
     editHistory: [],
@@ -963,6 +972,16 @@ export const librarySlice = createSlice({
     showPopup(state, action: PayloadAction<t.PopupData>) {
       state.popupOpen = true;
       state.popupData = action.payload;
+    },
+    hideMultipleChoicePopup(state: t.State) {
+      state.multipleChoicePopupOpen = false;
+    },
+    showMultipleChoicePopup(
+      state,
+      action: PayloadAction<t.MultipleChoicePopupData>
+    ) {
+      state.multipleChoicePopupOpen = true;
+      state.multipleChoicePopupData = action.payload;
     },
     toggleHelp(state: t.State) {
       state.helpOpen = !state.helpOpen;

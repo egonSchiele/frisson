@@ -1,15 +1,12 @@
 import React, { useContext } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import LibraryContext from "./LibraryContext";
 import * as t from "./Types";
 import List from "./components/List";
 import ListItem from "./components/ListItem";
-import { RootState } from "./store";
 
 export default function PromptsSidebar({}: {}) {
-  const _cachedSelectedText = useSelector(
-    (state: RootState) => state.library.editor._cachedSelectedText
-  );
+  // const state = useSelector((state: RootState) => state.library.editor);
   const dispatch = useDispatch();
   const { settings, fetchSuggestions } = useContext(
     LibraryContext
@@ -22,16 +19,7 @@ export default function PromptsSidebar({}: {}) {
         selected={false}
         plausibleEventName="prompt-click"
         onClick={async () => {
-          if (prompt.action === "replaceSelection") {
-            await fetchSuggestions(prompt, [], {
-              type: "replaceSelection",
-              selection: _cachedSelectedText,
-            });
-          } else {
-            await fetchSuggestions(prompt, [], {
-              type: "addToSuggestionsList",
-            });
-          }
+          await fetchSuggestions(prompt, []);
         }}
         selector={`prompt-${prompt.label}-button`}
       />

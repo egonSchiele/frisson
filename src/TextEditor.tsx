@@ -302,9 +302,9 @@ function TextEditor({
       if (_pushSelectionToEditor.index === -1) {
         editor.setSelection(editor.getLength());
       } else {
-        //editor.setSelection(_pushSelectionToEditor);
-        highlightForFocusMode();
-        editor.formatText(_pushSelectionToEditor, { class: "selectedText" });
+        editor.setSelection(_pushSelectionToEditor);
+        //highlightForFocusMode();
+        //editor.formatText(_pushSelectionToEditor, { class: "selectedText" });
       }
       dispatch(librarySlice.actions.clearPushSelectionToEditor());
     }

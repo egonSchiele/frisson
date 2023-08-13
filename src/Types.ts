@@ -18,9 +18,11 @@ export type State = {
   viewMode: ViewMode;
   launcherOpen: boolean;
   popupOpen: boolean;
+  multipleChoicePopupOpen: boolean;
   helpOpen: boolean;
   recording: boolean;
   popupData: PopupData | null;
+  multipleChoicePopupData: MultipleChoicePopupData | null;
   scrollTo?: number;
   openTabs: Tab[];
   activeTab: number | null;
@@ -131,6 +133,17 @@ export type PopupData = {
   opaqueBackground?: boolean;
   type?: "text" | "password";
   onSubmit: (value: string) => void;
+};
+
+export type MultipleChoicePopupData = {
+  title: string;
+  options: MultipleChoiceOption[];
+  onClick: (value: string) => void;
+};
+
+export type MultipleChoiceOption = {
+  label: string;
+  value: string;
 };
 
 export type ViewMode =
@@ -678,8 +691,15 @@ export type FetchSuggestionsParams = {
   };
 };
 
-export type PromptAction = AddToSuggestionsList | ReplaceSelection;
-export type PromptActionName = "addToSuggestionsList" | "replaceSelection";
+export type PromptAction =
+  | AddToSuggestionsList
+  | ReplaceSelection
+  | ShowMultipleChoice;
+
+export type PromptActionName =
+  | "addToSuggestionsList"
+  | "replaceSelection"
+  | "showMultipleChoice";
 
 export type AddToSuggestionsList = {
   type: "addToSuggestionsList";
@@ -687,5 +707,10 @@ export type AddToSuggestionsList = {
 
 export type ReplaceSelection = {
   type: "replaceSelection";
+  selection: SelectedText;
+};
+
+export type ShowMultipleChoice = {
+  type: "showMultipleChoice";
   selection: SelectedText;
 };
