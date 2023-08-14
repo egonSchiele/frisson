@@ -25,7 +25,6 @@ import OutlineSidebar from "./OutlineSidebar";
 import ProgressBar from "./ProgressBar";
 import PromptsSidebar from "./PromptsSidebar";
 import SearchSidebar from "./SearchSidebar";
-import Sidebar from "./Sidebar";
 import SpeechSidebar from "./SpeechSidebar";
 import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
@@ -40,6 +39,7 @@ import {
 import { AppDispatch, RootState } from "./store";
 import ExportSidebar from "./ExportSidebar";
 import MultipleChoicePopup from "./MultipleChoicePopup";
+import Sidebar from "./sidebars/Sidebar";
 
 export default function LibraryDesktop() {
   const state: t.State = useSelector((state: RootState) => state.library);
@@ -391,10 +391,7 @@ export default function LibraryDesktop() {
               <div
                 className={`absolute top-0 right-0 h-screen w-48 md:w-72 lg:w-96 mt-9 z-10`}
               >
-                <Sidebar
-                  /* TODO */
-                  triggerHistoryRerender={0}
-                />
+                <Sidebar />
               </div>
             </SlideTransition>
           </PanelPlaceholder>

@@ -6,7 +6,7 @@ import LibErrorBoundary from "./components/LibErrorBoundary";
 import LibraryContext from "./LibraryContext";
 import LibraryDesktop from "./LibraryDesktop";
 import LibraryMobile from "./LibraryMobile";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebars/Sidebar";
 import * as t from "./Types";
 import LibraryLauncher from "./components/LibraryLauncher";
 import "./globals.css";
@@ -906,7 +906,7 @@ export default function Library({ mobile = false }) {
             <LibraryLauncher onLauncherClose={onLauncherClose} />
           )}
 
-          <Sidebar triggerHistoryRerender={triggerHistoryRerender} />
+          <Sidebar />
         </LibraryContext.Provider>
       </div>
     );

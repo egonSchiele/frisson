@@ -49,7 +49,8 @@ export default function SearchSidebar({}: {}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   function getClassNames({ selected }) {
-    const defaultClasses = "w-full py-1 text-sm font-medium text-center";
+    const defaultClasses =
+      "w-full py-1 text-sm font-medium text-center focus:outline-none";
     return classNames(
       defaultClasses,
       selected ? `${colors.background}` : `${colors.selectedBackground}`

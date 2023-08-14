@@ -173,7 +173,8 @@ function ManuallyDecryptObject({ password }) {
 function ManualMode({ password }) {
   const colors = useColors();
   function getClassNames({ selected }) {
-    const defaultClasses = "w-full py-1 text-sm font-medium text-center";
+    const defaultClasses =
+      "w-full py-1 text-sm font-medium text-center focus:outline-none";
     return classNames(
       defaultClasses,
       selected ? `${colors.selectedBackground}` : `${colors.background}`

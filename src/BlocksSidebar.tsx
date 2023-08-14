@@ -42,7 +42,8 @@ export default function BlockSidebar({}: {}) {
 
   if (!currentText) return null;
   function getClassNames({ selected }) {
-    const defaultClasses = "w-full py-1 text-sm font-medium text-center";
+    const defaultClasses =
+      "w-full py-1 text-sm font-medium text-center focus:outline-none";
     return classNames(
       defaultClasses,
       selected ? `${colors.background}` : `${colors.selectedBackground}`
