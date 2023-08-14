@@ -1,8 +1,5 @@
-import { useReactMediaRecorder } from "react-media-recorder";
-
 import {
   ArchiveBoxIcon,
-  ArrowPathIcon,
   Bars3Icon,
   ChatBubbleLeftIcon,
   CheckCircleIcon,
@@ -11,12 +8,9 @@ import {
   DocumentDuplicateIcon,
   EllipsisHorizontalCircleIcon,
   EyeIcon,
-  LockClosedIcon,
-  LockOpenIcon,
   MagnifyingGlassIcon,
   MicrophoneIcon,
   MinusIcon,
-  MusicalNoteIcon,
   PencilIcon,
   PlayIcon,
   SparklesIcon,
@@ -24,14 +18,12 @@ import {
 } from "@heroicons/react/24/outline";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import LibErrorBoundary from "./components/LibErrorBoundary";
+import { useNavigate } from "react-router-dom";
 import LibraryContext from "./LibraryContext";
-import Tabs from "./Tabs";
 import * as t from "./Types";
+import LibErrorBoundary from "./components/LibErrorBoundary";
 import NavButton from "./components/NavButton";
 import Spinner from "./components/Spinner";
-import * as fd from "./lib/fetchData";
 import { useColors, useRecording } from "./lib/hooks";
 import {
   getSelectedChapter,
@@ -39,7 +31,6 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
-import { textToSpeech } from "@huggingface/inference";
 export default function Nav({
   mobile,
   bookid,
@@ -481,36 +472,7 @@ export default function Nav({
                     aria-hidden="true"
                   />
                 </NavButton>
-                {settings.encrypted && !mobile && (
-                  <NavButton
-                    color="nav"
-                    label="Encryption"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.toggleEncryption());
-                    }}
-                    selector="chat-button"
-                  >
-                    <LockClosedIcon
-                      className="h-8 w-8 md:h-5 md:w-5"
-                      aria-hidden="true"
-                    />
-                  </NavButton>
-                )}
-                {!settings.encrypted && !mobile && (
-                  <NavButton
-                    color="nav"
-                    label="Encryption"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.toggleEncryption());
-                    }}
-                    selector="chat-button"
-                  >
-                    <LockOpenIcon
-                      className="h-8 w-8 md:h-5 md:w-5"
-                      aria-hidden="true"
-                    />
-                  </NavButton>
-                )}
+
                 {settings.admin && (
                   <NavButton
                     color="nav"

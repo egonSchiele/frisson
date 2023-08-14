@@ -10,7 +10,7 @@ import ChatSidebar from "./ChatSidebar";
 import DebugSidebar from "./DebugSidebar";
 import EditHistorySidebar from "./EditHistorySidebar";
 import Editor from "./Editor";
-import EncryptionSidebar from "./EncryptionSidebar";
+
 import FocusSidebar from "./FocusSidebar";
 import Help from "./Help";
 import Home from "./Home";
@@ -107,7 +107,6 @@ export default function LibraryDesktop() {
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel !== "chat" &&
     state.panels.rightSidebar.activePanel !== "speech" &&
-    state.panels.rightSidebar.activePanel !== "encryption" &&
     state.viewMode !== "focus" &&
     currentChapter &&
     !mobile
@@ -118,12 +117,6 @@ export default function LibraryDesktop() {
     state.panels.rightSidebar.activePanel === "chat" &&
     state.viewMode !== "focus" &&
     currentChapter
-  );
-
-  const encryptionOpen = !!(
-    state.panels.rightSidebar.open &&
-    state.panels.rightSidebar.activePanel === "encryption" &&
-    state.viewMode !== "focus"
   );
 
   const speechOpen = !!(
@@ -406,20 +399,6 @@ export default function LibraryDesktop() {
             <SlideTransition show={chatOpen} direction="right">
               <div className={`absolute top-0 right-0 h-screen w-1/2 mt-9`}>
                 <ChatSidebar />
-              </div>
-            </SlideTransition>
-          </PanelPlaceholder>
-        </LibErrorBoundary>
-
-        <LibErrorBoundary component="encryption">
-          <PanelPlaceholder
-            loaded={state.booksLoaded}
-            show={state.panels.rightSidebar.open}
-            className="top-0 right-0"
-          >
-            <SlideTransition show={encryptionOpen} direction="right">
-              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
-                <EncryptionSidebar />
               </div>
             </SlideTransition>
           </PanelPlaceholder>

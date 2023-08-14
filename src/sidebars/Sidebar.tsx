@@ -4,6 +4,8 @@ import {
   ClockIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   Square2StackIcon,
 } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
@@ -26,6 +28,7 @@ import History from "../History";
 import Settings from "../Settings";
 import LibraryContext from "../LibraryContext";
 import { LibraryContextType } from "../Types";
+import EncryptionSidebar from "../EncryptionSidebar";
 function Suggestions({ suggestions }) {
   const maximize = useSelector(
     (state: RootState) => state.library.viewMode === "fullscreen"
@@ -102,6 +105,7 @@ export default function Sidebar() {
   if (tab === "suggestions") selectedIndex = 1;
   if (tab === "history") selectedIndex = 2;
   if (tab === "settings") selectedIndex = 3;
+  if (tab === "encryption") selectedIndex = 4;
 
   function setSelectedIndex(index: number) {
     if (index === 0) {
@@ -112,6 +116,8 @@ export default function Sidebar() {
       dispatch(librarySlice.actions.setActivePanel("history"));
     } else if (index === 3) {
       dispatch(librarySlice.actions.setActivePanel("settings"));
+    } else if (index === 4) {
+      dispatch(librarySlice.actions.toggleEncryption());
     }
   }
 
@@ -147,6 +153,18 @@ export default function Sidebar() {
             <Cog6ToothIcon
               className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
             />
+          </Tab>
+          <Tab className={getClassNames}>
+            {settings.encrypted && (
+              <LockClosedIcon
+                className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+              />
+            )}
+            {!settings.encrypted && (
+              <LockOpenIcon
+                className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+              />
+            )}
           </Tab>
         </Tab.List>
         <Tab.Panels className="">
@@ -192,6 +210,9 @@ export default function Sidebar() {
                 />,
               ]}
             />
+          </Tab.Panel>
+          <Tab.Panel>
+            <EncryptionSidebar />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
