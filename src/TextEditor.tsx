@@ -819,9 +819,6 @@ function TextEditor({
               {currentText.hideInExport && (
                 <EyeSlashIcon className="mt-xs w-5 h-5 text-gray-500" />
               )}
-              {/*   {currentText.type === "code" && (
-                <CodeMenu currentText={currentText} index={index} />
-              )} */}
             </div>
             <div
               className={`flex-grow grid grid-cols-1 pl-md`}
