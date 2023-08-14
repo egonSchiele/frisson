@@ -412,53 +412,6 @@ export default function Nav({
                   </NavButton>
                 )}
 
-                {!mobile && (
-                  <>
-                    <NavButton
-                      color="nav"
-                      label="Focus Mode"
-                      onClick={() =>
-                        dispatch(librarySlice.actions.toggleViewMode("focus"))
-                      }
-                    >
-                      <EyeIcon
-                        className={`h-8 w-8 md:h-5 md:w-5 ${
-                          state.viewMode === "focus" &&
-                          colors.highlightTextColor
-                        }`}
-                        aria-hidden="true"
-                      />
-                    </NavButton>
-
-                    {/*   <NavButton
-                  color="nav"
-                    label="Prompts"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.togglePrompts());
-                      if (!state.panels.prompts.open) {
-                        dispatch(librarySlice.actions.closeFileNavigator());
-                      }
-                    }}
-                    selector="prompts-button"
-                  >
-                    <SparklesIcon className="h-8 w-8 md:h-5 md:w-5" aria-hidden="true" />
-                  </NavButton> */}
-
-                    <NavButton
-                      color="nav"
-                      label="Sidebar"
-                      onClick={() => {
-                        dispatch(librarySlice.actions.toggleRightSidebar());
-                      }}
-                      selector="sidebar-button"
-                    >
-                      <EllipsisHorizontalCircleIcon
-                        className="h-8 w-8 md:h-5 md:w-5"
-                        aria-hidden="true"
-                      />
-                    </NavButton>
-                  </>
-                )}
                 <NavButton
                   color="nav"
                   label="Chat"
@@ -473,7 +426,23 @@ export default function Nav({
                   />
                 </NavButton>
 
-                {settings.admin && (
+                {!mobile && (
+                  <NavButton
+                    color="nav"
+                    label="Sidebar"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.toggleRightSidebar());
+                    }}
+                    selector="sidebar-button"
+                  >
+                    <EllipsisHorizontalCircleIcon
+                      className="h-8 w-8 md:h-5 md:w-5"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
+
+                {settings.admin && mobile && (
                   <NavButton
                     color="nav"
                     label="Text to speech"

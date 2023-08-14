@@ -87,7 +87,8 @@ export type ActivePanel =
   | "history"
   | "chat"
   | "speech"
-  | "encryption";
+  | "encryption"
+  | "synonyms";
 
 export type LeftActivePanel =
   | "filenavigator"

@@ -321,6 +321,17 @@ export default function LibraryLauncher({ onLauncherClose }) {
         toggleRightPanel("settings");
       },
     },
+    {
+      label:
+        state.panels.rightSidebar.open &&
+        state.panels.rightSidebar.activePanel === "synonyms"
+          ? "Close Synonyms"
+          : "Open Synonyms",
+      icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,
+      onClick: () => {
+        toggleRightPanel("synonyms");
+      },
+    },
     /* {
       label: "Show Book List Only",
       icon: <Cog6ToothIcon className="w-6 h-6 xl:w-5 xl:h-5" />,

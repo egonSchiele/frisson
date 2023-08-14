@@ -1,11 +1,13 @@
 import {
   Bars3Icon,
+  BeakerIcon,
   ClipboardIcon,
   ClockIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
   LockClosedIcon,
   LockOpenIcon,
+  PlayIcon,
   Square2StackIcon,
 } from "@heroicons/react/24/outline";
 import React, { useContext, useState } from "react";
@@ -29,6 +31,8 @@ import Settings from "../Settings";
 import LibraryContext from "../LibraryContext";
 import { LibraryContextType } from "../Types";
 import EncryptionSidebar from "../EncryptionSidebar";
+import SynonymsSidebar from "../SynonymsSidebar";
+import SpeechSidebar from "../SpeechSidebar";
 function Suggestions({ suggestions }) {
   const maximize = useSelector(
     (state: RootState) => state.library.viewMode === "fullscreen"
@@ -106,6 +110,8 @@ export default function Sidebar() {
   if (tab === "history") selectedIndex = 2;
   if (tab === "settings") selectedIndex = 3;
   if (tab === "encryption") selectedIndex = 4;
+  if (tab === "synonyms") selectedIndex = 5;
+  if (tab === "speech") selectedIndex = 6;
 
   function setSelectedIndex(index: number) {
     if (index === 0) {
@@ -118,6 +124,10 @@ export default function Sidebar() {
       dispatch(librarySlice.actions.setActivePanel("settings"));
     } else if (index === 4) {
       dispatch(librarySlice.actions.toggleEncryption());
+    } else if (index === 5) {
+      dispatch(librarySlice.actions.setActivePanel("synonyms"));
+    } else if (index === 6) {
+      dispatch(librarySlice.actions.toggleSpeech());
     }
   }
 
@@ -166,6 +176,16 @@ export default function Sidebar() {
               />
             )}
           </Tab>
+          <Tab className={getClassNames}>
+            <BeakerIcon
+              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+            />
+          </Tab>
+          <Tab className={getClassNames}>
+            <PlayIcon
+              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+            />
+          </Tab>
         </Tab.List>
         <Tab.Panels className="">
           <Tab.Panel>
@@ -213,6 +233,12 @@ export default function Sidebar() {
           </Tab.Panel>
           <Tab.Panel>
             <EncryptionSidebar />
+          </Tab.Panel>
+          <Tab.Panel>
+            <SynonymsSidebar />
+          </Tab.Panel>
+          <Tab.Panel>
+            <SpeechSidebar />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

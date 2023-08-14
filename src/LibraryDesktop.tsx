@@ -106,8 +106,6 @@ export default function LibraryDesktop() {
   const rightSidebarOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel !== "chat" &&
-    state.panels.rightSidebar.activePanel !== "speech" &&
-    state.viewMode !== "focus" &&
     currentChapter &&
     !mobile
   );
@@ -115,13 +113,6 @@ export default function LibraryDesktop() {
   const chatOpen = !!(
     state.panels.rightSidebar.open &&
     state.panels.rightSidebar.activePanel === "chat" &&
-    state.viewMode !== "focus" &&
-    currentChapter
-  );
-
-  const speechOpen = !!(
-    state.panels.rightSidebar.open &&
-    state.panels.rightSidebar.activePanel === "speech" &&
     state.viewMode !== "focus" &&
     currentChapter
   );
@@ -399,20 +390,6 @@ export default function LibraryDesktop() {
             <SlideTransition show={chatOpen} direction="right">
               <div className={`absolute top-0 right-0 h-screen w-1/2 mt-9`}>
                 <ChatSidebar />
-              </div>
-            </SlideTransition>
-          </PanelPlaceholder>
-        </LibErrorBoundary>
-
-        <LibErrorBoundary component="speech">
-          <PanelPlaceholder
-            loaded={state.booksLoaded}
-            show={state.panels.rightSidebar.open}
-            className="top-0 right-0"
-          >
-            <SlideTransition show={speechOpen} direction="right">
-              <div className={`absolute top-0 right-0 h-screen w-96 mt-9`}>
-                <SpeechSidebar />
               </div>
             </SlideTransition>
           </PanelPlaceholder>
