@@ -882,7 +882,11 @@ export default function LibraryLauncher({ onLauncherClose }) {
     });
   }
 
-  if (currentTextBlock.versions && currentTextBlock.versions.length === 1) {
+  if (
+    currentTextBlock &&
+    currentTextBlock.versions &&
+    currentTextBlock.versions.length === 1
+  ) {
     launchItems.push({
       label: "Diff With Version",
       onClick: async () => {
