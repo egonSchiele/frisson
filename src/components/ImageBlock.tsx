@@ -38,7 +38,7 @@ export default function ImageBlock({
   if (text.display === "linear") {
     return (
       <div
-        className="mb-lg grid grid-cols-1 gap-2"
+        className="my-sm grid grid-cols-1 gap-2"
         onClick={setActiveTextIndex}
       >
         {images.map((url) => (

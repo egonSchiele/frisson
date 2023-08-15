@@ -1,11 +1,12 @@
-/* import levenshtein from "js-levenshtein";
-import intersection from "lodash/intersection";
- */ import sortBy from "lodash/sortBy";
+import LibraryContext from "../LibraryContext";
+import * as t from "../Types";
+import sortBy from "lodash/sortBy";
 import { apStyleTitleCase } from "ap-style-title-case";
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useContext } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { MenuItem } from "../Types";
+import { WrenchIcon } from "@heroicons/react/24/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -25,9 +26,34 @@ export default function Launcher({
   autocompleteCache?: { [key: string]: number };
 }) {
   const [query, setQuery] = useState("");
+  const { fetchSuggestions } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
 
   let filteredItems = items;
-  if (query !== "") {
+  if (query.startsWith(">")) {
+    const cleanedQuery = query.replace(/^> ?/, "").trim();
+    filteredItems = [
+      {
+        label: `Run prompt: "${cleanedQuery}"`,
+        tooltip: "Run AI prompt and replace current selection",
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        onClick: () => {
+          let text = cleanedQuery;
+          if (!text.includes("{{text}}")) {
+            text = `${text}: {{text}}`;
+          }
+          const prompt: t.Prompt = {
+            label: "Run prompt from launcher",
+            text,
+            action: "replaceSelection",
+          };
+          fetchSuggestions(prompt, []);
+        },
+        plausibleEventName: "run-prompt",
+      },
+    ];
+  } else if (query !== "") {
     // @ts-ignore
     filteredItems = items.map((item) => {
       const a = item.label.toLowerCase().split(" ");
