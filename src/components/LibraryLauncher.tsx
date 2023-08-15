@@ -551,10 +551,24 @@ export default function LibraryLauncher({ onLauncherClose }) {
     launchItems.push({
       label: "Diff with block below",
       onClick: () => {
+        const originalText = currentText[state.editor.activeTextIndex].text;
+        const newText = currentText[state.editor.activeTextIndex + 1].text;
+        const textForDiff = { originalText, newText };
+        dispatch(librarySlice.actions.setTextForDiff(textForDiff));
         dispatch(librarySlice.actions.setViewMode("diff"));
       },
       icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
       tooltip: "Command+Shift+d",
+    });
+  }
+
+  if (state.viewMode !== "diff") {
+    launchItems.push({
+      label: "Show last diff",
+      onClick: () => {
+        dispatch(librarySlice.actions.setViewMode("diff"));
+      },
+      icon: <DocumentDuplicateIcon className="h-4 w-4" aria-hidden="true" />,
     });
   }
 
