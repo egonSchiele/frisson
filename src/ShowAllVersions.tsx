@@ -51,7 +51,7 @@ export default function ShowAllVersions({ index }) {
   sortBy(versions, ["text"]).forEach((version, i) => {
     items.push(
       <div
-        className={` ${fontClass} ${fontSizeClass} ${colors.secondaryTextColor} rounded-md max-h-108 overflow-scroll`}
+        className={` ${fontClass} ${fontSizeClass} ${colors.secondaryTextColor} rounded-md max-h-108 overflow-scroll bg-gray-800 p-xs`}
         key={version.id}
         /*  onClick={() => {
             if (version.id !== null) {
@@ -83,7 +83,7 @@ export default function ShowAllVersions({ index }) {
     <div
       className={`grid ${
         versions.length === 1 ? "col-span-1" : "col-span-2"
-      } gap-sm my-sm mx-lg bg-gray-800 p-sm rounded-md`}
+      } gap-y-sm gap-x-xs my-sm mx-lg bg-dmeditor p-sm rounded-md`}
     >
       {items}
     </div>
