@@ -24,7 +24,7 @@ export function failure(message) {
   return { success: false, message };
 }
 
-export const saveBook = async (book) => {
+export const saveBook = async (book, lastHeardFromServer) => {
   if (!book) {
     console.log("no book to save");
     return failure("No book to save");
@@ -33,12 +33,15 @@ export const saveBook = async (book) => {
   const docRef = db.collection("books").doc(book.bookid);
   return await checkForStaleUpdate(
     "book",
-    book.lastHeardFromServer,
+    lastHeardFromServer,
     docRef,
     async () => {
       const created_at = Date.now();
       try {
         book.created_at = created_at;
+
+        // Not sure if this is a good idea, since lastHeardFromServer is something I'm using on the frontend only. But adding it just in case, because I compare lastHeardFromServer and created_at timestamps in checkForStaleUpdate, and would like them to be the same value consistently.
+        book.lastHeardFromServer = created_at;
 
         if (book.chapterOrder) {
           book.chapterOrder = _.uniq(book.chapterOrder);
@@ -334,7 +337,7 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
           (_chapterid) => _chapterid !== chapterid
         );
       }
-      return await saveBook(book);
+      return await saveBook(book, lastHeardFromServer);
     }
   );
 };

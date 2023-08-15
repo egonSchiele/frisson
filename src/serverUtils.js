@@ -65,8 +65,8 @@ export async function checkForStaleUpdate(
     console.log(
       "saving",
       type,
-      data.created_at,
-      lastHeardFromServer,
+      `created_at on ${type}: ${data.created_at}`,
+      `lastHeardFromServer: ${lastHeardFromServer}`,
       new Date(data.created_at).toLocaleString(),
       new Date(lastHeardFromServer + FUDGE_FACTOR).toLocaleString()
     );

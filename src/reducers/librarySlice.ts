@@ -717,12 +717,20 @@ export const librarySlice = createSlice({
       if (!chapter) return;
       const currentBlock = chapter.text[activeTextIndex];
 
+      const originalText = currentBlock.text;
+      let newText = "";
+
       if (length > 0) {
-        const newText = strSplice(currentBlock.text, index, length, text);
-        currentBlock.text = newText;
+        const updatedText = strSplice(currentBlock.text, index, length, text);
+        currentBlock.text = updatedText;
+        newText = updatedText;
       } else {
         currentBlock.text = text;
+        newText = text;
       }
+
+      const textForDiff = { originalText, newText };
+      state.textForDiff = textForDiff;
       state.editor._pushTextToEditor = nanoid();
       state.saved = false;
     },
@@ -1699,6 +1707,32 @@ export const librarySlice = createSlice({
       if (!prevState) return;
 
       saveToEditHistory(state, "restore from history");
+
+      /* make sure timestamps don't regress */
+      prevState.books.forEach((book) => {
+        const olderBook = state.books.find((b) => b.bookid === book.bookid);
+        if (olderBook) {
+          book.created_at = olderBook.created_at;
+          book.lastHeardFromServer = olderBook.lastHeardFromServer;
+        } else {
+          console.log(
+            `book ${book.bookid} not found in restoreFromEditHistory`
+          );
+        }
+        book.chapters.forEach((chapter) => {
+          const olderChapter = olderBook.chapters.find(
+            (c) => c.chapterid === chapter.chapterid
+          );
+          if (olderChapter) {
+            chapter.created_at = olderChapter.created_at;
+            chapter.lastHeardFromServer = olderChapter.lastHeardFromServer;
+          } else {
+            console.log(
+              `chapter ${chapter.chapterid} not found in restoreFromEditHistory`
+            );
+          }
+        });
+      });
 
       state.books = prevState.books;
       state.editor._pushTextToEditor = nanoid();
