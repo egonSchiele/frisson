@@ -846,7 +846,9 @@ function TextEditor({
             </div>
           </div>
         )}
-        <div className="fancy-background mt-16 h-30 w-full"></div>
+        {index === currentChapterTextLength - 1 && (
+          <div className="fancy-background mt-16 h-30 w-full"></div>
+        )}
       </div>
     </div>
   );
