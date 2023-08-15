@@ -31,22 +31,46 @@ export default function Launcher({
   ) as t.LibraryContextType;
 
   let filteredItems = items;
-  if (query.startsWith(">")) {
-    const cleanedQuery = query.replace(/^> ?/, "").trim();
+  if (query.startsWith(">>")) {
+    let cleanedQuery = query.replace(/^> ?/, "").trim();
+    if (cleanedQuery.length === 0) {
+      cleanedQuery = "{{text}}";
+    } else if (!cleanedQuery.includes("{{text}}")) {
+      cleanedQuery = `${cleanedQuery}: {{text}}`;
+    }
     filteredItems = [
       {
         label: `Run prompt: "${cleanedQuery}"`,
         tooltip: "Run AI prompt and replace current selection",
         icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
         onClick: () => {
-          let text = cleanedQuery;
-          if (!text.includes("{{text}}")) {
-            text = `${text}: {{text}}`;
-          }
           const prompt: t.Prompt = {
             label: "Run prompt from launcher",
-            text,
+            text: cleanedQuery,
             action: "replaceSelection",
+          };
+          fetchSuggestions(prompt, []);
+        },
+        plausibleEventName: "run-prompt",
+      },
+    ];
+  } else if (query.startsWith(">")) {
+    let cleanedQuery = query.replace(/^> ?/, "").trim();
+    if (cleanedQuery.length === 0) {
+      cleanedQuery = "{{text}}";
+    } else if (!cleanedQuery.includes("{{text}}")) {
+      cleanedQuery = `${cleanedQuery}: {{text}}`;
+    }
+    filteredItems = [
+      {
+        label: `Run prompt: "${cleanedQuery}"`,
+        tooltip: "Run AI prompt",
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        onClick: () => {
+          const prompt: t.Prompt = {
+            label: "Run prompt from launcher",
+            text: cleanedQuery,
+            action: "addToSuggestionsList",
           };
           fetchSuggestions(prompt, []);
         },
