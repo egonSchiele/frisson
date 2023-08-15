@@ -30,7 +30,7 @@ export default function Launcher({
     LibraryContext
   ) as t.LibraryContextType;
 
-  let filteredItems = items;
+  let filteredItems = [];
   if (query.startsWith(">>")) {
     let cleanedQuery = query.replace(/^> ?/, "").trim();
     if (cleanedQuery.length === 0) {
