@@ -1501,6 +1501,7 @@ async function usingLocalAi(
 }
 
 function sanitize(str) {
+  return str;
   return str
     .split(" ")
     .map((_word) => {

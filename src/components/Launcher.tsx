@@ -68,7 +68,7 @@ export default function Launcher({
     } else if (!cleanedQuery.includes("{{text}}")) {
       cleanedQuery = `${cleanedQuery}: {{text}}`;
     }
-    const queryWithContext = `Use this context: ${currentTextBlock.text}\nAnd answer this question: ${cleanedQuery}`;
+    const queryWithContext = `### Use this context:\n${currentTextBlock.text}\n\n### And respond to this user prompt:\n${cleanedQuery}`;
     filteredItems = [
       {
         label: `Run prompt with context: "${cleanedQuery}"`,
@@ -143,6 +143,13 @@ export default function Launcher({
     /*     filteredItems = sortBy(filteredItems, (item) => {
       return levenshtein(item.label.toLowerCase(), query.toLowerCase());
     }); */
+  }
+
+  function maybeTitleCase(text: string): string {
+    if (text.startsWith("Run prompt")) {
+      return text;
+    }
+    return apStyleTitleCase(text);
   }
 
   return (
@@ -220,7 +227,7 @@ export default function Launcher({
                         <div className="flex">
                           <div className=" mt-0.5">{item.icon} </div>
                           <div className="ml-1 flex-grow">
-                            {apStyleTitleCase(item.label)}{" "}
+                            {maybeTitleCase(item.label)}{" "}
                             {item.tooltip && (
                               <span className=" text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-1">
                                 {item.tooltip}
