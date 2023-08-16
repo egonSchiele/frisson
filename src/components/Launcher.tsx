@@ -7,6 +7,9 @@ import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { MenuItem } from "../Types";
 import { WrenchIcon } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
+import { getText } from "../reducers/librarySlice";
+import { RootState } from "../store";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -29,10 +32,14 @@ export default function Launcher({
   const { fetchSuggestions } = useContext(
     LibraryContext
   ) as t.LibraryContextType;
+  const activeTextIndex = useSelector(
+    (state: RootState) => state.library.editor.activeTextIndex
+  );
+  const currentTextBlock = useSelector(getText(activeTextIndex));
 
   let filteredItems = [];
-  if (query.startsWith(">>")) {
-    let cleanedQuery = query.replace(/^> ?/, "").trim();
+  if (query.startsWith(".")) {
+    let cleanedQuery = query.replace(/^\. ?/, "").trim();
     if (cleanedQuery.length === 0) {
       cleanedQuery = "{{text}}";
     } else if (!cleanedQuery.includes("{{text}}")) {
@@ -40,14 +47,38 @@ export default function Launcher({
     }
     filteredItems = [
       {
-        label: `Run prompt: "${cleanedQuery}"`,
-        tooltip: "Run AI prompt and replace current selection",
+        label: `Run prompt and replace: "${cleanedQuery}"`,
+        tooltip: "Run AI prompt",
         icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
         onClick: () => {
           const prompt: t.Prompt = {
             label: "Run prompt from launcher",
             text: cleanedQuery,
             action: "replaceSelection",
+          };
+          fetchSuggestions(prompt, []);
+        },
+        plausibleEventName: "run-prompt",
+      },
+    ];
+  } else if (query.startsWith(">>") && currentTextBlock) {
+    let cleanedQuery = query.replace(/^>> ?/, "").trim();
+    if (cleanedQuery.length === 0) {
+      cleanedQuery = "{{text}}";
+    } else if (!cleanedQuery.includes("{{text}}")) {
+      cleanedQuery = `${cleanedQuery}: {{text}}`;
+    }
+    const queryWithContext = `Use this context: ${currentTextBlock.text}\nAnd answer this question: ${cleanedQuery}`;
+    filteredItems = [
+      {
+        label: `Run prompt with context: "${cleanedQuery}"`,
+        tooltip: "Run AI prompt",
+        icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+        onClick: () => {
+          const prompt: t.Prompt = {
+            label: "Run prompt from launcher",
+            text: queryWithContext,
+            action: "addToSuggestionsList",
           };
           fetchSuggestions(prompt, []);
         },
@@ -166,6 +197,7 @@ export default function Launcher({
                     placeholder="Search..."
                     onChange={(event) => setQuery(event.target.value)}
                     data-selector="launcher-search-input"
+                    autoComplete="off"
                   />
                 </div>
 
