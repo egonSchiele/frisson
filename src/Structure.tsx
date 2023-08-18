@@ -40,7 +40,7 @@ export default function Structure({}) {
     const fill: string = block.blockColor || "none"; //index % 2 === 0 ? "#aaa" : "#bbb";
     const fillColor = {
       red: "#e63946",
-      yellow: "#ecc94b",
+      yellow: "#bda13c",
       green: "#588157",
       blue: "#457b9d",
       none: "#718096",
