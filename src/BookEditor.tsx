@@ -24,6 +24,8 @@ import {
   isString,
   pluralize,
   prettyDate,
+  sortChapters,
+  useLocalStorage,
   wordCount,
 } from "./utils";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -39,6 +41,7 @@ import { useColors, useFonts } from "./lib/hooks";
 import readingTime from "reading-time/lib/reading-time";
 import CalendarWidget from "./components/Calendar";
 import ListMenu from "./components/ListMenu";
+import Select from "./components/Select";
 
 function BookInfo({ book }: { book: Book }) {
   const text = book.chapters
@@ -229,7 +232,7 @@ function Chapter({ chapter, bookid, index }) {
   } else if (chapter.status && chapter.status === "in-progress") {
     status = `🚧`;
   }
-  //const hasHiddenBlocks = wordCount(chapter, true) !== wordCount(chapter);
+  const hasHiddenBlocks = wordCount(chapter, true) !== wordCount(chapter);
 
   return (
     <div className="flex flex-col my-sm">
@@ -251,15 +254,15 @@ function Chapter({ chapter, bookid, index }) {
         </p>
       </Link>
       <div className="flex flex-row justify-end">
-        {/*   <p className="text-sm font-sans text-gray-500">
+        {/*  <p className="text-sm font-sans text-gray-500">
           {wordCount(chapter)} words{" "}
           {hasHiddenBlocks && <span>({wordCount(chapter, true)} total)</span>} |{" "}
         </p> */}
-        {/* <p
+        <p
           className={`text-md px-sm mt-md font-sans ${colors.secondaryTextColor}`}
         >
           Last edited: {prettyDate(chapter.created_at)}
-        </p> */}
+        </p>
 
         <Button
           onClick={() => {
@@ -653,6 +656,12 @@ export default function BookEditor({ className = "" }) {
   );
   const { fontClass, fontSizeClass, titleFontSize } = useFonts();
 
+  const [sortType, setSortType] = useLocalStorage<t.SortType>(
+    "chapterListSort",
+    "manual"
+  );
+  const sortedChapters = sortChapters(chapters, sortType);
+
   const dispatch = useDispatch();
   const bookEditorDiv = useRef(null);
   const { settings, saveBook, setLoading, newChapter } = useContext(
@@ -741,6 +750,8 @@ export default function BookEditor({ className = "" }) {
     return <div>loading</div>;
   }
 
+  console.log(sortedChapters.map((chapter) => chapter.title));
+
   return (
     <div
       className={`flex h-screen overflow-auto w-full mx-auto pt-lg ${className}`}
@@ -825,8 +836,25 @@ export default function BookEditor({ className = "" }) {
                 </Button>
               )}
             </Heading>
-            {chapters &&
-              chapters.map((chapter, i) => (
+
+            <Select
+              key="sort"
+              name="sort"
+              value={sortType}
+              onChange={(e) => setSortType(e.target.value)}
+            >
+              <option value="manual">Manual</option>
+              <option value="alphabetical">Alphabetical</option>
+              <option value="recentlyModified">Recently Modified</option>
+              <option value="leastRecentlyModified">
+                Least Recently Modified
+              </option>
+              <option value="shortestToLongest">Shortest to Longest</option>
+              <option value="longestToShortest">Longest to Shortest</option>
+            </Select>
+
+            {sortedChapters &&
+              sortedChapters.map((chapter, i) => (
                 <Chapter
                   key={i}
                   chapter={chapter}
@@ -939,12 +967,12 @@ export default function BookEditor({ className = "" }) {
             </div>
             <p>The following chapters are duplicates of each other:</p>
             <div className="grid gap-sm grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
-              {dupes.map((chapters, i) => (
+              {dupes.map((sortedChapters, i) => (
                 <ul
                   key={i}
                   className="list-decimal border border-gray-500 p-sm rounded-md my-sm text-md"
                 >
-                  {chapters.map((chapter, j) => (
+                  {sortedChapters.map((chapter, j) => (
                     <li key={j} className="ml-md">
                       <Link
                         to={`/book/${chapter.bookid}/chapter/${chapter.chapterid}`}

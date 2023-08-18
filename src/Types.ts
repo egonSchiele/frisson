@@ -624,6 +624,7 @@ export type MenuItem = {
   tooltip?: string;
   icon?: any;
   onClick: () => any;
+  onSecondaryClick?: () => any;
   className?: string;
   plausibleEventName?: string;
 };

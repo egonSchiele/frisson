@@ -373,6 +373,9 @@ export default function LibraryLauncher({ onLauncherClose }) {
           onClick: () => {
             navigate(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
           },
+          onSecondaryClick: () => {
+            window.open(`/book/${book.bookid}/chapter/${chapter.chapterid}`);
+          },
           icon: <Bars3BottomLeftIcon className="h-4 w-4" aria-hidden="true" />,
         });
       });
@@ -384,6 +387,9 @@ export default function LibraryLauncher({ onLauncherClose }) {
       label: book.title,
       onClick: () => {
         navigate(`/book/${book.bookid}`);
+      },
+      onSecondaryClick: () => {
+        window.open(`/book/${book.bookid}`);
       },
       icon: <BookOpenIcon className="h-4 w-4" aria-hidden="true" />,
     });

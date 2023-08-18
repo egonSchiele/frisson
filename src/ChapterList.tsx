@@ -25,6 +25,7 @@ import {
   getChapterText,
   getCsrfToken,
   prettyDate,
+  sortChapters,
   useLocalStorage,
   wordCount,
 } from "./utils";
@@ -80,18 +81,7 @@ export default function ChapterList({
   const uploadAudioRef = React.useRef<HTMLInputElement>(null);
   const colors = useColors();
 
-  let sortedChapters = chapters;
-  if (sortType === "alphabetical") {
-    sortedChapters = sortBy(chapters, ["title"]);
-  } else if (sortType === "recentlyModified") {
-    sortedChapters = sortBy(chapters, ["created_at"]).reverse();
-  } else if (sortType === "leastRecentlyModified") {
-    sortedChapters = sortBy(chapters, ["created_at"]);
-  } else if (sortType === "shortestToLongest") {
-    sortedChapters = sortBy(chapters, [wordCount]);
-  } else if (sortType === "longestToShortest") {
-    sortedChapters = sortBy(chapters, [wordCount]).reverse();
-  }
+  const sortedChapters = sortChapters(chapters, sortType);
 
   if (!loaded) {
     return (

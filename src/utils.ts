@@ -1,3 +1,4 @@
+import sortBy from "lodash/sortBy";
 import cloneDeep from "lodash/cloneDeep";
 
 import CryptoJS from "crypto-js";
@@ -621,4 +622,19 @@ export function getStringContext(
   const start = Math.max(0, index - window);
   const end = Math.min(str.length, index + substring.length + window);
   return str.substring(start, end);
+}
+
+export function sortChapters(chapters: t.Chapter[], sortType: t.SortType) {
+  if (sortType === "alphabetical") {
+    return sortBy(chapters, ["title"]);
+  } else if (sortType === "recentlyModified") {
+    return sortBy(chapters, ["created_at"]).reverse();
+  } else if (sortType === "leastRecentlyModified") {
+    return sortBy(chapters, ["created_at"]);
+  } else if (sortType === "shortestToLongest") {
+    return sortBy(chapters, [wordCount]);
+  } else if (sortType === "longestToShortest") {
+    return sortBy(chapters, [wordCount]).reverse();
+  }
+  return chapters;
 }
