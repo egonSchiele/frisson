@@ -37,9 +37,7 @@ export default function ListItem({
   const navigate = useNavigate();
   const colors = useColors();
 
-  const selectedCss = selected
-    ? `border-l-4 ${colors.selectedBorderColor}`
-    : "";
+  const selectedCss = selected ? `bg-gray-600` : "";
   let plausibleEventNameCss = "";
   if (plausibleEventName) {
     plausibleEventNameCss = `plausible-event-name=${plausibleEventName}`;
