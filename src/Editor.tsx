@@ -288,10 +288,10 @@ export default function Editor({ settings }: { settings: t.UserSettings }) {
         <ContentEditable
           value={currentChapterTitle}
           className={`${titleFontSize} mb-md tracking-wide font-normal text-darkest dark:text-lightest mx-auto text-center w-full mt-lg ${fontClass}`}
-          /* // This is needed so the first block gets focus when we hit enter
+          // This is needed so the first block gets focus when we hit enter
           onClick={() => {
             dispatch(librarySlice.actions.setActiveTextIndex(-1));
-          }} */
+          }}
           onSubmit={(title) => {
             dispatch(
               librarySlice.actions.setTitle({
