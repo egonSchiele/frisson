@@ -80,10 +80,23 @@ async function updateCacheWithChapter(books, data) {
     (c) => c.chapterid === chapter.chapterid
   );
   if (chapterIndex === -1) {
-    console.warn("chapter not found", chapter);
-    return false;
+    console.warn("chapter not found. Must be a move", chapter);
+    // first remove the chapter from the old book
+    books.forEach((_book) => {
+      _book.chapters = _book.chapters.filter(
+        (c) => c.chapterid !== chapter.chapterid
+      );
+      _book.chapterOrder = _book.chapterOrder.filter(
+        (c) => c !== chapter.chapterid
+      );
+    });
+
+    // then add to new book
+    book.chapters.push(chapter);
+    // book.chapterOrder.push(chapter.chapterid);
+  } else {
+    book.chapters[chapterIndex] = chapter;
   }
-  book.chapters[chapterIndex] = chapter;
   return books;
 }
 
