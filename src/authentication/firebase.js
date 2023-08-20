@@ -225,6 +225,11 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
     return false;
   }
 
+  if (!user.userid) {
+    console.log("no userid given:", user);
+    return false;
+  }
+
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
 
