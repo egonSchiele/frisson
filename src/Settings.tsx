@@ -146,10 +146,6 @@ function Settings({ settings, setSettings, usage, onSave }) {
         {settings.admin && <option>flan-t5-xl</option>}
         {settings.admin && <option>TheBloke/guanaco-65B-HF</option>}
         {settings.admin && <option>gpt2</option>}
-        {/*         <option>text-davinci-003</option>
-        <option>davinci</option>
- */}{" "}
-        <option>curie</option>
       </Select>
 
       <Input

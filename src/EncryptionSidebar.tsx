@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as t from "./Types";
 import Header from "./components/Header";
-import Input from "./components/Input";
 import List from "./components/List";
 import Switch from "./components/Switch";
 import { useColors } from "./lib/hooks";
@@ -15,26 +14,18 @@ import {
 import { RootState } from "./store";
 import {
   classNames,
-  encryptMessage,
   decryptMessage,
-  useLocalStorage,
-  prettyDate,
-  encryptObject,
   decryptObject,
+  encryptMessage,
+  encryptObject,
+  prettyDate,
 } from "./utils";
 
 import { Tab } from "@headlessui/react";
-import {
-  InformationCircleIcon,
-  Square2StackIcon,
-} from "@heroicons/react/24/outline";
-import BlockInfoSidebar from "./BlockInfoSidebar";
 import LibraryContext from "./LibraryContext";
-import VersionsSidebar from "./VersionsSidebar";
 import Button from "./components/Button";
-import TextArea from "./components/TextArea";
-import { use } from "chai";
 import PasswordConfirmation from "./components/PasswordConfirmation";
+import TextArea from "./components/TextArea";
 
 function ManuallyEncrypt({ password }) {
   const colors = useColors();

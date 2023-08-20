@@ -24,6 +24,7 @@ import {
   encryptMessage,
   getChapterText,
   getCsrfToken,
+  hasPermission,
   prettyDate,
   sortChapters,
   useLocalStorage,
@@ -414,7 +415,7 @@ export default function ChapterList({
     },
   ];
 
-  if (settings.admin) {
+  if (hasPermission(settings, "openai_api_whisper")) {
     dropdownMenuItems.push({
       label: "Import Audio",
       icon: <PlusIcon className="w-6 h-6 xl:w-5 xl:h-5" />,

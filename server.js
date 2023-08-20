@@ -65,6 +65,8 @@ import {
   toMarkdown,
   countTokens,
   substringTokens,
+  hasPermission,
+  updatePermissionLimit,
 } from "./src/serverUtils.js";
 import Replicate from "replicate";
 import {
@@ -84,8 +86,24 @@ console.log("Initializing wordnet");
 await wordnet.init("wordnet");
 //const list = await wordnet.list();
 
-const execAwait = util.promisify(exec);
 const writeFileAwait = util.promisify(fs.writeFile);
+
+const execAwait = util.promisify(exec);
+
+export async function run(cmd) {
+  console.log(`$ ${cmd}`);
+  const resp = await execAwait(cmd);
+
+  return resp.stdout?.toString("UTF8");
+}
+
+export async function getAudioDuration(filename) {
+  const resp = await run(
+    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${filename}`
+  );
+
+  return parseFloat(resp);
+}
 
 //console.log(JSON.stringify(definitions, null, 2));
 
@@ -145,6 +163,7 @@ function isMobile(req) {
 }
 
 const csrf = (req, res, next) => {
+  //return next();
   if (req.method !== "GET") {
     const excluded = [
       "/submitLogin",
@@ -179,13 +198,6 @@ const csrf = (req, res, next) => {
 };
 
 app.use(csrf);
-
-async function run(cmd) {
-  console.log(`$ ${cmd}`);
-  const resp = await execAwait(cmd);
-
-  return resp.stdout?.toString("UTF8");
-}
 
 const bookAccessCache = {};
 const chapterAccessCache = {};
@@ -335,7 +347,13 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
   });
 });
 
-app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
+app.post("/api/uploadAudio", requireLogin, async (req, res) => {
+  const user = await getUser(req);
+  if (!user) {
+    console.log("no user");
+    return res.status(404).end();
+  }
+
   const form = formidable({ multiples: true });
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
@@ -368,6 +386,25 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
       if (err) console.log(err);
     });
 
+    const duration = await getAudioDuration(newPath);
+
+    const permissionCheck = hasPermission(user, "openai_api_whisper", duration);
+    if (!permissionCheck.success) {
+      console.log("no whisper permission");
+      return res.status(400).send(permissionCheck.message).end();
+    }
+
+    const updateLimit = await updatePermissionLimit(
+      user,
+      saveUser,
+      "openai_api_whisper",
+      duration
+    );
+    if (!updateLimit.success) {
+      res.status(400).send(updateLimit.message).end();
+      return;
+    }
+
     let mp3Path = newPath.replaceAll(".wav", ".mp3");
     mp3Path = mp3Path.replaceAll(".m4a", ".mp3");
 
@@ -383,7 +420,9 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
   --form file=@${mp3Path} \
   --form model=whisper-1`);
     await run(`rm ${mp3Path}`);
-    await run(`rm ${newPath}`);
+    if (newPath !== mp3Path) {
+      await run(`rm ${newPath}`);
+    }
     console.log({ response });
     const json = JSON.parse(response);
     if (json.error) {
@@ -762,44 +801,90 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     const settings = user.settings;
     settings.admin = user.admin;
     settings.email = user.email;
+    settings.permissions = user.permissions;
     res.status(200).json({ settings, usage: user.usage });
   }
 });
 
-app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
+app.post("/api/textToSpeechLong", requireLogin, async (req, res) => {
+  const user = await getUser(req);
   const { chapterid, text } = req.body;
   const truncatedText = text.substring(0, 100_000);
   const filename = "test.mp3";
-  const task_id = await textToSpeechLong(truncatedText, filename, res);
-  res.json({ success: true, task_id });
-  /* console.log("piping");
-    const data = fs.readFileSync(filename);
-    res.writeHead(200, {
-      "Content-Type": "audio/mpeg",
-      "Content-disposition": "inline;filename=" + filename,
-      "Content-Length": data.length,
-    });
-    res.end(data); */
+  if (!user) {
+    console.log("no user");
+    res.status(404).end();
+  } else {
+    const permissionCheck = hasPermission(
+      user,
+      "amazon_polly",
+      truncatedText.length
+    );
+    if (permissionCheck.success) {
+      const updateLimit = await updatePermissionLimit(
+        user,
+        saveUser,
+        "amazon_polly",
+        truncatedText.length
+      );
+      if (!updateLimit.success) {
+        res.status(400).send(updateLimit.message).end();
+        return;
+      }
+
+      const task_id = await textToSpeechLong(truncatedText, filename, res);
+      res.json({ success: true, task_id });
+    } else {
+      console.log("no polly permission");
+      res.status(400).send(permissionCheck.message).end();
+    }
+  }
 });
 
-app.post("/api/textToSpeech", requireAdmin, async (req, res) => {
+app.post("/api/textToSpeech", requireLogin, async (req, res) => {
+  const user = await getUser(req);
   const { text } = req.body;
   const truncatedText = text.substring(0, 3000);
-  const filename = "test.mp3";
-  await textToSpeech(truncatedText, filename, res);
-  console.log("piping");
-  const data = fs.readFileSync(filename);
-  res.writeHead(200, {
-    "Content-Type": "audio/mpeg",
-    "Content-disposition": "inline;filename=" + filename,
-    "Content-Length": data.length,
-  });
-  res.end(data);
-});
 
+  if (!user) {
+    console.log("no user");
+    res.status(404).end();
+  } else {
+    const permissionCheck = hasPermission(
+      user,
+      "amazon_polly",
+      truncatedText.length
+    );
+    if (permissionCheck.success) {
+      const updateLimit = await updatePermissionLimit(
+        user,
+        saveUser,
+        "amazon_polly",
+        truncatedText.length
+      );
+      if (!updateLimit.success) {
+        res.status(400).send(updateLimit.message).end();
+        return;
+      }
+      const filename = "test.mp3";
+      await textToSpeech(truncatedText, filename, res);
+      console.log("piping");
+      const data = fs.readFileSync(filename);
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-disposition": "inline;filename=" + filename,
+        "Content-Length": data.length,
+      });
+      res.end(data);
+    } else {
+      console.log("no polly permission");
+      res.status(400).send(permissionCheck.message).end();
+    }
+  }
+});
 app.get(
   "/api/textToSpeech/task/:chapterid/:task_id",
-  requireAdmin,
+  requireLogin,
   async (req, res) => {
     try {
       const { chapterid, task_id } = req.params;
@@ -832,7 +917,7 @@ app.get(
   }
 );
 
-app.get("/api/textToSpeechData/:chapterid", requireAdmin, async (req, res) => {
+app.get("/api/textToSpeechData/:chapterid", requireLogin, async (req, res) => {
   const { chapterid } = req.params;
   const userid = getUserId(req);
   const data = await getSpeech(chapterid);
@@ -843,7 +928,7 @@ app.get("/api/textToSpeechData/:chapterid", requireAdmin, async (req, res) => {
   res.status(403).send("no access").end();
 });
 
-app.get("/api/textToSpeech/:s3key", requireAdmin, async (req, res) => {
+app.get("/api/textToSpeech/:s3key", requireLogin, async (req, res) => {
   const { s3key } = req.params;
   const data = await getFromS3(s3key);
   if (data.success) {
@@ -871,13 +956,19 @@ app.post("/api/settings", requireLogin, async (req, res) => {
       console.log("no user");
       res.status(404).end();
     } else {
+      // we add these onto settings before sending to the frontend, but don't actually want to save them in the settings field.
+      // they'll be saved directly on the user instead.
+      delete settings.admin;
+      delete settings.email;
+      delete settings.permissions;
+
       const updateData = {
         eventName: "settingsUpdate",
         data: { settings },
       };
       SE.save(req, res, updateData, async () => {
         user.settings = settings;
-        return await saveUser(user, lastHeardFromServer);
+        return await saveUser(user);
       });
     }
   }
@@ -1312,7 +1403,7 @@ async function updateUsage(user, usage) {
   user.usage.openai_api.tokens.total.completion += usage.completion_tokens || 0;
 
   // TODO use real lastHeardFromServer time here
-  await saveUser(user, Date.now());
+  await saveUser(user);
 }
 
 async function getSuggestions(
@@ -1324,15 +1415,20 @@ async function getSuggestions(
   _messages = null,
   customKey
 ) {
+  const prompt = substringTokens(_prompt, settings.maxPromptLength);
+
   if (!customKey && !user.admin) {
-    return failure("Please provide your own key to use the AI features.");
-    const check = checkUsage(user);
-    if (!check.success) {
-      return check;
+    const permissionCheck = hasPermission(
+      user,
+      "openai_api_gpt35",
+      prompt.length
+    );
+    if (!permissionCheck.success) {
+      console.log("no chatgpt permission");
+      return permissionCheck;
     }
   }
 
-  const prompt = substringTokens(_prompt, settings.maxPromptLength);
   const max_tokens = Math.min(_max_tokens, settings.maxTokens);
   const num_suggestions = Math.min(_num_suggestions, settings.maxSuggestions);
 
@@ -1351,14 +1447,7 @@ async function getSuggestions(
 
   for (const index in instantBlocklist) {
     const term = instantBlocklist[index];
-    /*  console.log({
-      index,
-      term,
-      prompt,
-      promptLower: prompt.toLowerCase(),
-      termLower: term.toLowerCase(),
-      includes: prompt.toLowerCase().includes(term.toLowerCase()),
-    }); */
+
     if (prompt.toLowerCase().includes(term.toLowerCase())) {
       console.log("failing early, prompt:", prompt);
       return failure("fetch failed");
@@ -1385,7 +1474,7 @@ async function getSuggestions(
       _messages,
       customKey
     );
-  } else if (huggingfaceModels.includes(model)) {
+  } else if (huggingfaceModels.includes(model) && user.admin) {
     result = await usingHuggingFace(
       user,
       prompt,
@@ -1395,7 +1484,7 @@ async function getSuggestions(
       _messages,
       customKey
     );
-  } else if (localAiModels.includes(model)) {
+  } else if (localAiModels.includes(model) && user.admin) {
     result = await usingLocalAi(
       user,
       prompt,
@@ -1416,6 +1505,18 @@ async function getSuggestions(
   } else {
     if (!customKey) {
       await updateUsage(user, result.data.usage);
+      const tokensUsed =
+        (result.data.usage.prompt_tokens || 0) +
+        (result.data.usage.completion_tokens || 0);
+      const updateLimit = await updatePermissionLimit(
+        user,
+        saveUser,
+        "openai_api_gpt35",
+        tokensUsed
+      );
+      if (!updateLimit.success) {
+        return updateLimit;
+      }
     }
     return success({ choices: result.data.choices });
   }
@@ -1553,6 +1654,7 @@ async function getEmbeddings(user, _text) {
   if (json.error) {
     return failure(json.error.message);
   }
+  // TODO: call updatePermissionLimit here too
   await updateUsage(user, json.usage);
 
   if (json.data) {

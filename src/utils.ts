@@ -638,3 +638,19 @@ export function sortChapters(chapters: t.Chapter[], sortType: t.SortType) {
   }
   return chapters;
 }
+
+export function hasPermission(
+  settings: t.UserSettings,
+  permissionName: t.PermissionName
+) {
+  if (!settings) return false;
+  if (settings.admin) return true;
+  if (!settings.permissions) return false;
+  const permission: t.Permission = settings.permissions[permissionName];
+  if (!permission) return false;
+  if (permission.type === "none") return false;
+  if (permission.type === "unlimited") return true;
+  if (permission.type === "limited" && permission.limit && permission.limit > 0)
+    return true;
+  return false;
+}

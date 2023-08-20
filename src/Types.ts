@@ -547,6 +547,7 @@ export type UserSettings = {
   created_at?: number;
   encrypted?: boolean;
   encryptionPasswordHint?: string;
+  permissions?: UserPermissions;
 };
 
 export type DesignPreferences = {
@@ -563,8 +564,19 @@ export type Prompt = {
 
 export type Theme = "default" | "dark" | "light" | "solarized";
 
+export type PermissionName = keyof UserPermissions;
+
 export type UserPermissions = {
-  openai_api: boolean;
+  openai_api_gpt35: Permission;
+  openai_api_gpt4: Permission;
+  openai_api_whisper: Permission;
+  amazon_polly: Permission;
+  amazon_s3: Permission;
+};
+
+export type Permission = {
+  type: "unlimited" | "limited" | "none";
+  limit?: number;
 };
 
 export type Usage = {

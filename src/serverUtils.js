@@ -91,3 +91,45 @@ export async function checkForStaleUpdate(
 export function prettyDate(timestamp) {
   return new Date(timestamp).toLocaleString();
 }
+
+export function hasPermission(user, permissionName, limit = 0) {
+  console.log("hasPermission", user, permissionName, limit);
+  if (!user) return failure("no user");
+  if (user.admin) return success();
+  if (!user.permissions) return failure("no permissions found");
+  const permission = user.permissions[permissionName];
+  if (!permission) return failure("no permission named " + permissionName);
+  if (permission.type === "none")
+    return failure("no permission for " + permissionName);
+  if (permission.type === "unlimited") return success();
+  if (permission.type === "limited" && permission.limit) {
+    if (permission.limit >= limit) return success();
+    return failure(
+      `limit reached for ${permissionName}. Limit: ${permission.limit}. You requested: ${limit}`
+    );
+  }
+  return failure("unknown permission type " + permissionName);
+}
+
+export async function updatePermissionLimit(
+  user,
+  saveUser,
+  permissionName,
+  subtractAmount
+) {
+  if (!user) return failure("no user");
+  if (user.admin) return success("admin");
+  if (!user.permissions) return failure("no permissions found");
+  const permission = user.permissions[permissionName];
+  if (!permission) return failure("no permission named " + permissionName);
+  if (permission.type === "none")
+    return failure("Can't update limit. No permission for " + permissionName);
+  if (permission.type === "unlimited") return success("unlimited");
+  if (permission.type === "limited" && permission.limit) {
+    const newLimit = Math.max(0, permission.limit - subtractAmount);
+    user.permissions[permissionName].limit = newLimit;
+    await saveUser(user, true);
+    return success(newLimit);
+  }
+  return failure("unknown permission type " + permissionName);
+}

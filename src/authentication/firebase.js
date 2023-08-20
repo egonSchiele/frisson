@@ -178,6 +178,17 @@ export const getUser = async (req) => {
     return null;
   }
 
+  if (!user.permissions.openai_api_gpt35) {
+    user.permissions = {
+      openai_api_gpt35: { type: "none" },
+      openai_api_gpt4: { type: "none" },
+      openai_api_whisper: { type: "none" },
+      amazon_polly: { type: "none" },
+      amazon_s3: { type: "none" },
+    };
+    await saveUser(user, true);
+  }
+
   const defaultSettings = {
     model: "gpt-3.5-turbo",
     max_tokens: 100,
@@ -217,26 +228,54 @@ export const getUser = async (req) => {
   return user;
 };
 
-export const saveUser = async (user, lastHeardFromServer) => {
-  console.log("saving user");
+// if allowSensitiveUpdate is false, only the settings field will be updated
+export const saveUser = async (user, allowSensitiveUpdate = false) => {
+  console.log("saving user", user);
   if (!user) {
     console.log("no user to save");
+    return false;
+  }
+  if (!user.userid) {
+    console.log("no userid given:", user);
     return false;
   }
 
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
 
+  const result = await docRef.get();
+  let userToSave = null;
+  if (allowSensitiveUpdate) {
+    userToSave = user;
+  } else {
+    if (result.exists) {
+      const userInDb = result.data();
+      userToSave = { ...userInDb, settings: user.settings };
+    } else {
+      console.log("user does not exist, so must be new");
+      userToSave = user;
+    }
+  }
+
+  if (!userToSave.email || !userToSave.userid) {
+    console.log(`refusing to save user with no email or userid`, {
+      userToSave,
+      userInDb,
+      user,
+      allowSensitiveUpdate,
+    });
+    return false;
+  }
   return await checkForStaleUpdate(
     "user",
     user.created_at,
     docRef,
     async () => {
       try {
-        user.created_at = Date.now();
-        await docRef.set(user);
+        userToSave.created_at = Date.now();
+        await docRef.set(userToSave);
         console.log("Successfully synced user to Firestore");
-        return success({ settings: user.settings });
+        return success({ settings: userToSave.settings });
       } catch (error) {
         console.error("Error syncing user to Firestore:", error);
         return failure();
@@ -277,7 +316,11 @@ const createUser = async (email, extraData = {}) => {
     approved: true,
     admin: false,
     permissions: {
-      openai_api: true,
+      openai_api_gpt35: { type: "none" },
+      openai_api_gpt4: { type: "none" },
+      openai_api_whisper: { type: "none" },
+      amazon_polly: { type: "none" },
+      amazon_s3: { type: "none" },
     },
     usage: {
       openai_api: {
@@ -409,7 +452,7 @@ export const resetMonthlyTokenCounts = async () => {
 
     data.usage.openai_api.tokens.month.prompt = 0;
     data.usage.openai_api.tokens.month.completion = 0;
-    saveUser(data, Date.now());
+    saveUser(data);
   });
 
   console.log(">>", userData);
