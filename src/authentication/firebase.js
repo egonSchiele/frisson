@@ -277,7 +277,11 @@ const createUser = async (email, extraData = {}) => {
     approved: true,
     admin: false,
     permissions: {
-      openai_api: true,
+      openai_api_gpt35: { type: "none" },
+      openai_api_gpt4: { type: "none" },
+      openai_api_whisper: { type: "none" },
+      amazon_polly: { type: "none" },
+      amazon_s3: { type: "none" },
     },
     usage: {
       openai_api: {

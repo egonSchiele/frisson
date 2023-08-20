@@ -91,3 +91,21 @@ export async function checkForStaleUpdate(
 export function prettyDate(timestamp) {
   return new Date(timestamp).toLocaleString();
 }
+
+export function hasPermission(user, permissionName, limit = 0) {
+  console.log("hasPermission", user, permissionName, limit);
+  if (!user) return false;
+  if (user.admin) return true;
+  if (!user.permissions) return false;
+  const permission = user.permissions[permissionName];
+  if (!permission) return false;
+  if (permission.type === "none") return false;
+  if (permission.type === "unlimited") return true;
+  if (
+    permission.type === "limited" &&
+    permission.limit &&
+    permission.limit > limit
+  )
+    return true;
+  return false;
+}

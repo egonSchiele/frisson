@@ -375,6 +375,7 @@ export default function Library({ mobile = false }) {
         result.payload.settings.max_tokens
       );
 
+      console.log({ result });
       setSettings(result.payload.settings);
       setUsage(result.payload.usage);
     } else {

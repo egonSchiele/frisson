@@ -21,7 +21,7 @@ import { RootState } from "../store";
 
 import { Tab } from "@headlessui/react";
 import { useColors } from "../lib/hooks";
-import { classNames, useLocalStorage } from "../utils";
+import { classNames, hasPermission, useLocalStorage } from "../utils";
 import Info from "../Info";
 import List from "../components/List";
 import SuggestionPanel from "../SuggestionPanel";
@@ -181,11 +181,13 @@ export default function Sidebar() {
               className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
             />
           </Tab>
-          <Tab className={getClassNames}>
-            <PlayIcon
-              className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
-            />
-          </Tab>
+          {hasPermission(settings, "amazon_polly") && (
+            <Tab className={getClassNames}>
+              <PlayIcon
+                className={`w-5 h-5 mx-auto ${colors.secondaryTextColor}`}
+              />
+            </Tab>
+          )}
         </Tab.List>
         <Tab.Panels className="">
           <Tab.Panel>

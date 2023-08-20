@@ -65,6 +65,7 @@ import {
   toMarkdown,
   countTokens,
   substringTokens,
+  hasPermission,
 } from "./src/serverUtils.js";
 import Replicate from "replicate";
 import {
@@ -145,6 +146,7 @@ function isMobile(req) {
 }
 
 const csrf = (req, res, next) => {
+  return next();
   if (req.method !== "GET") {
     const excluded = [
       "/submitLogin",
@@ -762,16 +764,26 @@ app.get("/api/settings", requireLogin, noCache, async (req, res) => {
     const settings = user.settings;
     settings.admin = user.admin;
     settings.email = user.email;
+    settings.permissions = user.permissions;
     res.status(200).json({ settings, usage: user.usage });
   }
 });
 
-app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
+app.post("/api/textToSpeechLong", requireLogin, async (req, res) => {
+  const user = await getUser(req);
   const { chapterid, text } = req.body;
   const truncatedText = text.substring(0, 100_000);
   const filename = "test.mp3";
-  const task_id = await textToSpeechLong(truncatedText, filename, res);
-  res.json({ success: true, task_id });
+  if (!user) {
+    console.log("no user");
+    res.status(404).end();
+  } else if (!hasPermission(user, "amazon_polly", truncatedText.length)) {
+    console.log("no polly permission");
+    res.status(404).end();
+  } else {
+    const task_id = await textToSpeechLong(truncatedText, filename, res);
+    res.json({ success: true, task_id });
+  }
   /* console.log("piping");
     const data = fs.readFileSync(filename);
     res.writeHead(200, {
@@ -782,19 +794,29 @@ app.post("/api/textToSpeechLong", requireAdmin, async (req, res) => {
     res.end(data); */
 });
 
-app.post("/api/textToSpeech", requireAdmin, async (req, res) => {
+app.post("/api/textToSpeech", requireLogin, async (req, res) => {
+  const user = await getUser(req);
   const { text } = req.body;
   const truncatedText = text.substring(0, 3000);
-  const filename = "test.mp3";
-  await textToSpeech(truncatedText, filename, res);
-  console.log("piping");
-  const data = fs.readFileSync(filename);
-  res.writeHead(200, {
-    "Content-Type": "audio/mpeg",
-    "Content-disposition": "inline;filename=" + filename,
-    "Content-Length": data.length,
-  });
-  res.end(data);
+
+  if (!user) {
+    console.log("no user");
+    res.status(404).end();
+  } else if (!hasPermission(user, "amazon_polly", truncatedText.length)) {
+    console.log("no polly permission");
+    res.status(404).end();
+  } else {
+    const filename = "test.mp3";
+    await textToSpeech(truncatedText, filename, res);
+    console.log("piping");
+    const data = fs.readFileSync(filename);
+    res.writeHead(200, {
+      "Content-Type": "audio/mpeg",
+      "Content-disposition": "inline;filename=" + filename,
+      "Content-Length": data.length,
+    });
+    res.end(data);
+  }
 });
 
 app.get(
@@ -882,6 +904,29 @@ app.post("/api/settings", requireLogin, async (req, res) => {
     }
   }
 });
+
+app.get(
+  "/api/settings/switchToNewPermissions",
+  requireLogin,
+  async (req, res) => {
+    const user = await getUser(req);
+    if (!user) {
+      console.log("no user");
+      res.status(404).end();
+    } else {
+      console.log({ user });
+      user.permissions = {
+        openai_api_gpt35: { type: "none" },
+        openai_api_gpt4: { type: "none" },
+        openai_api_whisper: { type: "none" },
+        amazon_polly: { type: "none" },
+        amazon_s3: { type: "none" },
+      };
+      await saveUser(user);
+      res.status(200).json({ success: true }).end();
+    }
+  }
+);
 
 app.get("/api/books", requireLogin, noCache, async (req, res) => {
   const userid = getUserId(req);
