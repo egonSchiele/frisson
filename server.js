@@ -350,6 +350,11 @@ app.post("/api/uploadAudio", requireLogin, async (req, res) => {
       return res.status(400).send(permissionCheck.message).end();
     }
   }
+  /* const updateLimit = await updatePermissionLimit(user, "openai_api_whisper");
+  if (!updateLimit.success) {
+    res.status(400).send(updateLimit.message).end();
+    return;
+  } */
   const form = formidable({ multiples: true });
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
@@ -796,8 +801,9 @@ app.post("/api/textToSpeechLong", requireLogin, async (req, res) => {
       truncatedText.length
     );
     if (permissionCheck.success) {
-      const updateLimit = updatePermissionLimit(
+      const updateLimit = await updatePermissionLimit(
         user,
+        saveUser,
         "amazon_polly",
         truncatedText.length
       );
@@ -830,6 +836,16 @@ app.post("/api/textToSpeech", requireLogin, async (req, res) => {
       truncatedText.length
     );
     if (permissionCheck.success) {
+      const updateLimit = await updatePermissionLimit(
+        user,
+        saveUser,
+        "amazon_polly",
+        truncatedText.length
+      );
+      if (!updateLimit.success) {
+        res.status(400).send(updateLimit.message).end();
+        return;
+      }
       const filename = "test.mp3";
       await textToSpeech(truncatedText, filename, res);
       console.log("piping");
@@ -921,6 +937,12 @@ app.post("/api/settings", requireLogin, async (req, res) => {
       console.log("no user");
       res.status(404).end();
     } else {
+      // we add these onto settings before sending to the frontend, but don't actually want to save them in the settings field.
+      // they'll be saved directly on the user instead.
+      delete settings.admin;
+      delete settings.email;
+      delete settings.permissions;
+
       const updateData = {
         eventName: "settingsUpdate",
         data: { settings },

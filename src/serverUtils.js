@@ -111,7 +111,12 @@ export function hasPermission(user, permissionName, limit = 0) {
   return failure("unknown permission type " + permissionName);
 }
 
-export function updatePermissionLimit(user, permissionName, subtractAmount) {
+export async function updatePermissionLimit(
+  user,
+  saveUser,
+  permissionName,
+  subtractAmount
+) {
   if (!user) return failure("no user");
   if (user.admin) return success("admin");
   if (!user.permissions) return failure("no permissions found");
@@ -121,7 +126,10 @@ export function updatePermissionLimit(user, permissionName, subtractAmount) {
     return failure("Can't update limit. No permission for " + permissionName);
   if (permission.type === "unlimited") return success("unlimited");
   if (permission.type === "limited" && permission.limit) {
-    return success(permission.limit - subtractAmount);
+    const newLimit = permission.limit - subtractAmount;
+    user.permissions[permissionName].limit = newLimit;
+    await saveUser(user, true);
+    return success(newLimit);
   }
   return failure("unknown permission type " + permissionName);
 }

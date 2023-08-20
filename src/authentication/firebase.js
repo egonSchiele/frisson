@@ -217,7 +217,8 @@ export const getUser = async (req) => {
   return user;
 };
 
-export const saveUser = async (user) => {
+// if allowSensitiveUpdate is false, only the settings field will be updated
+export const saveUser = async (user, allowSensitiveUpdate = false) => {
   console.log("saving user");
   if (!user) {
     console.log("no user to save");
@@ -226,6 +227,10 @@ export const saveUser = async (user) => {
 
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
+  const userInDb = await docRef.get();
+  const userToSave = allowSensitiveUpdate
+    ? user
+    : { ...userInDb, settings: user.settings };
 
   return await checkForStaleUpdate(
     "user",
@@ -233,10 +238,10 @@ export const saveUser = async (user) => {
     docRef,
     async () => {
       try {
-        user.created_at = Date.now();
-        await docRef.set(user);
+        userToSave.created_at = Date.now();
+        await docRef.set(userToSave);
         console.log("Successfully synced user to Firestore");
-        return success({ settings: user.settings });
+        return success({ settings: userToSave.settings });
       } catch (error) {
         console.error("Error syncing user to Firestore:", error);
         return failure();
