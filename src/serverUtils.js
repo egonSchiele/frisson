@@ -103,7 +103,7 @@ export function hasPermission(user, permissionName, limit = 0) {
     return failure("no permission for " + permissionName);
   if (permission.type === "unlimited") return success();
   if (permission.type === "limited" && permission.limit) {
-    if (permission.limit > limit) return success();
+    if (permission.limit >= limit) return success();
     return failure(
       `limit reached for ${permissionName}. Limit: ${permission.limit}. You requested: ${limit}`
     );
@@ -126,7 +126,7 @@ export async function updatePermissionLimit(
     return failure("Can't update limit. No permission for " + permissionName);
   if (permission.type === "unlimited") return success("unlimited");
   if (permission.type === "limited" && permission.limit) {
-    const newLimit = permission.limit - subtractAmount;
+    const newLimit = Math.max(0, permission.limit - subtractAmount);
     user.permissions[permissionName].limit = newLimit;
     await saveUser(user, true);
     return success(newLimit);

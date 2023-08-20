@@ -445,7 +445,7 @@ export default function Nav({
                   </NavButton>
                 )}
 
-                {settings.admin && mobile && (
+                {hasPermission(settings, "amazon_polly") && mobile && (
                   <NavButton
                     color="nav"
                     label="Text to speech"

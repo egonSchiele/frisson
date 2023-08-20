@@ -219,7 +219,7 @@ export const getUser = async (req) => {
 
 // if allowSensitiveUpdate is false, only the settings field will be updated
 export const saveUser = async (user, allowSensitiveUpdate = false) => {
-  console.log("saving user");
+  console.log("saving user", user);
   if (!user) {
     console.log("no user to save");
     return false;
@@ -227,11 +227,26 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
 
   const db = getFirestore();
   const docRef = db.collection("users").doc(user.userid);
-  const userInDb = await docRef.get();
+
+  const result = await docRef.get();
+  if (!result.exists) {
+    console.log("user does not exist");
+    return false;
+  }
+  const userInDb = result.data();
   const userToSave = allowSensitiveUpdate
     ? user
     : { ...userInDb, settings: user.settings };
 
+  if (!userToSave.email || !userToSave.userid) {
+    console.log(`refusing to save user with no email or userid`, {
+      userToSave,
+      userInDb,
+      user,
+      allowSensitiveUpdate,
+    });
+    return false;
+  }
   return await checkForStaleUpdate(
     "user",
     user.created_at,

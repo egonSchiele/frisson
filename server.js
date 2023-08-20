@@ -992,7 +992,7 @@ app.get(
         amazon_polly: { type: "none" },
         amazon_s3: { type: "none" },
       };
-      await saveUser(user);
+      await saveUser(user, true);
       res.status(200).json({ success: true }).end();
     }
   }
@@ -1439,15 +1439,20 @@ async function getSuggestions(
   _messages = null,
   customKey
 ) {
+  const prompt = substringTokens(_prompt, settings.maxPromptLength);
+
   if (!customKey && !user.admin) {
-    return failure("Please provide your own key to use the AI features.");
-    const check = checkUsage(user);
-    if (!check.success) {
-      return check;
+    const permissionCheck = hasPermission(
+      user,
+      "openai_api_gpt35",
+      prompt.length
+    );
+    if (!permissionCheck.success) {
+      console.log("no chatgpt permission");
+      return permissionCheck;
     }
   }
 
-  const prompt = substringTokens(_prompt, settings.maxPromptLength);
   const max_tokens = Math.min(_max_tokens, settings.maxTokens);
   const num_suggestions = Math.min(_num_suggestions, settings.maxSuggestions);
 
@@ -1466,14 +1471,7 @@ async function getSuggestions(
 
   for (const index in instantBlocklist) {
     const term = instantBlocklist[index];
-    /*  console.log({
-      index,
-      term,
-      prompt,
-      promptLower: prompt.toLowerCase(),
-      termLower: term.toLowerCase(),
-      includes: prompt.toLowerCase().includes(term.toLowerCase()),
-    }); */
+
     if (prompt.toLowerCase().includes(term.toLowerCase())) {
       console.log("failing early, prompt:", prompt);
       return failure("fetch failed");
@@ -1500,7 +1498,7 @@ async function getSuggestions(
       _messages,
       customKey
     );
-  } else if (huggingfaceModels.includes(model)) {
+  } else if (huggingfaceModels.includes(model) && user.admin) {
     result = await usingHuggingFace(
       user,
       prompt,
@@ -1510,7 +1508,7 @@ async function getSuggestions(
       _messages,
       customKey
     );
-  } else if (localAiModels.includes(model)) {
+  } else if (localAiModels.includes(model) && user.admin) {
     result = await usingLocalAi(
       user,
       prompt,
@@ -1531,6 +1529,18 @@ async function getSuggestions(
   } else {
     if (!customKey) {
       await updateUsage(user, result.data.usage);
+      const tokensUsed =
+        (result.data.usage.prompt_tokens || 0) +
+        (result.data.usage.completion_tokens || 0);
+      const updateLimit = await updatePermissionLimit(
+        user,
+        saveUser,
+        "openai_api_gpt35",
+        tokensUsed
+      );
+      if (!updateLimit.success) {
+        return updateLimit;
+      }
     }
     return success({ choices: result.data.choices });
   }
@@ -1668,6 +1678,7 @@ async function getEmbeddings(user, _text) {
   if (json.error) {
     return failure(json.error.message);
   }
+  // TODO: call updatePermissionLimit here too
   await updateUsage(user, json.usage);
 
   if (json.data) {
