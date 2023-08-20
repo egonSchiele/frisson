@@ -1,5 +1,5 @@
 import { Blob } from "buffer";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import secondaryBlocklist from "./secondaryBlocklist.js";
 import instantBlocklist from "./instantBlocklist.js";
 import { HfInference } from "@huggingface/inference";
@@ -16,6 +16,7 @@ import dotenv from "dotenv";
 import browser from "browser-detect";
 import * as fs from "fs";
 import path from "path";
+import util from "util";
 import cookieParser from "cookie-parser";
 import AdmZip from "adm-zip";
 import { nanoid } from "nanoid";
@@ -82,6 +83,9 @@ const replicate = new Replicate({
 console.log("Initializing wordnet");
 await wordnet.init("wordnet");
 //const list = await wordnet.list();
+
+const execAwait = util.promisify(exec);
+const writeFileAwait = util.promisify(fs.writeFile);
 
 //console.log(JSON.stringify(definitions, null, 2));
 
@@ -176,10 +180,11 @@ const csrf = (req, res, next) => {
 
 app.use(csrf);
 
-function run(cmd) {
+async function run(cmd) {
   console.log(`$ ${cmd}`);
-  const resp = execSync(cmd);
-  return resp.toString("UTF8");
+  const resp = await execAwait(cmd);
+
+  return resp.stdout?.toString("UTF8");
 }
 
 const bookAccessCache = {};
@@ -358,8 +363,8 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     console.log({ newPath, oldPath });
     const rawData = fs.readFileSync(oldPath);
 
-    run("mkdir -p uploads");
-    fs.writeFileSync(newPath, rawData, function (err) {
+    await run("mkdir -p uploads");
+    await writeFileAwait(newPath, rawData, function (err) {
       if (err) console.log(err);
     });
 
@@ -367,18 +372,18 @@ app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
     mp3Path = mp3Path.replaceAll(".m4a", ".mp3");
 
     if (newPath !== mp3Path) {
-      const convert = run(`ffmpeg -y -i ${newPath} ${mp3Path}`);
+      const convert = await run(`ffmpeg -y -i ${newPath} ${mp3Path}`);
       console.log({ convert });
     }
-    const response = run(`
+    const response = await run(`
     curl --request POST \
   --url https://api.openai.com/v1/audio/transcriptions \
   --header 'Authorization: Bearer ${settings.openAiApiKey}' \
   --header 'Content-Type: multipart/form-data' \
   --form file=@${mp3Path} \
   --form model=whisper-1`);
-    run(`mv ${mp3Path} ${mp3Path}.trash`);
-    run(`mv ${newPath} ${newPath}.trash`);
+    await run(`rm ${mp3Path}`);
+    await run(`rm ${newPath}`);
     console.log({ response });
     const json = JSON.parse(response);
     if (json.error) {
