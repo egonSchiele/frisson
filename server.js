@@ -86,8 +86,25 @@ console.log("Initializing wordnet");
 await wordnet.init("wordnet");
 //const list = await wordnet.list();
 
-const execAwait = util.promisify(exec);
 const writeFileAwait = util.promisify(fs.writeFile);
+
+const execAwait = util.promisify(exec);
+
+export async function run(cmd) {
+  console.log(`$ ${cmd}`);
+  const resp = await execAwait(cmd);
+
+  return resp.stdout?.toString("UTF8");
+}
+
+export async function getAudioDuration(filename) {
+  const resp = await run(
+    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${filename}`
+  );
+  console.log({ resp });
+  return parseFloat(resp);
+  // ffprobe test.mp3 2>&1 | grep Duration
+}
 
 //console.log(JSON.stringify(definitions, null, 2));
 
@@ -182,13 +199,6 @@ const csrf = (req, res, next) => {
 };
 
 app.use(csrf);
-
-async function run(cmd) {
-  console.log(`$ ${cmd}`);
-  const resp = await execAwait(cmd);
-
-  return resp.stdout?.toString("UTF8");
-}
 
 const bookAccessCache = {};
 const chapterAccessCache = {};
@@ -343,18 +353,8 @@ app.post("/api/uploadAudio", requireLogin, async (req, res) => {
   if (!user) {
     console.log("no user");
     return res.status(404).end();
-  } else {
-    const permissionCheck = hasPermission(user, "openai_api_whisper");
-    if (!permissionCheck.success) {
-      console.log("no whisper permission");
-      return res.status(400).send(permissionCheck.message).end();
-    }
   }
-  /* const updateLimit = await updatePermissionLimit(user, "openai_api_whisper");
-  if (!updateLimit.success) {
-    res.status(400).send(updateLimit.message).end();
-    return;
-  } */
+
   const form = formidable({ multiples: true });
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
@@ -387,6 +387,25 @@ app.post("/api/uploadAudio", requireLogin, async (req, res) => {
       if (err) console.log(err);
     });
 
+    const duration = await getAudioDuration(newPath);
+
+    const permissionCheck = hasPermission(user, "openai_api_whisper", duration);
+    if (!permissionCheck.success) {
+      console.log("no whisper permission");
+      return res.status(400).send(permissionCheck.message).end();
+    }
+
+    const updateLimit = await updatePermissionLimit(
+      user,
+      saveUser,
+      "openai_api_whisper",
+      duration
+    );
+    if (!updateLimit.success) {
+      res.status(400).send(updateLimit.message).end();
+      return;
+    }
+
     let mp3Path = newPath.replaceAll(".wav", ".mp3");
     mp3Path = mp3Path.replaceAll(".m4a", ".mp3");
 
@@ -402,7 +421,9 @@ app.post("/api/uploadAudio", requireLogin, async (req, res) => {
   --form file=@${mp3Path} \
   --form model=whisper-1`);
     await run(`rm ${mp3Path}`);
-    await run(`rm ${newPath}`);
+    if (newPath !== mp3Path) {
+      await run(`rm ${newPath}`);
+    }
     console.log({ response });
     const json = JSON.parse(response);
     if (json.error) {
