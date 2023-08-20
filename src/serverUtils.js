@@ -124,7 +124,12 @@ export async function updatePermissionLimit(
   if (!permission) return failure("no permission named " + permissionName);
   if (permission.type === "none")
     return failure("Can't update limit. No permission for " + permissionName);
-  if (permission.type === "unlimited") return success("unlimited");
+  if (permission.type === "unlimited") {
+    user.permissions[permissionName].usage ||= 0;
+    user.permissions[permissionName].usage += subtractAmount;
+    await saveUser(user, true);
+    return success("unlimited");
+  }
   if (permission.type === "limited" && permission.limit) {
     const newLimit = Math.max(0, permission.limit - subtractAmount);
     user.permissions[permissionName].limit = newLimit;

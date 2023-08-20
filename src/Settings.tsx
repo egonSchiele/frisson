@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import LibraryContext from "./LibraryContext";
+
+import React, { useState, useEffect, useContext } from "react";
 import { produce } from "immer";
 import Button from "./components/Button";
 import Input from "./components/Input";
@@ -63,6 +65,49 @@ function Prompt({
       >
         Delete
       </Button>
+    </div>
+  );
+}
+
+function PermissionsView() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { settings, setSettings } = useContext(
+    LibraryContext
+  ) as t.LibraryContextType;
+  const items = [];
+
+  if (settings.admin) {
+    items.push(<p>Admin permissions</p>);
+  } else if (settings.permissions) {
+    Object.keys(settings.permissions!).forEach((key, i) => {
+      const permission: t.Permission = settings.permissions![key];
+
+      if (permission.type === "unlimited") {
+        items.push(
+          <p>
+            <span className="uppercase ">{key}:</span> unlimited
+          </p>
+        );
+      } else if (permission.type === "limited") {
+        items.push(
+          <p>
+            <span className="uppercase ">{key}:</span> {permission.limit}
+          </p>
+        );
+      }
+    });
+  }
+
+  if (items.length === 0) {
+    items.push(<p>No permissions</p>);
+  }
+
+  return (
+    <div className="text-sm text-gray-700 dark:text-gray-300">
+      <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
+        Permissions
+      </h4>
+      {items}
     </div>
   );
 }
@@ -206,8 +251,8 @@ function Settings({ settings, setSettings, usage, onSave }) {
         <option>dark</option>
         {/* <option>solarized</option> */}
       </Select>
-
-      {usage && (
+      <PermissionsView />
+      {/* {usage && (
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs">
             Usage
@@ -219,7 +264,7 @@ function Settings({ settings, setSettings, usage, onSave }) {
             <span className="uppercase ">Total:</span> {totalUsage} tokens
           </p>
         </div>
-      )}
+      )} */}
       <div>
         <h4 className="text-xl font-semibold text-black dark:text-gray-300 mb-xs mt-sm">
           Prompts
