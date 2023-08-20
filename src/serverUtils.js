@@ -94,18 +94,34 @@ export function prettyDate(timestamp) {
 
 export function hasPermission(user, permissionName, limit = 0) {
   console.log("hasPermission", user, permissionName, limit);
-  if (!user) return false;
-  if (user.admin) return true;
-  if (!user.permissions) return false;
+  if (!user) return failure("no user");
+  if (user.admin) return success();
+  if (!user.permissions) return failure("no permissions found");
   const permission = user.permissions[permissionName];
-  if (!permission) return false;
-  if (permission.type === "none") return false;
-  if (permission.type === "unlimited") return true;
-  if (
-    permission.type === "limited" &&
-    permission.limit &&
-    permission.limit > limit
-  )
-    return true;
-  return false;
+  if (!permission) return failure("no permission named " + permissionName);
+  if (permission.type === "none")
+    return failure("no permission for " + permissionName);
+  if (permission.type === "unlimited") return success();
+  if (permission.type === "limited" && permission.limit) {
+    if (permission.limit > limit) return success();
+    return failure(
+      `limit reached for ${permissionName}. Limit: ${permission.limit}. You requested: ${limit}`
+    );
+  }
+  return failure("unknown permission type " + permissionName);
+}
+
+export function updatePermissionLimit(user, permissionName, subtractAmount) {
+  if (!user) return failure("no user");
+  if (user.admin) return success("admin");
+  if (!user.permissions) return failure("no permissions found");
+  const permission = user.permissions[permissionName];
+  if (!permission) return failure("no permission named " + permissionName);
+  if (permission.type === "none")
+    return failure("Can't update limit. No permission for " + permissionName);
+  if (permission.type === "unlimited") return success("unlimited");
+  if (permission.type === "limited" && permission.limit) {
+    return success(permission.limit - subtractAmount);
+  }
+  return failure("unknown permission type " + permissionName);
 }

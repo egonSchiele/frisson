@@ -31,6 +31,7 @@ import {
   librarySlice,
 } from "./reducers/librarySlice";
 import { AppDispatch, RootState } from "./store";
+import { hasPermission } from "./utils";
 export default function Nav({
   mobile,
   bookid,
@@ -379,38 +380,40 @@ export default function Nav({
                   </NavButton>
                 )}
 
-                {!state.recording && settings.admin && (
-                  <NavButton
-                    color="nav"
-                    label="Record"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.startRecording());
-                      startRecording();
-                    }}
-                  >
-                    <MicrophoneIcon
-                      className={`h-8 w-8 md:h-5 md:w-5`}
-                      aria-hidden="true"
-                    />
-                  </NavButton>
-                )}
+                {!state.recording &&
+                  hasPermission(settings, "openai_api_whisper") && (
+                    <NavButton
+                      color="nav"
+                      label="Record"
+                      onClick={() => {
+                        dispatch(librarySlice.actions.startRecording());
+                        startRecording();
+                      }}
+                    >
+                      <MicrophoneIcon
+                        className={`h-8 w-8 md:h-5 md:w-5`}
+                        aria-hidden="true"
+                      />
+                    </NavButton>
+                  )}
 
-                {state.recording && settings.admin && (
-                  <NavButton
-                    color="nav"
-                    label="Record"
-                    onClick={() => {
-                      dispatch(librarySlice.actions.stopRecording());
-                      stopRecording();
-                    }}
-                  >
-                    {/* <p className="w-36 text-sm">{status}</p> */}
-                    <MicrophoneIcon
-                      className={`h-8 w-8 md:h-5 md:w-5 text-red-700`}
-                      aria-hidden="true"
-                    />
-                  </NavButton>
-                )}
+                {state.recording &&
+                  hasPermission(settings, "openai_api_whisper") && (
+                    <NavButton
+                      color="nav"
+                      label="Record"
+                      onClick={() => {
+                        dispatch(librarySlice.actions.stopRecording());
+                        stopRecording();
+                      }}
+                    >
+                      {/* <p className="w-36 text-sm">{status}</p> */}
+                      <MicrophoneIcon
+                        className={`h-8 w-8 md:h-5 md:w-5 text-red-700`}
+                        aria-hidden="true"
+                      />
+                    </NavButton>
+                  )}
 
                 <NavButton
                   color="nav"

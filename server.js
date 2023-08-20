@@ -66,6 +66,7 @@ import {
   countTokens,
   substringTokens,
   hasPermission,
+  updatePermissionLimit,
 } from "./src/serverUtils.js";
 import Replicate from "replicate";
 import {
@@ -337,7 +338,18 @@ app.post("/api/newBook", requireLogin, async (req, res) => {
   });
 });
 
-app.post("/api/uploadAudio", requireAdmin, async (req, res) => {
+app.post("/api/uploadAudio", requireLogin, async (req, res) => {
+  const user = await getUser(req);
+  if (!user) {
+    console.log("no user");
+    return res.status(404).end();
+  } else {
+    const permissionCheck = hasPermission(user, "openai_api_whisper");
+    if (!permissionCheck.success) {
+      console.log("no whisper permission");
+      return res.status(400).send(permissionCheck.message).end();
+    }
+  }
   const form = formidable({ multiples: true });
   form.parse(req, async (err, fields, files) => {
     console.log({ err, fields, files });
@@ -777,21 +789,30 @@ app.post("/api/textToSpeechLong", requireLogin, async (req, res) => {
   if (!user) {
     console.log("no user");
     res.status(404).end();
-  } else if (!hasPermission(user, "amazon_polly", truncatedText.length)) {
-    console.log("no polly permission");
-    res.status(404).end();
   } else {
-    const task_id = await textToSpeechLong(truncatedText, filename, res);
-    res.json({ success: true, task_id });
+    const permissionCheck = hasPermission(
+      user,
+      "amazon_polly",
+      truncatedText.length
+    );
+    if (permissionCheck.success) {
+      const updateLimit = updatePermissionLimit(
+        user,
+        "amazon_polly",
+        truncatedText.length
+      );
+      if (!updateLimit.success) {
+        res.status(400).send(updateLimit.message).end();
+        return;
+      }
+
+      const task_id = await textToSpeechLong(truncatedText, filename, res);
+      res.json({ success: true, task_id });
+    } else {
+      console.log("no polly permission");
+      res.status(400).send(permissionCheck.message).end();
+    }
   }
-  /* console.log("piping");
-    const data = fs.readFileSync(filename);
-    res.writeHead(200, {
-      "Content-Type": "audio/mpeg",
-      "Content-disposition": "inline;filename=" + filename,
-      "Content-Length": data.length,
-    });
-    res.end(data); */
 });
 
 app.post("/api/textToSpeech", requireLogin, async (req, res) => {
@@ -802,20 +823,27 @@ app.post("/api/textToSpeech", requireLogin, async (req, res) => {
   if (!user) {
     console.log("no user");
     res.status(404).end();
-  } else if (!hasPermission(user, "amazon_polly", truncatedText.length)) {
-    console.log("no polly permission");
-    res.status(404).end();
   } else {
-    const filename = "test.mp3";
-    await textToSpeech(truncatedText, filename, res);
-    console.log("piping");
-    const data = fs.readFileSync(filename);
-    res.writeHead(200, {
-      "Content-Type": "audio/mpeg",
-      "Content-disposition": "inline;filename=" + filename,
-      "Content-Length": data.length,
-    });
-    res.end(data);
+    const permissionCheck = hasPermission(
+      user,
+      "amazon_polly",
+      truncatedText.length
+    );
+    if (permissionCheck.success) {
+      const filename = "test.mp3";
+      await textToSpeech(truncatedText, filename, res);
+      console.log("piping");
+      const data = fs.readFileSync(filename);
+      res.writeHead(200, {
+        "Content-Type": "audio/mpeg",
+        "Content-disposition": "inline;filename=" + filename,
+        "Content-Length": data.length,
+      });
+      res.end(data);
+    } else {
+      console.log("no polly permission");
+      res.status(400).send(permissionCheck.message).end();
+    }
   }
 });
 
@@ -899,7 +927,7 @@ app.post("/api/settings", requireLogin, async (req, res) => {
       };
       SE.save(req, res, updateData, async () => {
         user.settings = settings;
-        return await saveUser(user, lastHeardFromServer);
+        return await saveUser(user);
       });
     }
   }
@@ -1357,7 +1385,7 @@ async function updateUsage(user, usage) {
   user.usage.openai_api.tokens.total.completion += usage.completion_tokens || 0;
 
   // TODO use real lastHeardFromServer time here
-  await saveUser(user, Date.now());
+  await saveUser(user);
 }
 
 async function getSuggestions(

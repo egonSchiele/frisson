@@ -217,7 +217,7 @@ export const getUser = async (req) => {
   return user;
 };
 
-export const saveUser = async (user, lastHeardFromServer) => {
+export const saveUser = async (user) => {
   console.log("saving user");
   if (!user) {
     console.log("no user to save");
@@ -413,7 +413,7 @@ export const resetMonthlyTokenCounts = async () => {
 
     data.usage.openai_api.tokens.month.prompt = 0;
     data.usage.openai_api.tokens.month.completion = 0;
-    saveUser(data, Date.now());
+    saveUser(data);
   });
 
   console.log(">>", userData);
