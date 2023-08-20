@@ -178,6 +178,17 @@ export const getUser = async (req) => {
     return null;
   }
 
+  if (!user.permissions.openai_api_gpt35) {
+    user.permissions = {
+      openai_api_gpt35: { type: "none" },
+      openai_api_gpt4: { type: "none" },
+      openai_api_whisper: { type: "none" },
+      amazon_polly: { type: "none" },
+      amazon_s3: { type: "none" },
+    };
+    await saveUser(user, true);
+  }
+
   const defaultSettings = {
     model: "gpt-3.5-turbo",
     max_tokens: 100,
@@ -224,7 +235,6 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
     console.log("no user to save");
     return false;
   }
-
   if (!user.userid) {
     console.log("no userid given:", user);
     return false;
