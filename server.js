@@ -862,10 +862,9 @@ app.post("/api/textToSpeech", requireLogin, async (req, res) => {
     }
   }
 });
-
 app.get(
   "/api/textToSpeech/task/:chapterid/:task_id",
-  requireAdmin,
+  requireLogin,
   async (req, res) => {
     try {
       const { chapterid, task_id } = req.params;
@@ -898,7 +897,7 @@ app.get(
   }
 );
 
-app.get("/api/textToSpeechData/:chapterid", requireAdmin, async (req, res) => {
+app.get("/api/textToSpeechData/:chapterid", requireLogin, async (req, res) => {
   const { chapterid } = req.params;
   const userid = getUserId(req);
   const data = await getSpeech(chapterid);
@@ -909,7 +908,7 @@ app.get("/api/textToSpeechData/:chapterid", requireAdmin, async (req, res) => {
   res.status(403).send("no access").end();
 });
 
-app.get("/api/textToSpeech/:s3key", requireAdmin, async (req, res) => {
+app.get("/api/textToSpeech/:s3key", requireLogin, async (req, res) => {
   const { s3key } = req.params;
   const data = await getFromS3(s3key);
   if (data.success) {
