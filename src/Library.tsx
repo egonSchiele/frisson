@@ -766,7 +766,7 @@ export default function Library({ mobile = false }) {
     return text;
   }
 
-  async function fetchSuggestions(prompt: t.Prompt, messages: t.ChatHistory[]) {
+  async function fetchSuggestions(prompt: t.Prompt, messages: t.ChatItem[]) {
     let action: t.PromptAction = {
       type: "addToSuggestionsList",
     };

@@ -669,14 +669,21 @@ export type LibraryContextType = {
   fetchBooks: () => Promise<void>;
   fetchSuggestions: (
     prompt: Prompt,
-    messages: ChatHistory[],
+    messages: ChatItem[],
     action?: PromptAction
   ) => Promise<void>;
 };
 
-export type ChatHistory = {
+export type ChatItem = {
   role: "user" | "system";
   content: string;
+  timestamp?: number;
+};
+
+export type Chat = {
+  title: string;
+  subtitle: string;
+  messages: ChatItem[];
 };
 
 export type DecryptedMessage = {
@@ -697,7 +704,7 @@ export type FetchSuggestionsParams = {
   num_suggestions: number;
   max_tokens: number;
   prompt: string;
-  messages: ChatHistory[];
+  messages: ChatItem[];
   customKey: string | null;
   replaceParams: {
     text: string;
