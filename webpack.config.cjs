@@ -22,7 +22,7 @@ module.exports = {
   experiments: { topLevelAwait: true },
   mode: "development",
   entry: {
-    server: "./server.ts",
+    // server: "./server.ts",
     admin: "./admin.tsx",
     library: "./library.tsx",
     book: "./library.tsx",
@@ -59,12 +59,12 @@ module.exports = {
         test: /\.(svg|png|jpg|jpeg|ico|gif)$/i,
         type: "asset/resource",
       },
-      { test: /\.json$/, type: "json" },
-      {
+      // { test: /\.json$/, type: "json" },
+      /* {
         test: /\.jsx?$/,
         loader: "babel-loader",
-        exclude: [/node_modules/, /public/],
-      },
+        exclude: [/node_modules/, /public/,],
+      }, */
     ],
   },
   resolve: {

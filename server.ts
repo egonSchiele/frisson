@@ -128,7 +128,7 @@ app.use(
 app.use(compression());
 
 app.use(express.static("public"));
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 
 app.use(cookieParser());
 app.disable("x-powered-by");
@@ -722,7 +722,7 @@ function serveFile(filename, res, userid) {
   const lastEdited = SE.getLastEdited(userid);
   res.cookie("csrfToken", token);
   console.log(`serving ${filename}`);
-  const rendered = render(path.resolve(`./dist/${filename}`), {
+  const rendered = render(path.resolve(`./dist/pages/${filename}`), {
     csrfToken: token,
     lastEdited,
   });
@@ -793,7 +793,7 @@ app.get("/home.html", requireLogin, async (req, res) => {
 });
 
 app.get("/404", async (req, res) => {
-  res.sendFile(path.resolve("./dist/404.html"));
+  res.sendFile(path.resolve("./dist/pages/404.html"));
 });
 
 app.get("/api/settings", requireLogin, noCache, async (req, res) => {

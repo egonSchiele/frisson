@@ -107,12 +107,13 @@
     "wordnet": "https://github.com/egonSchiele/wordnet"
   },
   "scripts": {
-    "start": "node dist/server.js",
-    "build": "webpack --mode production",
+    "start": "node build/server.js",
+    "build": "tsc && webpack --mode production",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
-    "nodemon": "nodemon dist/server.js",
+    "nodemon": "nodemon build/server.js",
     "tswatch": "tsc --watch",
+    "tsc": "tsc",
     "prof": "NODE_ENV=production node --prof server.js",
     "profprocess": "node --prof-process isolate-0x118008000-31668-v8.log > processed.txt",
     "serve": "webpack serve",
