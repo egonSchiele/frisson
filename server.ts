@@ -128,7 +128,7 @@ app.use(
 app.use(compression());
 
 app.use(express.static("public"));
-// app.use(express.static("dist"));
+app.use(express.static("dist"));
 
 app.use(cookieParser());
 app.disable("x-powered-by");
