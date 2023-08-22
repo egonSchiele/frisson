@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./build",
     "noImplicitAny": false,
     //"sourceMap": true,
     "module": "esnext",
@@ -10,8 +10,9 @@
     "allowJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
-
-  "exclude": ["node_modules"]
+  "files": ["server.ts"],
+  "exclude": ["node_modules/**/*"]
 }
