@@ -10,6 +10,7 @@ import { WrenchIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { getText } from "../reducers/librarySlice";
 import { RootState } from "../store";
+import { useLocalStorage } from "../utils";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -36,6 +37,48 @@ export default function Launcher({
     (state: RootState) => state.library.editor.activeTextIndex
   );
   const currentTextBlock = useSelector(getText(activeTextIndex));
+  const [commandHistory, setCommandHistory] = useLocalStorage<string[]>(
+    "launcher-commandHistory",
+    []
+  );
+  const [replaceCommandHistory, setReplaceCommandHistory] = useLocalStorage<
+    string[]
+  >("launcher-replaceCommandHistory", []);
+
+  const commandHistoryItems = commandHistory.map((item) => {
+    return {
+      label: item,
+      tooltip: "Run AI prompt",
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        const prompt: t.Prompt = {
+          label: "Run prompt from launcher",
+          text: item,
+          action: "addToSuggestionsList",
+        };
+        fetchSuggestions(prompt, []);
+      },
+      plausibleEventName: "run-prompt",
+    };
+  });
+
+  // TODO the action is the only thing different. Consolidate these smartly somehow?
+  const replaceCommandHistoryItems = replaceCommandHistory.map((item) => {
+    return {
+      label: item,
+      tooltip: "Run AI prompt",
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        const prompt: t.Prompt = {
+          label: "Run prompt from launcher",
+          text: item,
+          action: "replaceSelection",
+        };
+        fetchSuggestions(prompt, []);
+      },
+      plausibleEventName: "run-prompt",
+    };
+  });
 
   let filteredItems = [];
   if (query.startsWith(".")) {
@@ -61,6 +104,14 @@ export default function Launcher({
         plausibleEventName: "run-prompt",
       },
     ];
+    filteredItems = filteredItems.concat(replaceCommandHistoryItems);
+    filteredItems.push({
+      label: `Clear prompt replace history`,
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        setReplaceCommandHistory([]);
+      },
+    });
   } else if (query.startsWith(">>") && currentTextBlock) {
     let cleanedQuery = query.replace(/^>> ?/, "").trim();
     if (cleanedQuery.length === 0) {
@@ -108,6 +159,14 @@ export default function Launcher({
         plausibleEventName: "run-prompt",
       },
     ];
+    filteredItems = filteredItems.concat(commandHistoryItems);
+    filteredItems.push({
+      label: `Clear prompt history`,
+      icon: <WrenchIcon className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        setCommandHistory([]);
+      },
+    });
   } else if (query !== "") {
     // @ts-ignore
     filteredItems = items.map((item) => {
@@ -190,6 +249,26 @@ export default function Launcher({
                   if (item.plausibleEventName) {
                     // @ts-ignore
                     window.plausible("launcher-" + item.plausibleEventName);
+                  }
+
+                  if (item.label.startsWith("Run prompt and replace")) {
+                    setReplaceCommandHistory((history) => {
+                      if (history.includes(item.label)) {
+                        history.splice(history.indexOf(item.label), 1);
+                      }
+                      history.unshift(item.label);
+
+                      return history;
+                    });
+                  } else if (item.label.startsWith("Run prompt")) {
+                    setCommandHistory((history) => {
+                      if (history.includes(item.label)) {
+                        history.splice(history.indexOf(item.label), 1);
+                      }
+                      history.unshift(item.label);
+
+                      return history;
+                    });
                   }
                   close();
                 }}
