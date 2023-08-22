@@ -612,7 +612,7 @@ export default function Library({ mobile = false }) {
     _settings.customKey = undefined;
 
     const result = await fetch("/api/settings", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

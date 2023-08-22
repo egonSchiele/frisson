@@ -88,51 +88,6 @@ app.use(csrf);
 //app.use(noCache);
 app.use(allowAutoplay);
 
-app.post("/api/settings", requireLogin, async (req, res) => {
-  const { settings } = req.body;
-  const lastHeardFromServer = req.cookies.lastHeardFromServer;
-  //console.log("saving settings", settings);
-  if (!settings) {
-    console.log("no settings");
-    res.status(404).end();
-  } else {
-    const user = await getUser(req);
-    if (!user) {
-      console.log("no user");
-      res.status(404).end();
-    } else {
-      // we add these onto settings before sending to the frontend, but don't actually want to save them in the settings field.
-      // they'll be saved directly on the user instead.
-      delete settings.admin;
-      delete settings.email;
-      delete settings.permissions;
-
-      const updateData = {
-        eventName: "settingsUpdate",
-        data: { settings },
-      };
-      SE.save(req, res, updateData, async () => {
-        user.settings = settings;
-        return await saveUser(user);
-      });
-    }
-  }
-});
-
-app.get("/api/books", requireLogin, noCache, async (req, res) => {
-  const userid = getUserId(req);
-  const books = await getBooks(userid);
-
-  // this isn't an edit, so don't update lastEdited
-  // unless necessary
-  let lastEdited = SE.getLastEdited(userid);
-  if (!lastEdited) {
-    lastEdited = SE.updateLastEdited(req);
-  }
-  res.cookie("lastHeardFromServer", lastEdited);
-  res.status(200).json({ books, lastEdited });
-});
-
 app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
   const { bookid } = req.body;
   const lastHeardFromServer = req.cookies.lastHeardFromServer;
@@ -248,29 +203,6 @@ app.post("/api/suggestions", requireLogin, async (req, res) => {
   }
 });
 
-app.get("/admin", requireAdmin, async (req, res) => {
-  const userid = getUserId(req);
-  serveFile("admin.html", res, userid);
-});
-app.get("/api/admin/users", requireAdmin, async (req, res) => {
-  const data = await getUsers();
-  res.status(200).json(data);
-});
-
-app.get("/api/admin/deleteTestUserBooks", requireAdmin, async (req, res) => {
-  await deleteBooks("ZMLuWv0J2HkI30kEfm5xs");
-  res.status(200).end();
-});
-
-app.get(
-  "/api/admin/resetMonthlyTokenCounts",
-  requireAdmin,
-  async (req, res) => {
-    await resetMonthlyTokenCounts();
-    res.status(200).end();
-  }
-);
-
 app.get(
   "/api/getEmbeddings/:bookid/:chapterid",
   requireLogin,
@@ -287,11 +219,6 @@ app.get(
     res.status(200).json({ embeddings });
   }
 );
-
-app.get("/api/sseUpdates/:clientSessionId", requireLogin, async (req, res) => {
-  const userid = getUserId(req);
-  SE.connectClient(userid, req.params.clientSessionId, req, res);
-});
 
 app.get(
   "/api/trainOnBook/:bookid",

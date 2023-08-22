@@ -25,7 +25,8 @@ export function processDir(
         /.js$/,
         ""
       );
-      if (routeName === "index") routeName = "/";
+
+      if (routeName === "/index") routeName = "/";
 
       const routeComponents = routeName.split("/");
       const routeComponentsWithParams = routeComponents.map((component) => {
