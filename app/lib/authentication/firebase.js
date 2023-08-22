@@ -1,81 +1,16 @@
 import { checkForStaleUpdate } from "../serverUtils.js";
-import { success, failure, deleteBooks } from "../storage/firebase.js";
+import { success, failure } from "../utils.js";
 import { getFirestore } from "firebase-admin/firestore";
 import { nanoid } from "nanoid";
 
 import * as firebaseAuth from "@firebase/auth";
 import * as firebaseApp from "firebase/app";
-import settings from "../../settings.js";
-
+import settings from "../../config/settings.js";
+import { stringToHash } from "../utils/crypto.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-const mainPageUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://egonschiele.github.io/chisel-docs/"
-    : "/login.html";
-
-async function stringToHash(str) {
-  const encoder = new TextEncoder();
-  const salt = settings.tokenSalt;
-  const data = encoder.encode(str + salt);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-const isTestEnv =
-  process.env.NODE_ENV === "test" &&
-  process.env.CHISEL_CONFIRM === "yes_i_am_sure" &&
-  settings.testUser;
-
-export const requireLogin = (req, res, next) => {
-  const c = req.cookies;
-  // console.log({ req });
-  if (isTestEnv) {
-    next();
-  } else if (!req.cookies.userid) {
-    console.log("no userid");
-    res.redirect(mainPageUrl);
-  } else {
-    stringToHash(req.cookies.userid).then((hash) => {
-      if (hash !== req.cookies.token) {
-        res.redirect(mainPageUrl);
-      } else {
-        next();
-      }
-    });
-  }
-};
-
-export const requireAdmin = (req, res, next) => {
-  const c = req.cookies;
-  /*   console.log({ req });
-   */
-  if (!req.cookies.userid) {
-    console.log("no userid");
-    res.redirect(mainPageUrl);
-  } else {
-    stringToHash(req.cookies.userid).then(async (hash) => {
-      if (hash !== req.cookies.token) {
-        res.redirect(mainPageUrl);
-      } else {
-        const user = await getUser(req);
-        if (!user.admin) {
-          res.redirect(mainPageUrl);
-        } else {
-          next();
-        }
-      }
-    });
-  }
-};
-
 export const getUserId = (req) => {
-  if (isTestEnv) {
-    return settings.testUser.userid;
-  }
   if (!req.cookies.userid) {
     return null;
   }
@@ -153,9 +88,7 @@ export const submitRegister = async (req, res) => {
 
 const _getUser = async (userid) => {
   let _userid = userid;
-  if (isTestEnv) {
-    _userid = settings.testUser.userid;
-  }
+
   const db = getFirestore();
   const userRef = db.collection("users").doc(_userid);
   const user = await userRef.get();
@@ -286,9 +219,7 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
 
 const getUserWithEmail = async (email) => {
   let _email = email;
-  if (isTestEnv) {
-    _email = settings.testUser.email;
-  }
+
   const db = getFirestore();
   const userRef = db.collection("users").where("email", "==", _email);
   const user = await userRef.get();

@@ -23,7 +23,7 @@ export const checkIfStale = async () => {
     return t.error("no lastHeardFromServer found");
   }
   const lastHeardFromServer = parseInt(_lastHeardFromServer);
-  const res = await fetch(`/api/getLastEdited`, { credentials: "include" });
+  const res = await fetch(`/api/lastEdited`, { credentials: "include" });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error fetching last edited: ${text}`);
@@ -54,22 +54,9 @@ export const checkIfStale = async () => {
   return t.success({ stale: false });
 };
 
-export const fetchBookTitles = async () => {
-  const res = await fetch(`/api/bookTitles`, { credentials: "include" });
-  if (!res.ok) {
-    const text = await res.text();
-    return t.error(`Error fetching book titles: ${text}`);
-  }
-  const data = await res.json();
-
-  if (!data) {
-    return t.error("bookTitles not found");
-  }
-  return t.success(data);
-};
-
 export const fetchSuggestions = async (_params: t.FetchSuggestionsParams) => {
   const prompt = _params.prompt
+    // @ts-ignore
     .replaceAll("{{text}}", _params.replaceParams.text)
     .replaceAll("{{synopsis}}", _params.replaceParams.synopsis);
 
@@ -109,7 +96,7 @@ export const newChapter = async (
   title: string,
   text: string
 ) => {
-  const res = await postWithCsrf(`/api/newChapter`, { bookid, title, text });
+  const res = await postWithCsrf(`/api/chapter`, { bookid, title, text });
 
   if (!res.ok) {
     const text = await res.text();
@@ -146,7 +133,7 @@ export async function deleteChapter(bookid: string, chapterid: string) {
 }
 
 export async function newBook() {
-  const res = await postWithCsrf(`/api/newBook`, {});
+  const res = await postWithCsrf(`/api/book`, {});
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error creating new book: ${text}`);
@@ -181,8 +168,20 @@ export async function fetchDefinition(word: string) {
 }
 
 export async function postWithCsrf(url: string, body: any) {
+  return await withCsrf("POST", url, body);
+}
+
+export async function putWithCsrf(url: string, body: any) {
+  return await withCsrf("PUT", url, body);
+}
+
+export async function deleteWithCsrf(url: string, body: any = {}) {
+  return await withCsrf("DELETE", url, body);
+}
+
+export async function withCsrf(method, url: string, body: any) {
   const res = await fetch(url, {
-    method: "POST",
+    method,
     headers: {
       "Content-Type": "application/json",
     },
@@ -196,7 +195,7 @@ export async function postWithCsrf(url: string, body: any) {
 }
 
 export async function uploadBook(chapters) {
-  const res = await postWithCsrf(`/api/uploadBook`, { chapters });
+  const res = await postWithCsrf(`/api/book/upload`, { chapters });
   if (!res.ok) {
     if (res.status === 413) {
       return t.error(`That's a big file! Keep it under 1MB.`);
@@ -213,7 +212,7 @@ export async function uploadAudio(audioFile) {
   formData.append("audioFile", audioFile);
   formData.append("csrfToken", getCsrfToken() as string);
 
-  const res = await fetch("/api/uploadAudio", {
+  const res = await fetch("/api/speechToText/upload", {
     method: "POST",
     headers: {
       Accept: "*/*",
@@ -238,7 +237,7 @@ export async function upload(fileToUpload) {
   formData.append("fileToUpload", fileToUpload);
   formData.append("csrfToken", getCsrfToken() as string);
 
-  const res = await fetch("/api/upload", {
+  const res = await fetch("/api/file/upload", {
     method: "POST",
     headers: {
       Accept: "*/*",
@@ -291,7 +290,7 @@ export async function askQuestion(bookid, question) {
 }
 
 export async function saveToHistory(chapterid: string, data: t.Commit) {
-  const res = await postWithCsrf(`/api/saveToHistory`, { chapterid, ...data });
+  const res = await postWithCsrf(`/api/history`, { chapterid, ...data });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error saving to history: ${text}`);
@@ -304,7 +303,7 @@ export async function editCommitMessage(
   message: string,
   index: number
 ) {
-  const res = await postWithCsrf(`/api/history/editCommitMessage`, {
+  const res = await putWithCsrf(`/api/history/commitMessage`, {
     chapterid,
     message,
     index,
@@ -317,7 +316,7 @@ export async function editCommitMessage(
 }
 
 export async function saveChapter(chapter: t.Chapter) {
-  const res = await postWithCsrf(`/api/saveChapter`, {
+  const res = await putWithCsrf(`/api/chapter`, {
     chapter,
   });
   if (!res.ok) {
@@ -329,7 +328,7 @@ export async function saveChapter(chapter: t.Chapter) {
 }
 
 export async function saveBook(book: t.Book) {
-  const res = await postWithCsrf(`/api/saveBook`, {
+  const res = await putWithCsrf(`/api/book`, {
     book,
   });
   if (!res.ok) {
@@ -341,7 +340,7 @@ export async function saveBook(book: t.Book) {
 }
 
 export async function textToSpeechLong(chapterid: string, text: string) {
-  const res = await postWithCsrf(`/api/textToSpeechLong`, { chapterid, text });
+  const res = await postWithCsrf(`/api/textToSpeech/long`, { chapterid, text });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error with textToSpeechLong: ${text}`);
@@ -354,7 +353,10 @@ export async function textToSpeechLong(chapterid: string, text: string) {
 }
 
 export async function textToSpeechShort(chapterid: string, text: string) {
-  const res = await postWithCsrf(`/api/textToSpeech`, { chapterid, text });
+  const res = await postWithCsrf(`/api/textToSpeech/short`, {
+    chapterid,
+    text,
+  });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error with textToSpeech: ${text}`);
@@ -380,7 +382,7 @@ export async function getSpeechTaskStatus(chapterid: string, task_id: string) {
 }
 
 export async function getTextToSpeechData(chapterid: string) {
-  const res = await fetch(`/api/textToSpeechData/${chapterid}`);
+  const res = await fetch(`/api/textToSpeech/data/${chapterid}`);
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error getting speech data: ${text}`);
@@ -390,7 +392,7 @@ export async function getTextToSpeechData(chapterid: string) {
 }
 
 export async function getTextToSpeechAudio(s3key: string) {
-  const res = await fetch(`/api/textToSpeech/${s3key}`);
+  const res = await fetch(`/api/textToSpeech/file/${s3key}`);
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error getting speech audio: ${text}`);

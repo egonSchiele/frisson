@@ -3,7 +3,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-const lastEditedRequest = new Request("/api/getLastEdited", {
+const lastEditedRequest = new Request("/api/lastEdited", {
   credentials: "include",
 });
 
@@ -353,16 +353,28 @@ self.addEventListener("fetch", async (event) => {
   //console.log(event.request);
   if (event.request.url.endsWith("/api/books")) {
     event.respondWith(getBooksFromCacheOrServer());
-  } else if (event.request.url.endsWith("/api/saveChapter")) {
+  } else if (
+    event.request.method === "PUT" &&
+    event.request.url.endsWith("/api/chapter")
+  ) {
     console.log("save chapter", event.request);
     event.respondWith(saveChapter(event.request));
-  } else if (event.request.url.endsWith("/api/saveBook")) {
+  } else if (
+    event.request.method === "PUT" &&
+    event.request.url.endsWith("/api/book")
+  ) {
     console.log("save book", event.request);
     event.respondWith(saveBook(event.request));
-  } else if (event.request.url.endsWith("/api/newChapter")) {
+  } else if (
+    event.request.method === "POST" &&
+    event.request.url.endsWith("/api/chapter")
+  ) {
     console.log("new chapter", event.request);
     event.respondWith(newChapter(event.request));
-  } else if (event.request.url.endsWith("/api/newBook")) {
+  } else if (
+    event.request.method === "POST" &&
+    event.request.url.endsWith("/api/book")
+  ) {
     console.log("new book", event.request);
     event.respondWith(newBook(event.request));
   } else if (event.request.url.endsWith("/api/deleteChapter")) {

@@ -664,7 +664,10 @@ export type LibraryContextType = {
   setSettings: (settings: UserSettings) => void;
   usage: Usage | null;
   deleteChapter: (deletedChapterid: string) => Promise<void>;
-  onTextEditorSave: (state: State, shouldSaveToHistory?: boolean) => void;
+  onTextEditorSave: (
+    state: State | null,
+    shouldSaveToHistory?: boolean
+  ) => void;
   mobile: boolean;
   fetchBooks: () => Promise<void>;
   fetchSuggestions: (
@@ -728,10 +731,10 @@ export type AddToSuggestionsList = {
 
 export type ReplaceSelection = {
   type: "replaceSelection";
-  selection: SelectedText;
+  selection: SelectedText | null;
 };
 
 export type ShowMultipleChoice = {
   type: "showMultipleChoice";
-  selection: SelectedText;
+  selection: SelectedText | null;
 };

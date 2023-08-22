@@ -252,7 +252,7 @@ export default function Library({ mobile = false }) {
         );
       }
     } else if (event.metaKey && event.code === "BracketRight") {
-      if (state.editor.activeTextIndex < currentChapter.text.length - 1) {
+      if (state.editor.activeTextIndex < currentChapter!.text.length - 1) {
         event.preventDefault();
         dispatch(
           librarySlice.actions.setActiveTextIndex(
@@ -402,38 +402,9 @@ export default function Library({ mobile = false }) {
     }
   }
 
-  const fetchBookTitles = async () => {
-    if (!bookid && !chapterid) return;
-    setLoading(true);
-    const result = await fd.fetchBookTitles();
-    setLoading(false);
-
-    if (result.tag === "success") {
-      setCachedBooks(
-        result.payload.books.map((book) => ({
-          title: book.title,
-          bookid: book.bookid,
-          tag: book.tag,
-        }))
-      );
-      /*    result.payload.settings.num_suggestions = parseInt(
-        result.payload.settings.num_suggestions
-      );
-      result.payload.settings.max_tokens = parseInt(
-        result.payload.settings.max_tokens
-      );
-
-      setSettings(result.payload.settings);
-      setUsage(result.payload.usage); */
-    } else {
-      dispatch(librarySlice.actions.setError(result.message));
-    }
-  };
-
   useEffect(() => {
     const func = async () => {
       await Promise.all([fetchBooks(), fetchSettings()]);
-      //await Promise.all([fetchBooks(), fetchSettings(), fetchBookTitles()]);
     };
     sessionStorage.setItem("clientSessionId", nanoid());
 
@@ -638,7 +609,7 @@ export default function Library({ mobile = false }) {
 
   async function saveSettings() {
     const _settings = { ...settings };
-    _settings.customKey = null;
+    _settings.customKey = undefined;
 
     const result = await fetch("/api/settings", {
       method: "POST",
@@ -755,7 +726,7 @@ export default function Library({ mobile = false }) {
 
   function getTextForSuggestions() {
     if (!currentText) return "";
-    let { text } = currentTextBlock;
+    let { text } = currentTextBlock!;
     if (
       state.editor._cachedSelectedText &&
       state.editor._cachedSelectedText.contents &&
@@ -774,12 +745,12 @@ export default function Library({ mobile = false }) {
     if (prompt.action === "replaceSelection") {
       action = {
         type: "replaceSelection",
-        selection: state.editor._cachedSelectedText,
+        selection: state.editor._cachedSelectedText || null,
       };
     } else if (prompt.action === "showMultipleChoice") {
       action = {
         type: "showMultipleChoice",
-        selection: state.editor._cachedSelectedText,
+        selection: state.editor._cachedSelectedText || null,
       };
       promptText += "\nGive the result as comma separated values.";
     }
@@ -816,7 +787,7 @@ export default function Library({ mobile = false }) {
             value: generatedText,
           })
         );
-      } else if (action.type === "replaceSelection") {
+      } else if (action.type === "replaceSelection" && action.selection) {
         dispatch(
           librarySlice.actions.replaceContents({
             text: generatedText,
@@ -824,7 +795,7 @@ export default function Library({ mobile = false }) {
             length: action.selection.length,
           })
         );
-      } else if (action.type === "showMultipleChoice") {
+      } else if (action.type === "showMultipleChoice" && action.selection) {
         const { index, length } = action.selection;
         dispatch(
           librarySlice.actions.setSelection({

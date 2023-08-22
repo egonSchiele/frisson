@@ -7,11 +7,11 @@ import { setCookie } from "./utils";
 function AuthApp() {
   const [error, setError] = React.useState(null);
   async function submitLogin(email, password) {
-    await submitBase("/submitLogin", email, password);
+    await submitBase("/auth/login", email, password);
   }
 
   async function submitRegister(email, password) {
-    await submitBase("/submitRegister", email, password);
+    await submitBase("/auth/register", email, password);
   }
   async function submitBase(url, email, password) {
     const res = await fetch(url, {

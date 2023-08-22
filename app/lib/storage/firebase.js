@@ -1,11 +1,12 @@
+import { success, failure } from "../utils.js";
 import { checkForStaleUpdate } from "../serverUtils.js";
 import _ from "lodash";
 import { nanoid } from "nanoid";
 import { getFirestore } from "firebase-admin/firestore";
 import * as Diff from "diff";
 import admin from "firebase-admin";
-import settings from "../../settings.js";
-import serviceAccountKey from "../../serviceAccountKey.json" assert { type: "json" };
+import settings from "../../config/settings.js";
+import serviceAccountKey from "../../config/serviceAccountKey.json" assert { type: "json" };
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey),
@@ -15,14 +16,6 @@ try {
 }
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
-
-export function success(data = {}) {
-  return { success: true, data };
-}
-
-export function failure(message) {
-  return { success: false, message };
-}
 
 export const saveBook = async (book, lastHeardFromServer) => {
   if (!book) {

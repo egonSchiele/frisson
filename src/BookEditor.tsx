@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as t from "./Types";
 import * as fd from "./lib/fetchData";
 import md5 from "md5";
@@ -34,7 +35,7 @@ import {
   ArrowsUpDownIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { chapterToMarkdown } from "./serverUtils";
+
 import LibraryContext from "./LibraryContext";
 import QuillTextArea from "./components/QuillTextArea";
 import { useColors, useFonts } from "./lib/hooks";
@@ -692,7 +693,7 @@ export default function BookEditor({ className = "" }) {
   }, [bookEditorDiv.current]);
 
   let referenceBlocks = [];
-  const chapterHashes = {};
+  /* const chapterHashes = {};
   if (chapters) {
     chapters.forEach((chapter) => {
       chapter.text.forEach((block, index) => {
@@ -718,6 +719,8 @@ export default function BookEditor({ className = "" }) {
       dupes.push(chapterHashes[key]);
     }
   }
+ */
+  const dupes = [];
 
   function handleUpload(x) {
     const files = x.target.files;

@@ -1,11 +1,11 @@
-import { failure, success } from "../storage/firebase.js";
+import { success, failure } from "../utils.js";
 
 import {
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import settings from "../../settings.js";
+import settings from "../../config/settings.js";
 
 const region = "us-west-2";
 const bucket = settings.awsBucket;

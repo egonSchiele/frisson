@@ -64,7 +64,7 @@ function Reveal({ label, children, showCopy = false }) {
 }
 
 async function lastEdited() {
-  const lastEditedRequest = new Request("/api/getLastEdited", {
+  const lastEditedRequest = new Request("/api/lastEdited", {
     credentials: "include",
   });
 

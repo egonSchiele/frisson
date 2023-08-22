@@ -13,6 +13,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true
   },
-  "files": ["server.ts"],
+  "include": ["app/**/*"],
   "exclude": ["node_modules/**/*"]
 }

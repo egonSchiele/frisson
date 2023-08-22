@@ -21,7 +21,7 @@ Cypress.Commands.add("login", (user) => {
 Cypress.Commands.add("newBook", (user) => {
   cy.intercept({
     method: "POST",
-    url: "/newBook",
+    url: "/book",
   }).as("postNewBook");
 
   // Click the New button to add a new book

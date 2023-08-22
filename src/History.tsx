@@ -163,7 +163,7 @@ function History({ bookid, chapterid, triggerHistoryRerender }) {
   const dispatch = useDispatch();
   useEffect(() => {
     const func = async () => {
-      const res = await fetch(`/api/getHistory/${bookid}/${chapterid}`, {
+      const res = await fetch(`/api/history/${bookid}/${chapterid}`, {
         credentials: "include",
       });
       if (!res.ok) {

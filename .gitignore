@@ -16,3 +16,5 @@ secondaryBlocklist.js
 instantBlocklist.js
 *.DS_Store
 build/*
+app/blocklists/*
+app/config/*
