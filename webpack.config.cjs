@@ -22,7 +22,7 @@ module.exports = {
   experiments: { topLevelAwait: true },
   mode: "development",
   entry: {
-    //server: "./server.js",
+    server: "./server.ts",
     admin: "./admin.tsx",
     library: "./library.tsx",
     book: "./library.tsx",
