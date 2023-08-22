@@ -415,19 +415,21 @@ export default function Nav({
                     </NavButton>
                   )}
 
-                <NavButton
-                  color="nav"
-                  label="Chat"
-                  onClick={() => {
-                    dispatch(librarySlice.actions.toggleChat());
-                  }}
-                  selector="chat-button"
-                >
-                  <ChatBubbleLeftIcon
-                    className="h-8 w-8 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  />
-                </NavButton>
+                {hasPermission(settings, "openai_api_gpt35") && (
+                  <NavButton
+                    color="nav"
+                    label="Chat"
+                    onClick={() => {
+                      dispatch(librarySlice.actions.toggleChat());
+                    }}
+                    selector="chat-button"
+                  >
+                    <ChatBubbleLeftIcon
+                      className="h-8 w-8 md:h-5 md:w-5"
+                      aria-hidden="true"
+                    />
+                  </NavButton>
+                )}
 
                 {!mobile && (
                   <NavButton
