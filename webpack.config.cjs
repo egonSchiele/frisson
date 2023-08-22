@@ -10,7 +10,7 @@ const htmlPages = pages.map((page) => {
   const name = page.split(".")[0];
   return new HtmlWebpackPlugin({
     title: "Chisel Editor",
-    filename: page,
+    filename: `pages/${name}.html`,
     template: `./pages/${page}`,
     chunks: [`${name}`],
     excludeChunks: ["main"],

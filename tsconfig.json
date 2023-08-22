@@ -10,8 +10,9 @@
     "allowJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
-
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "server.ts"],
+  "exclude": ["node_modules/**/*"]
 }
