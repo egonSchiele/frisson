@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { checkForStaleUpdate } from "../serverUtils.js";
 import { success, failure } from "../utils.js";
 import { getFirestore } from "firebase-admin/firestore";
@@ -7,17 +8,18 @@ import * as firebaseAuth from "@firebase/auth";
 import * as firebaseApp from "firebase/app";
 import settings from "../../config/settings.js";
 import { stringToHash } from "../utils/crypto.js";
+import { Book } from "../../../src/Types.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-export const getUserId = (req) => {
+export const getUserId = (req: Request): number => {
   if (!req.cookies.userid) {
     return null;
   }
   return req.cookies.userid;
 };
 
-export const submitLogin = async (req, res) => {
+export const submitLogin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -53,7 +55,7 @@ export const submitLogin = async (req, res) => {
   }
 };
 
-export const submitRegister = async (req, res) => {
+export const submitRegister = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -98,7 +100,7 @@ const _getUser = async (userid) => {
   return user.data();
 };
 
-export const getUser = async (req) => {
+export const getUser = async (req: Request) => {
   const userid = getUserId(req);
   if (!userid) {
     console.log("no userid");
@@ -178,11 +180,12 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
 
   const result = await docRef.get();
   let userToSave = null;
+  let userInDb = null;
   if (allowSensitiveUpdate) {
     userToSave = user;
   } else {
     if (result.exists) {
-      const userInDb = result.data();
+      userInDb = result.data();
       userToSave = { ...userInDb, settings: user.settings };
     } else {
       console.log("user does not exist, so must be new");
@@ -217,7 +220,7 @@ export const saveUser = async (user, allowSensitiveUpdate = false) => {
   );
 };
 
-const getUserWithEmail = async (email) => {
+const getUserWithEmail = async (email: string) => {
   let _email = email;
 
   const db = getFirestore();
@@ -237,7 +240,7 @@ const getUserWithEmail = async (email) => {
   return users[0];
 };
 
-const createUser = async (email, extraData = {}) => {
+const createUser = async (email: string, extraData = {}) => {
   console.log("creating user");
   console.log({ email });
   const userid = nanoid();
@@ -389,7 +392,7 @@ export const resetMonthlyTokenCounts = async () => {
   console.log(">>", userData);
 };
 
-export const getBooksForUser = async (userid) => {
+export const getBooksForUser = async (userid: number): Promise<Book[]> => {
   const db = getFirestore();
   const books = await db
     .collection("books")

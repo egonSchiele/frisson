@@ -34,7 +34,7 @@ export function success(data: any = {}): SuccessResult {
   return { success: true, data };
 }
 
-export function failure(message: string): FailureResult {
+export function failure(message: string = ""): FailureResult {
   return { success: false, message };
 }
 
