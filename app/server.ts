@@ -15,7 +15,6 @@ import { requireAdmin } from "./lib/utils/middleware/requireAdmin.js";
 import { requireLogin } from "./lib/utils/middleware/requireLogin.js";
 import { serveFile } from "./lib/utils/serveFile.js";
 
-import AdmZip from "adm-zip";
 import cookieParser from "cookie-parser";
 import settings from "./config/settings.js";
 import {
@@ -87,121 +86,6 @@ app.use(csrf);
 
 //app.use(noCache);
 app.use(allowAutoplay);
-
-app.post("/api/deleteBook", requireLogin, checkBookAccess, async (req, res) => {
-  const { bookid } = req.body;
-  const lastHeardFromServer = req.cookies.lastHeardFromServer;
-  const updateData = {
-    eventName: "bookDelete",
-    data: { bookid },
-  };
-  SE.save(req, res, updateData, async () => {
-    return await deleteBook(bookid, lastHeardFromServer);
-  });
-});
-
-app.get(
-  "/api/exportBook/:bookid/:title",
-  requireLogin,
-  checkBookAccess,
-  async (req, res) => {
-    try {
-      const book = await getBook(res.locals.bookid);
-
-      // creating archives
-      const zip = new AdmZip();
-
-      book.chapters.forEach((chapter) => {
-        const content = chapterToMarkdown(chapter, false);
-        let title = chapter.title || "untitled";
-        title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase() + ".md";
-        zip.addFile(title, Buffer.from(content, "utf8"), "");
-      });
-      const finalZip = zip.toBuffer();
-
-      res.status(200).send(finalZip);
-    } catch (error) {
-      console.error("Error getting chapter:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
-app.get(
-  "/api/exportChapter/:bookid/:chapterid/:title",
-  requireLogin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    const { title } = req.params;
-    try {
-      const chapter = await getChapter(res.locals.chapterid);
-
-      res.set("Content-Disposition", `attachment; filename="${title}"`);
-
-      res.status(200).send(chapterToMarkdown(chapter, false));
-    } catch (error) {
-      console.error("Error getting chapter:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
-
-app.get(
-  "/api/chapter/:bookid/:chapterid",
-  requireLogin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    try {
-      const chapter = await getChapter(res.locals.chapterid);
-
-      res.status(200).json(chapter);
-    } catch (error) {
-      console.error("Error getting chapter:", error);
-      res.status(400).json({ error });
-    }
-  }
-);
-
-app.post(
-  "/api/deleteChapter",
-  requireLogin,
-  checkBookAccess,
-  checkChapterAccess,
-  async (req, res) => {
-    const { chapterid, bookid } = req.body;
-    console.log("cookies", req.cookies);
-    const lastHeardFromServer = req.cookies.lastHeardFromServer;
-
-    const updateData = {
-      eventName: "chapterDelete",
-      data: { chapterid },
-    };
-    SE.save(req, res, updateData, async () => {
-      return await deleteChapter(chapterid, bookid, lastHeardFromServer);
-    });
-  }
-);
-
-app.post("/api/suggestions", requireLogin, async (req, res) => {
-  console.log({ body: req.body });
-  const user = await getUser(req);
-  const prompt = substringTokens(req.body.prompt, settings.maxPromptLength);
-  const suggestions = await getSuggestions(
-    user,
-    prompt,
-    req.body.max_tokens,
-    req.body.model,
-    req.body.num_suggestions,
-    req.body.messages || [],
-    req.body.customKey
-  );
-  if (suggestions.success === true) {
-    res.status(200).json(suggestions.data);
-  } else {
-    res.status(400).json({ error: suggestions.message });
-  }
-});
 
 app.get(
   "/api/getEmbeddings/:bookid/:chapterid",

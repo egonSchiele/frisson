@@ -145,7 +145,7 @@ export default function BookList({ cachedBooks = null }) {
         onClick: () => {
           let title = book.title || "untitled";
           title = title.replace(/[^a-z0-9_]/gi, "-").toLowerCase();
-          window.location.pathname = `/api/exportBook/${book.bookid}/${title}.zip`;
+          window.location.pathname = `/api/book/${book.bookid}/export/${title}.zip`;
         },
       },
     ]; */

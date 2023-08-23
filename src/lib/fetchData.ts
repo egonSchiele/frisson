@@ -107,9 +107,7 @@ export const newChapter = async (
 };
 
 export async function deleteBook(bookid: string) {
-  const res = await postWithCsrf(`/api/deleteBook`, {
-    bookid,
-  });
+  const res = await deleteWithCsrf(`/api/book/${bookid}`);
 
   if (!res.ok) {
     const text = await res.text();
@@ -119,10 +117,7 @@ export async function deleteBook(bookid: string) {
 }
 
 export async function deleteChapter(bookid: string, chapterid: string) {
-  const res = await postWithCsrf(`/api/deleteChapter`, {
-    bookid,
-    chapterid,
-  });
+  const res = await deleteWithCsrf(`/api/chapter/${bookid}/${chapterid}`);
 
   if (!res.ok) {
     const text = await res.text();

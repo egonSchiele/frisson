@@ -377,10 +377,16 @@ self.addEventListener("fetch", async (event) => {
   ) {
     console.log("new book", event.request);
     event.respondWith(newBook(event.request));
-  } else if (event.request.url.endsWith("/api/deleteChapter")) {
+  } else if (
+    event.request.method === "DELETE" &&
+    event.request.url.contains("/api/chapter")
+  ) {
     console.log("delete chapter", event.request);
     event.respondWith(deleteChapter(event.request));
-  } else if (event.request.url.endsWith("/api/deleteBook")) {
+  } else if (
+    event.request.method === "DELETE" &&
+    event.request.url.contains("/api/book")
+  ) {
     console.log("delete book", event.request);
     event.respondWith(deleteBook(event.request));
   } else if (event.request.url.endsWith("/logout")) {
