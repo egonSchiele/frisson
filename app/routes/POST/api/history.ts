@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import { saveToHistory } from "../../../lib/storage/firebase.js";
 import { Result } from "../../../lib/types.js";
 import { requireLogin } from "../../../lib/utils/middleware/requireLogin.js";
+import { Commit } from "../../../../src/Types.js";
 
 export const middleware = [requireLogin];
 
 export default async (req: Request, res: Response) => {
   const { chapterid, id, message, timestamp, patch } = req.body;
-  const commitData = {
+  const commitData: Commit = {
     id,
     message,
     timestamp,

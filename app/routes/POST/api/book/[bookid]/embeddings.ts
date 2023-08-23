@@ -29,23 +29,21 @@ export default async (req: Request, res: Response) => {
       return { chapter, embeddings };
     });
   const allEmbeddings = await Promise.all(promises);
-  promises = allEmbeddings.map(async ({ chapter, embeddings }) => {
-    if (!embeddings.success === true) {
+  const promises2 = allEmbeddings.map(async ({ chapter, embeddings }) => {
+    if (embeddings.success !== true) {
       console.error("Error getting embeddings:", embeddings.message);
       return;
     }
 
-    await saveEmbeddings(chapter.chapterid, {
+    return await saveEmbeddings(chapter.chapterid, {
       embeddings: embeddings.data,
       created_at: timestamp,
     });
-    /* chapter.embeddingsLastCalculatedAt = timestamp;
-      await saveChapter(chapter); */
   });
 
   book.lastTrainedAt = timestamp;
   const lastHeardFromServer = req.cookies.lastHeardFromServer;
-  await Promise.all([...promises, saveBook(book, lastHeardFromServer)]);
+  await Promise.all([...promises2, saveBook(book, lastHeardFromServer)]);
 
   res.status(200).json({ lastTrainedAt: timestamp });
 };

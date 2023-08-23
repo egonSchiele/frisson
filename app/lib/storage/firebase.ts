@@ -7,8 +7,14 @@ import * as Diff from "diff";
 import admin, { ServiceAccount } from "firebase-admin";
 import settings from "../../config/settings.js";
 import serviceAccountKey from "../../config/serviceAccountKey.json" assert { type: "json" };
-import { Book, Chapter, MarkdownBlock } from "../../../src/Types.js";
-import { SpeechData } from "../types.js";
+import {
+  Book,
+  Chapter,
+  Commit,
+  History,
+  MarkdownBlock,
+} from "../../../src/Types.js";
+import { Result, SpeechData } from "../types.js";
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey as ServiceAccount),
@@ -188,7 +194,7 @@ export const getBookTitles = async (
   return bookTitles;
 };
 
-export const getBooks = async (userid: number): Promise<Book[]> => {
+export const getBooks = async (userid: string): Promise<Book[]> => {
   const books = await db
     .collection("books")
     .where("userid", "==", userid)
@@ -268,7 +274,10 @@ export const getEmbeddingsForChapter = async (chapterid) => {
   }
 };
 
-export const saveChapter = async (chapter, lastHeardFromServer) => {
+export const saveChapter = async (
+  chapter: Chapter,
+  lastHeardFromServer: number
+): Promise<Result> => {
   if (!chapter) {
     return failure("no chapter to save");
   }
@@ -302,13 +311,15 @@ export const saveChapter = async (chapter, lastHeardFromServer) => {
   );
 };
 
-export const getChapter = async (chapterid) => {
+export const getChapter = async (
+  chapterid: string
+): Promise<Chapter | null> => {
   const docRef = db.collection("chapters").doc(chapterid);
   const chapter = await docRef.get();
   if (!chapter.exists) {
     return null;
   }
-  const data = chapter.data();
+  const data = chapter.data() as Chapter;
   if (data.embeddings) {
     delete data.embeddings;
     data.embeddingsLastCalculatedAt = null;
@@ -316,7 +327,11 @@ export const getChapter = async (chapterid) => {
   return data;
 };
 
-export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
+export const deleteChapter = async (
+  chapterid: string,
+  bookid: string,
+  lastHeardFromServer: number
+) => {
   const docRef = db.collection("chapters").doc(chapterid);
 
   return await checkForStaleUpdate(
@@ -353,7 +368,7 @@ export const deleteChapter = async (chapterid, bookid, lastHeardFromServer) => {
   );
 };
 
-export const getHistory = async (chapterid) => {
+export const getHistory = async (chapterid: string): Promise<History> => {
   const docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
   if (!bookObj.exists) {
@@ -362,7 +377,11 @@ export const getHistory = async (chapterid) => {
   return bookObj.data().history;
 };
 
-export const editCommitMessage = async (chapterid, message, index) => {
+export const editCommitMessage = async (
+  chapterid: string,
+  message: string,
+  index: number
+): Promise<Result> => {
   let docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
 
@@ -388,7 +407,10 @@ export const editCommitMessage = async (chapterid, message, index) => {
   return success();
 };
 
-export const saveToHistory = async (chapterid, commitData) => {
+export const saveToHistory = async (
+  chapterid: string,
+  commitData: Commit
+): Promise<Result> => {
   let docRef = db.collection("history").doc(chapterid);
   const bookObj = await docRef.get();
 
@@ -398,7 +420,8 @@ export const saveToHistory = async (chapterid, commitData) => {
     await docRef.set({ history });
     return success();
   }
-  const { history } = bookObj.data();
+  const data = bookObj.data();
+  const history: History = data.history;
 
   if (
     settings.limits.historyLength > 0 &&
@@ -423,12 +446,12 @@ export const saveToHistory = async (chapterid, commitData) => {
   return success();
 };
 
-function getPatch(data) {
+function getPatch(data: string | Commit): string {
   if (typeof data === "string") return data;
   return data.patch;
 }
 
-function checkForChangeInHistory(history, newPatch) {
+function checkForChangeInHistory(history: History, newPatch: string) {
   let old = getPatch(history[0]);
   history.slice(1).forEach((patch) => {
     old = Diff.applyPatch(old, getPatch(patch));
