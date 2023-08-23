@@ -153,7 +153,7 @@ export async function fetchSynonyms(word: string) {
 export async function fetchDefinition(word: string) {
   if (!word) return t.error("No word");
 
-  const res = await fetch(`/api/define/${word}`);
+  const res = await fetch(`/api/utils/define/${word}`);
   const response = await res.json();
   if (!res.ok) {
     return t.error(response.error);
@@ -254,7 +254,7 @@ export async function upload(fileToUpload) {
 
 export async function getEmbeddings(chapter) {
   const res = await fetch(
-    `/api/getEmbeddings/${chapter.bookid}/${chapter.chapterid}`
+    `/api/chapter/${chapter.bookid}/${chapter.chapterid}/embeddings`
   );
   if (!res.ok) {
     const text = await res.text();
@@ -265,7 +265,7 @@ export async function getEmbeddings(chapter) {
 }
 
 export async function trainOnBook(bookid) {
-  const res = await fetch(`/api/trainOnBook/${bookid}`);
+  const res = await postWithCsrf(`/api/book/${bookid}/embeddings`, {});
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error training: ${text}`);
@@ -275,7 +275,9 @@ export async function trainOnBook(bookid) {
 }
 
 export async function askQuestion(bookid, question) {
-  const res = await postWithCsrf(`/api/askQuestion/${bookid}`, { question });
+  const res = await postWithCsrf(`/api/book/${bookid}/askQuestion`, {
+    question,
+  });
   if (!res.ok) {
     const text = await res.text();
     return t.error(`Error asking question: ${text}`);
