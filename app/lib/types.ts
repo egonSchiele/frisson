@@ -14,3 +14,9 @@ export type FailureResult = {
 };
 
 export type Result = SuccessResult | FailureResult;
+
+export type SpeechData = {
+  s3key: string;
+  userid: string;
+  created_at: number;
+};

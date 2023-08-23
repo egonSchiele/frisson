@@ -7,7 +7,8 @@ import * as Diff from "diff";
 import admin, { ServiceAccount } from "firebase-admin";
 import settings from "../../config/settings.js";
 import serviceAccountKey from "../../config/serviceAccountKey.json" assert { type: "json" };
-import { Book } from "../../../src/Types.js";
+import { Book, Chapter, MarkdownBlock } from "../../../src/Types.js";
+import { SpeechData } from "../types.js";
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey as ServiceAccount),
@@ -51,7 +52,7 @@ export const saveBook = async (book: Book, lastHeardFromServer: number) => {
   );
 };
 
-export const getBook = async (bookid) => {
+export const getBook = async (bookid: string): Promise<Book | null> => {
   const bookRef = db.collection("books").doc(bookid);
 
   const [bookObj, chapters] = await Promise.all([
@@ -63,19 +64,26 @@ export const getBook = async (bookid) => {
     return null;
   }
 
-  const book = bookObj.data();
+  const book = bookObj.data() as Book;
   book.chapters = chapters;
   return book;
 };
 
-export const getBookToCheckAccess = async (bookid) => {
+export const getBookToCheckAccess = async (
+  bookid: string
+): Promise<Book | null> => {
   const bookRef = db.collection("books").doc(bookid);
   const bookObj = await bookRef.get();
-  const book = bookObj.data();
+  if (!bookObj.exists) {
+    return null;
+  }
+  const book = bookObj.data() as Book;
   return book;
 };
 
-export const getChaptersForBook = async (bookid) => {
+export const getChaptersForBook = async (
+  bookid: string
+): Promise<Chapter[]> => {
   const chapterRef = db.collection("chapters").where("bookid", "==", bookid);
 
   const chapters = await chapterRef.get();
@@ -91,7 +99,10 @@ export const getChaptersForBook = async (bookid) => {
   return allChapters;
 };
 
-export const deleteBook = async (bookid, lastHeardFromServer) => {
+export const deleteBook = async (
+  bookid: string,
+  lastHeardFromServer: number
+) => {
   console.log("deleting book >>", bookid);
   const docRef = db.collection("books").doc(bookid);
   return await checkForStaleUpdate(
@@ -152,7 +163,9 @@ export const deleteBook = async (bookid, lastHeardFromServer) => {
   );
 };
 
-function asArray(snapshot) {
+function asArray(
+  snapshot: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>
+): any[] {
   const array = [];
   snapshot.forEach((doc) => {
     array.push(doc.data());
@@ -160,7 +173,9 @@ function asArray(snapshot) {
   return array;
 }
 
-export const getBookTitles = async (userid) => {
+export const getBookTitles = async (
+  userid: string
+): Promise<{ bookid: string; title: string; tag: string }[]> => {
   const _books = await db
     .collection("books")
     .where("userid", "==", userid)
@@ -173,7 +188,7 @@ export const getBookTitles = async (userid) => {
   return bookTitles;
 };
 
-export const getBooks = async (userid) => {
+export const getBooks = async (userid: number): Promise<Book[]> => {
   const books = await db
     .collection("books")
     .where("userid", "==", userid)
@@ -447,11 +462,16 @@ export function makeNewBook(data = {}): Book {
   return book;
 }
 
-export function markdownBlock(text) {
+export function markdownBlock(text: string): MarkdownBlock {
   return { type: "markdown", open: true, id: nanoid(), text, reference: false };
 }
 
-export function makeNewChapter(text, title, bookid, data = {}) {
+export function makeNewChapter(
+  text: string,
+  title: string,
+  bookid: string,
+  data = {}
+): Chapter {
   const texts = text.split("---").map((t) => markdownBlock(t.trim()));
 
   const chapterid = nanoid();
@@ -468,7 +488,7 @@ export function makeNewChapter(text, title, bookid, data = {}) {
   return chapter;
 }
 
-export const deleteBooks = async (userid) => {
+export const deleteBooks = async (userid: string) => {
   console.log("deleting books for user", userid);
 
   const books = await db
@@ -491,7 +511,7 @@ export const deleteBooks = async (userid) => {
   }
 };
 
-export const saveSpeech = async (chapterid, data) => {
+export const saveSpeech = async (chapterid: string, data: SpeechData) => {
   const docRef = db.collection("speech").doc(chapterid);
   try {
     await docRef.set(data);
@@ -502,12 +522,14 @@ export const saveSpeech = async (chapterid, data) => {
   return success({ created_at: data.created_at });
 };
 
-export const getSpeech = async (chapterid) => {
+export const getSpeech = async (
+  chapterid: string
+): Promise<SpeechData | null> => {
   const docRef = db.collection("speech").doc(chapterid);
   try {
     const speech = await docRef.get();
     if (speech.exists) {
-      return speech.data();
+      return speech.data() as SpeechData;
     }
     return null;
   } catch (error) {

@@ -12,7 +12,7 @@ import { Book } from "../../../src/Types.js";
 const firebase = firebaseApp.initializeApp(settings.firebaseConfig);
 const auth = firebaseAuth.getAuth(firebase);
 
-export const getUserId = (req: Request): number => {
+export const getUserId = (req: Request): string => {
   if (!req.cookies.userid) {
     return null;
   }
