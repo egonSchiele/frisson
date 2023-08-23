@@ -4,12 +4,13 @@ import _ from "lodash";
 import { nanoid } from "nanoid";
 import { getFirestore } from "firebase-admin/firestore";
 import * as Diff from "diff";
-import admin from "firebase-admin";
+import admin, { ServiceAccount } from "firebase-admin";
 import settings from "../../config/settings.js";
 import serviceAccountKey from "../../config/serviceAccountKey.json" assert { type: "json" };
+import { Book } from "../../../src/Types.js";
 try {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountKey),
+    credential: admin.credential.cert(serviceAccountKey as ServiceAccount),
   });
 } catch (e) {
   console.log(e);
@@ -17,7 +18,7 @@ try {
 const db = getFirestore();
 db.settings({ ignoreUndefinedProperties: true });
 
-export const saveBook = async (book, lastHeardFromServer) => {
+export const saveBook = async (book: Book, lastHeardFromServer: number) => {
   if (!book) {
     console.log("no book to save");
     return failure("No book to save");
@@ -116,15 +117,17 @@ export const deleteBook = async (bookid, lastHeardFromServer) => {
               .collection("deletedChapters")
               .doc(data.chapterid);
             await deletedDocRef.set(data);
-            const historyDoc = db.collection("history").doc(data.chapterid);
+            const historyDocRef = db.collection("history").doc(data.chapterid);
+            const historyDoc = await historyDocRef.get();
             if (historyDoc.exists) {
-              await historyDoc.delete();
+              await historyDocRef.delete();
               console.log("deleted history for chapter", data.chapterid);
             }
             const embeddingsDocRef = db
               .collection("embeddings")
               .doc(data.chapterid);
-            if (embeddingsDocRef.exists) {
+            const embeddingsDoc = await embeddingsDocRef.get();
+            if (embeddingsDoc.exists) {
               await embeddingsDocRef.delete();
               console.log("deleted embeddings for chapter", data.chapterid);
             }
@@ -422,9 +425,9 @@ function checkForChangeInHistory(history, newPatch) {
   return { old, noChange };
 }
 
-export function makeNewBook(data = {}) {
+export function makeNewBook(data = {}): Book {
   const bookid = nanoid();
-  const book = {
+  const book: Book = {
     bookid,
     title: "Untitled",
     author: "Unknown",
@@ -436,6 +439,9 @@ export function makeNewBook(data = {}) {
     characters: [],
     genre: "",
     style: "",
+    userid: "",
+    design: {},
+    favorite: false,
     ...data,
   };
   return book;
@@ -480,7 +486,7 @@ export const deleteBooks = async (userid) => {
     });
     console.log("deleting books", allbooks);
     allbooks.forEach(async (book) => {
-      await deleteBook(book.bookid);
+      await deleteBook(book.bookid, Date.now());
     });
   }
 };
