@@ -1,81 +1,22 @@
 # Chisel
 
-Chisel is an open source writing app. I write a lot, and it is customized for me. Read on to see if it's for you!
+Chisel is an open source writing app. It comes with whisper.cpp and llama.cpp built in, so you can run AI models locally. You can also use the OpenAI API with an API key. All data stays local and private. Here is a quick demo video:
+
+https://youtu.be/ZLQ5yUOumHo
+
+To get Chisel, just download the latest version from [releases](https://github.com/egonSchiele/chisel/releases/tag/v0.3.1).
+
+Chisel currently only works on Macs with the `arm64` architecture. If you have an M1 chip, the app will work for you. 
+
+If you're not sure, here's how to check: Click on the Apple icon on the top left, click on About This Mac, and then see what it says for chip. Mine says "Apple M1 Max".
+
+To run a model locally, you will need a model in the ggml format. You can look for models in these places:
+
+- https://github.com/ggerganov/llama.cpp
+- http://reddit.com/r/localllama
 
 ## Chisel may be for you if...
 - You're writing a book and want a free alternative to Scrivener.
-- You want better speech-to-text results than what Apple has built in. 
-- You like keyboard shortcuts, or want a writing app with a quick launch feature.
-- You have wanted to organize your chapters into blocks.
-- You want a writing app with end-to-end encryption.
 - You'd like to try using AI to help edit your work.
-- You want your writing to sync across all your devices.
-- You want a writing app that is a web app.
-
-### Chisel is not right for you if...
-- You want to visualize connections between all your notes.
-- You are looking for a desktop app.
-- You want collaborative editing.
-
-### Installation
-
-You will need:
-
-1. An OpenAI key
-2. A Firebase account
-3. A machine with Node installed.
-
-Then:
-
-1. Add your OpenAI key to `settings.example.js`.
-2. Add your Firebase config to `settings.example.js`.
-3. Add a salt to `settings.example.js` (`tokenSalt`).
-4. Rename `settings.example.js` to `settings.js`.
-5. Get your `serviceAccountKey.json` from Firebase and save it in the root directory of your project.
-6. `yarn` to install dependencies.
-
-### Running
-
-```
-yarn build
-yarn start
-```
-
-### Developing
-
-You can use watch mode for faster development locally.
-
-```
-yarn watch # for webpack
-yarn nodemon # for the server
-```
-
-### Running tests
-
-```
-NODE_OPTIONS=--experimental-vm-modules yarn test
-```
-
-### Integration tests
-
-You'll first need to add login details for a real user in settings.js:
-
-```js
-testuser: {
-  userid: '',
-  email: '',
-  password: ''
-}
-```
-
-Now run:
-
-```
-yarn cypress
-```
-
-And follow the instructions.
-
-### Bundle size
-
-Run `yarn buildstats` and then run through https://chrisbateman.github.io/webpack-visualizer/
+- You want better speech-to-text results than what Apple has built in. 
+- You have wanted to organize your chapters into blocks.
