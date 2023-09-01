@@ -20,3 +20,13 @@ To run a model locally, you will need a model in the ggml format. You can look f
 - You'd like to try using AI to help edit your work.
 - You want better speech-to-text results than what Apple has built in. 
 - You have wanted to organize your chapters into blocks.
+
+## Thanks to
+Chisel relies on a lot of open source projects, including:
+
+- Quill
+- Electron
+- llama.cpp
+- whisper.cpp
+
+A big thanks to the developers on these projects for making Chisel possible.
